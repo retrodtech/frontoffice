@@ -1749,9 +1749,9 @@ table .tableLine td, table .tableLine th {
   position: absolute;
   left: 50%;
   top: 50%;
-  height: 80vh;
+  height: 90vh;
   transform: translate(-50%, -50%);
-  overflow: auto;
+  overflow: hidden;
   padding: 15px 10px;
 }
 
@@ -1793,6 +1793,15 @@ table .tableLine td, table .tableLine th {
 #reservationAddGuestForm .card-head {
   display: flex;
   justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  box-shadow: 0 1px 15px rgba(0, 0, 0, 0.2588235294);
+  height: 40px;
+  align-items: center;
+  padding: 0 13px;
 }
 #reservationAddGuestForm .card-head a {
   width: 30px;
@@ -1804,4 +1813,10 @@ table .tableLine td, table .tableLine th {
 }
 #reservationAddGuestForm .card-head a:hover {
   background: #f2f2f2;
+}
+#reservationAddGuestForm .card-body {
+  margin-top: 35px;
+  position: relative;
+  overflow: auto;
+  height: 84vh;
 }/*# sourceMappingURL=style.css.map */

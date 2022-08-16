@@ -23,11 +23,11 @@ if($type == 'load_resorvation'){
     $search = $_POST['search'];
 
     if($reservation != ''){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where bookingdetail.checkinstatus = '1'";
+        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where bookingdetail.checkinstatus = '1' and payment_status = '1'";
     }
 
     if($arrive != ''){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.checkIn = '$currentDate'";
+        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.checkIn = '$currentDate' and payment_status = '1'";
     }
 
     if($failed != ''){        
@@ -35,7 +35,7 @@ if($type == 'load_resorvation'){
     }
 
     if($inHouse != ''){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where bookingdetail.checkinstatus = '2'";
+        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where bookingdetail.checkinstatus = '2' and payment_status = '1'";
     }
 
     if($search != ''){        
@@ -927,6 +927,9 @@ if($type == 'loadAddGuestReservationForm'){
         $guestKycType = $guestArray['kyc_type'];
         $guestImgUrl = FRONT_SITE_IMG.'guest/'.$guestImage;
         $guestImgHtml = "<img width='80' src='$guestImgUrl' />";
+
+        $guestPImgUrl = FRONT_SITE_IMG.'guestP/'.$guestKycFile;
+        $guestPImgHtml = "<img width='80' src='$guestPImgUrl' />";
     }
 
     $idProofHtml = '';
@@ -961,7 +964,7 @@ if($type == 'loadAddGuestReservationForm'){
                 <div class="card">
                     <div class="card-head">
                         <h4>'.$title.'</h4>
-                        <a href="javascript:void(0)">X</a>
+                        <a class="closeGuestSec" href="javascript:void(0)">X</a>
                         <input type="hidden" name="type" value="loadAddGuestReservationFormSubmit"/>
                         <input type="hidden" name="guestId" value="'.$gid.'"/>
                         <input type="hidden" name="bookingId" value="'.$bid.'"/>
@@ -1049,6 +1052,7 @@ if($type == 'loadAddGuestReservationForm'){
                                 <div class="col-4">
                                     <div class="form-group">
                                         <div class="guestProofImgSec">
+                                            '.$guestPImgHtml.'
                                             <label for="guestIdProofImg"><span>Choose Guest Proof Image</span></label>
                                             <input type="file" name="guestIdProofImg" id="guestIdProofImg">
                                         </div>
@@ -1077,12 +1081,15 @@ if($type == 'loadAddGuestReservationForm'){
                                     </div>
                                 </div>
                             </div>
+
+                            <hr/>
+                            <div class="card-foot">
+                                <a href="javascript:void(0)" class="btn btn-outline-secondary closeGuestSec">Close</a>
+                                <button  style="margin-bottom:0" type="submit" class="btn bg-gradient-info">Save</button>
+                            </div>
                         
                     </div>
-                    <div class="card-foot">
-                        <a class="btn btn-outline-secondary">Close</a>
-                        <button  style="margin-bottom:0" type="submit" class="btn bg-gradient-info">Save</button>
-                    </div>
+                    
                 </div>
             </form>
     ';
@@ -1113,25 +1120,40 @@ if($type == 'loadAddGuestReservationFormSubmit'){
     $guestImg = $_FILES['guestImg'];
     $kycImg = $_FILES['guestIdProofImg'];
 
+    $guestImage = '';
+    $guestKycFile = '';
+
+    if($_POST['guestId'] != ''){
+        $gId = $_POST['guestId'];
+        $guestArray = getGuestDetail('','',$gId)[0];
+        $guestImage = $guestArray['image'];
+        $guestKycFile = $guestArray['kyc_file'];
+    }
+
 
 
     $guestImgStr = '';
     $guestProofStr = '';
+    $guestImgStrSql = '';
+    $guestProofStrSql = '';
 
     if($guestImg['name'] != ''){
-        $guestImgStr = imgUploadWithData($guestImg,'guest')['img'];
+        $guestImgStr = imgUploadWithData($guestImg,'guest',$guestImage)['img'];
+        $guestImgStrSql = ",image='$guestImgStr'" ;
     }
 
+    
     if($kycImg['name'] != ''){
-        $guestProofStr = imgUploadWithData($kycImg,'guestP')['img'];
+        $guestProofStr = imgUploadWithData($kycImg,'guestP',$guestKycFile)['img'];
+        $guestProofStrSql = ",kyc_file='$guestProofStr'"; 
     }
 
 
     $sql = "insert into guest(hotelId,bookId,roomnum,name,email,phone,country,state,city,zip,image,kyc_file,kyc_number,kyc_type,addBy) values('$hotelId','$bookId','$roomnum','$guestName','$guestEmail','$guestPhone','$guestCountry','$guestIdState','$guestIdcity','$guestZip','$guestImgStr','$guestProofStr','$guestIdNumber','$guestIdType','$addBy')";
 
     if($_POST['guestId'] != ''){
-        $gId = $_POST['guestId'];
-        $sql = "update guest set name='$guestName',email='$guestEmail',phone='$guestPhone',country='$guestCountry',state='$guestIdState',city='$guestIdcity',zip='$guestZip',kyc_number='$guestIdNumber',kyc_type='$guestIdType',addBy='$addBy',image='$guestImgStr',kyc_file='$guestProofStr' where id = '$gId'";
+        
+        $sql = "update guest set name='$guestName',email='$guestEmail',phone='$guestPhone',country='$guestCountry',state='$guestIdState',city='$guestIdcity',zip='$guestZip',kyc_number='$guestIdNumber',kyc_type='$guestIdType',addBy='$addBy' $guestImgStrSql $guestProofStrSql where id = '$gId'";
     }
 
 
@@ -1149,7 +1171,7 @@ if($type == 'getRoomNumByRID'){
     $checkOut = $_POST['checkOut'];
 
     $html ='';
-    $roomNumArry = getRoomNumber('', '1', $id, $checkIn, $checkOut);
+    $roomNumArry = getRoomNumber('', '1', $id, $checkIn, $checkOut,'res');
     foreach($roomNumArry as $roomNumList){
         $rn = $roomNumList['roomNo'];
         

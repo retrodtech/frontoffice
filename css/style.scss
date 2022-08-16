@@ -1907,9 +1907,9 @@ table {
         position: absolute;
         left: 50%;
         top: 50%;
-        height: 80vh;
+        height: 90vh;
         transform: translate(-50%,-50%);
-        overflow: auto;
+        overflow: hidden;
         padding: 15px 10px;
     }
 }
@@ -1951,6 +1951,15 @@ table {
     .card-head{
         display: flex;
         justify-content: space-between;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: #ffffff;
+        box-shadow: 0 1px 15px #00000042;
+        height: 40px;
+        align-items: center;
+        padding: 0 13px;
         a{
             width : 30px;
             height: 30px;
@@ -1963,4 +1972,11 @@ table {
             }
         }
     }
+    .card-body{
+        margin-top: 35px;
+        position: relative;
+        overflow: auto;
+        height: 84vh;
+    }
+    
 }

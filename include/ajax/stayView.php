@@ -84,7 +84,7 @@ if($type == 'loadStayView'){
     
                 }
 
-                $hdHtml .= "<td class='$formatDate'><span class='$btn' style='width: calc(100% * $nightCount); background: #$checkInStatusClr'>$bookPersion</span></td>";
+                $hdHtml .= "<td  class='$formatDate'><span data-bid='$bid' class='$btn' style='width: calc(100% * $nightCount); background: #$checkInStatusClr'>$bookPersion</span></td>";
 
             }
 

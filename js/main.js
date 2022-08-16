@@ -643,6 +643,10 @@ $(document).on('submit', '#paymentBtnClickForm', function(e){
             if(data == 1){
                 var alertData = success('Successfully update payment');
                 showGuestDetailPopUp(roomNum,'','');
+
+                $('#bookindDetail').removeClass('show');
+                loadResorvation('1');
+                loadRoomView();
             }
             if(data == 0){
                 var alertData = error('Something Error');
@@ -666,6 +670,9 @@ $(document).on('submit', '#checkInOutBtnClickForm', function(e){
             if(data == 1){
                 var alertData = success('Successfully update Check in date');
                 showGuestDetailPopUp(roomNum,'','');
+                $('#bookindDetail').removeClass('show');
+                loadResorvation('1');
+                loadRoomView();
             }
             if(data == 0){
                 var alertData = error('Something Error');
@@ -726,6 +733,10 @@ $(document).on('click','#addGestOnReservation .closeContent', function(){
     $('#addGestOnReservation').hide();
 });
 
+$(document).on('click','#addGestOnReservation .closeGuestSec', function(){
+    $('#addGestOnReservation').hide();
+});
+
 
 // Room View end
 
@@ -750,6 +761,12 @@ $(document).on('mouseover','#stayViewContent .roomNum td',function(){
     $('thead th').css('background','white');
     var className = $(this).attr('class');
     $('#'+className).css('background','#fff0bb');
+});
+
+$(document).on('click', '.guestOnStayView', function(){
+    var bookId = $(this).data('bid');
+    $('#bookindDetail').addClass('show');
+    showGuestDetailPopUp('','',bookId);
 });
 
 

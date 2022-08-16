@@ -162,7 +162,7 @@ function generateNumberById($oid){
     return $oid;
 }
 
-function getRoomNumber($rNo='', $status = '', $rid='', $checkIn ='', $checkOut = ''){
+function getRoomNumber($rNo='', $status = '', $rid='', $checkIn ='', $checkOut = '',$ridRes = ''){
     global $conDB;
     if($status != ''){
         $sql = "select * from roomnumber where status = '1'";
@@ -180,7 +180,12 @@ function getRoomNumber($rNo='', $status = '', $rid='', $checkIn ='', $checkOut =
             $value = $roomNumList['room_number'];
             $roomNumCheck .= " and roomNo != '$value'";
         }
-        $sql .= " and roomId = '$rid' $roomNumCheck";
+        if($ridRes != ''){
+            $sql .= " and roomId = '$rid' $roomNumCheck";
+        }else{
+            $sql .= " and roomId = '$rid' ";
+        }
+        
     }
 
     $query = mysqli_query($conDB, $sql);
@@ -917,11 +922,11 @@ function countBookingRow($reservation='',$arrive='',$failed='',$inHouse=''){
     
 
     if($reservation != ''){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where bookingdetail.checkinstatus = '1'";
+        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where bookingdetail.checkinstatus = '1' and booking.payment_status = '1'";
     }
 
     if($arrive != ''){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.checkIn = '$currentDate'";
+        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.checkIn = '$currentDate' and booking.payment_status = '1'";
     }
 
     if($failed != ''){        
@@ -929,7 +934,7 @@ function countBookingRow($reservation='',$arrive='',$failed='',$inHouse=''){
     }
 
     if($inHouse != ''){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where bookingdetail.checkinstatus = '2'";
+        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where bookingdetail.checkinstatus = '2' and booking.payment_status = '1'";
     }
     
     $sql .= " and booking.id=bookingdetail.bid ";

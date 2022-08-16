@@ -349,8 +349,9 @@ if(isset($_POST['reservationSubmit'])){
 
     
 
+    <?php include(FO_SERVER_SCREEN_PATH.'booing_detail.php') ?>
 
-    <div id="alertCon"></div>
+
 
 
 

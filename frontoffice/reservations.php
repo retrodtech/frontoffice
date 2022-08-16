@@ -142,14 +142,7 @@ checkPageBySupperAdmin('pms','Reservation', 'Reservation');
 
     <?php include(FO_SERVER_SCREEN_PATH.'booing_detail.php') ?>
     
-    <section id="popupBox">
-        <div class="closeBox"></div>
-        <div class="box">
-            <div class="content">
-                
-            </div>
-        </div>
-    </section>
+
 
 
 

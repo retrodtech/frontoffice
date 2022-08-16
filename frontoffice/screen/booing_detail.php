@@ -7,3 +7,15 @@
     <div class="closeContent"></div>
     <div class="content"></div>
 </div>
+
+<section id="popupBox">
+    <div class="closeBox"></div>
+    <div class="box">
+        <div class="content">
+            
+        </div>
+    </div>
+</section>
+    
+
+<div id="alertCon"></div>
