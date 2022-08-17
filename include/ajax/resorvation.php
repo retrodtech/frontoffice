@@ -1112,7 +1112,7 @@ if($type == 'loadAddGuestReservationFormSubmit'){
     $guestIdState = safeData($_POST['guestState']);
     $guestIdcity = safeData($_POST['guestCity']);
 
-    $hotelId = 1;
+    $hotelId = $_SESSION['ADMIN_ID'];
     $bookId = safeData($_POST['bookingId']);
     $roomnum = safeData($_POST['roomNum']);
     $addBy = 1;

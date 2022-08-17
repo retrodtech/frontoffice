@@ -1325,6 +1325,17 @@ function visiter_count($ip){
     }
 }
 
+function getHotelDetail($slug = ''){
+    global $conDB;
+    $sql = "select * from hotel where id != ''";
+    if($slug != ''){
+        $sql .= " and slug = '$slug'";
+    }
+    $query = mysqli_query($conDB, $sql);
+    $row = mysqli_fetch_assoc($query);
+    return $row;
+}
+
 function hotelDetail(){
     global $conDB;
     $sql = mysqli_query($conDB, "select * from profile");

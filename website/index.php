@@ -13,6 +13,16 @@ $_SESSION['checkIn'] = date('Y-m-d',$current_date);
 $_SESSION['checkout'] = date('Y-m-d',$current_date + (1 * $one_day));
 
 $live = checkLive();
+
+$hotelArry = getHotelDetail($_GET['name']);
+
+$hotelId = $hotelArry['id'];
+$hotelName = $hotelArry['name'];
+$hotelEmail = $hotelArry['email'];
+$hotelPhone = $hotelArry['phone'];
+$hotelLogo = $hotelArry['logo'];
+
+
 ?>
 
 
@@ -26,7 +36,7 @@ if($live == 1){ ?>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Jamindars Palace</title>
+  <title><?php echo $hotelName ?></title>
   <?php include(WS_SERVER_SCREEN_PATH.'head.php') ?>
 </head>
 
