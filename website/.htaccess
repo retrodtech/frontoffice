@@ -1,6 +1,0 @@
-#ErrorDocument 404 /file full path 
-
-ErrorDocument 404 /404.html  
-
-RewriteEngine On
-RewriteRule ^([^/\.]+)/([^/\.]+)?$ website/?p=$1&id=$2
