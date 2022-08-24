@@ -321,7 +321,9 @@ if(isset($_POST['type'])){
         $roomdesc = '';
         $added_on=date('Y-m-d h:i:s');
 
-        mysqli_query($conDB, "insert into room(slug,header,bedtype,roomcapacity,noAdult,noChild,description,add_on,status,totalroom,mrp) values('$slug','$header','$bedType','$roomCapacity','$noAdult','$noChild','$roomdesc','$added_on','1','$room','$mrp')");
+        $hotelId = $_SESSION['ADMIN_ID'];
+
+        mysqli_query($conDB, "insert into room(slug,hotelId,header,bedtype,roomcapacity,noAdult,noChild,description,add_on,status,totalroom,mrp) values('$slug','$hotelId','$header','$bedType','$roomCapacity','$noAdult','$noChild','$roomdesc','$added_on','1','$room','$mrp')");
         $rid = mysqli_insert_id($conDB);
     
         foreach($amenities as $key=>$val){
@@ -349,7 +351,7 @@ if(isset($_POST['type'])){
             $extraAdult = $extraAdultArr[$key];
             $extraChild = $extraChildArr[$key];
             
-            mysqli_query($conDB, "insert into room_detail(room_id,title,singlePrice,doublePrice,extra_adult,extra_child,status) values('$rid','$title','$singleRoomPrice','$doubleRoomPrice','$extraAdult','$extraChild','1')");
+            mysqli_query($conDB, "insert into roomratetype(room_id,title,singlePrice,doublePrice,extra_adult,extra_child,status) values('$rid','$title','$singleRoomPrice','$doubleRoomPrice','$extraAdult','$extraChild','1')");
         }
 
     

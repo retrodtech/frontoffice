@@ -16,7 +16,7 @@ define('RETROD_TAN', 'BBNR03307D');
 define('SERVER_PATH', $_SERVER['DOCUMENT_ROOT'].'/pms');
 
 define('SA_SERVER_PATH', SERVER_PATH.'/superadmin');
-define('FO_SERVER_PATH', SERVER_PATH.'/frontoffice');
+define('FO_SERVER_PATH', SERVER_PATH);
 define('WB_SERVER_PATH', SERVER_PATH.'/web-builder');
 define('BE_SERVER_PATH', SERVER_PATH.'/web-builder');
 define('WS_SERVER_PATH', SERVER_PATH.'/website');
@@ -48,7 +48,7 @@ define('SERVER_HERO_IMG', SERVER_BOOKING_PATH.'/admin/img/hero/');
 define('FRONT_SITE','http://localhost/pms');
 
 define('SA_FRONT_SITE',FRONT_SITE.'/superadmin');
-define('FO_FRONT_SITE',FRONT_SITE.'/frontoffice');
+define('FO_FRONT_SITE',FRONT_SITE);
 define('WB_FRONT_SITE',FRONT_SITE.'/web-builder');
 define('BE_FRONT_SITE',FRONT_SITE.'/booking');
 define('WS_FRONT_SITE',FRONT_SITE.'/website');
@@ -68,7 +68,7 @@ define('FRONT_BOOKING_SITE', FRONT_SITE);
 
 
 define('FRONT_ADMIN_SITE', FRONT_BOOKING_SITE);
-define('FRONT_ADMIN_SITE_INCLUDE', FRONT_ADMIN_SITE.'/include');
+define('FRONT_ADMIN_SITE_INCLUDE', FRONT_SITE.'/include');
 define('FRONT_ADMIN_SITE_AJAX', FRONT_ADMIN_SITE_INCLUDE.'/ajax/');
 define('FRONT_SITE_ADMIN_LOGO', FRONT_BOOKING_SITE.'/admin/img/admin/');
 define('FRONT_SITE_ROOM_IMG', FRONT_BOOKING_SITE.'/admin/img/room/');

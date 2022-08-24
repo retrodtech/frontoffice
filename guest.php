@@ -1,12 +1,12 @@
 <?php
 
-include ('../include/constant.php');
+include ('include/constant.php');
 include (SERVER_INCLUDE_PATH.'db.php');
 include (SERVER_INCLUDE_PATH.'function.php');
 
 checkLoginAuth();
 
-checkPageBySupperAdmin('pms','Review', 'Review');
+checkPageBySupperAdmin('pms','Guest Detail', 'Guest Record');
 
 
 if(isset($_POST['reservationSubmit'])){
@@ -72,7 +72,7 @@ if(isset($_POST['reservationSubmit'])){
     <link rel="icon" type="image/png" href="favicons/img-favicon.png">
     <meta name="keywords" content="">
     <meta name="description" content="">
-
+    
     <title>Reservations </title>
 
     <?php include(FO_SERVER_SCREEN_PATH.'link.php') ?>
@@ -104,7 +104,7 @@ if(isset($_POST['reservationSubmit'])){
                     <div class="col-auto my-auto">
                         <div class="h-100">
                             <h5 class="mb-1">
-                                Guest Review
+                                Guest Database
                             </h5>
                             <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
                                 <li class="breadcrumb-item text-sm">
@@ -154,7 +154,7 @@ if(isset($_POST['reservationSubmit'])){
                         <div class="card-head">
                             <div class="dFlex jcsb aic">
                                 <div class="left dFlex" style="width:50%">
-                                    <h4 class="mr10">Guest Review Database</h4>
+                                    <h4 class="mr10">Guest Database</h4>
                                     <form action="" method="post" class="dFlex aic" style="width:40%">
                                         <input class="form-control" type="text" name="quickSearchGuest" placeholder="Quick search by Name,Email,Contact" style="width: 80%;"> 
                                         <button><i class="fas fa-search"></i></button>
@@ -171,7 +171,7 @@ if(isset($_POST['reservationSubmit'])){
                             </div>
                         </div>
                         <div class="card-body">
-                            <div id="reviewContent"></div>
+                            <div id="guestContent"></div>
                         </div>
                     </div>
 
@@ -340,16 +340,6 @@ if(isset($_POST['reservationSubmit'])){
             </div>
         </div>
     </section>
-    
-
-    <section id="sideBox">
-        <div class="closeContent"></div>
-        <div class="box">
-            <div class="closeBox"></div>
-            <div class="content"></div>
-        </div>
-    </section>
-
 
     <?php include(FO_SERVER_SCREEN_PATH.'script.php') ?>
 
@@ -373,7 +363,7 @@ if(isset($_POST['reservationSubmit'])){
 
         $(document).ready(() => {
 
-            loadReview();
+            loadGuest();
 
 
             $('#addGuestDataBtn').click(function () {

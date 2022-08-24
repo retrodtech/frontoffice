@@ -461,6 +461,17 @@ function getBookingSource($bsid = ''){
     return $data;
 }
 
+function checkAmenitiesById($rid,$aid){
+    global $conDB;
+    $sql = mysqli_query($conDB, "select * from room_amenities where room_id  = '$rid' and amenitie_id  = '$aid'");
+    if(mysqli_num_rows($sql)){
+        $data = 1;
+    }else{
+        $data = 0;
+    }
+    return $data;
+}
+
 function getReservationType($rid = ''){
     global $conDB;
     $sql = "select * from reservationtype";
