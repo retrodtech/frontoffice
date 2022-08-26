@@ -127,8 +127,9 @@ if(isset($_GET['removeImage'])){
         <?php include(FO_SERVER_SCREEN_PATH.'navbar.php') ?>
 
         <div class="container-fluid py-4" id="manage_room">
-
+            
             <div class="row">
+                
                 <div class="col-12">
                     <div class="multisteps-form">
 
@@ -348,7 +349,7 @@ if(isset($_GET['removeImage'])){
                                         <?php
 
                                     if(isset($_GET['update'])){
-                                        $detail_sql = mysqli_query($conDB, "select * from room_detail where room_id = '$uid'");
+                                        $detail_sql = mysqli_query($conDB, "select * from roomratetype where room_id = '$uid'");
                                         $count = 0;
                                         if(mysqli_num_rows($sql)>0){
 

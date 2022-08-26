@@ -218,9 +218,9 @@ if($_POST['inventoryAction'] == 'rate'){
                                     $roomPrice = getRoomLowPriceByIdWithDate($room_id, date('Y-m-d',$day));
 
                                     if($roomPrice > settingValue()['advancePay']){
-                                        $bookRoom = "<span class='bookRoom bg-gradient-primary '>".$countQPBookRoom."</span>";
+                                        $bookRoom = ($countQPBookRoom > 0) ? "<span class='bookRoom bg-gradient-primary '>".$countQPBookRoom."</span>": "";
                                     }else{
-                                        $bookRoom = "<span class='bookRoom bg-gradient-info'>".$countBookRoom."</span>";
+                                        $bookRoom = ($countBookRoom > 0) ? "<span class='bookRoom bg-gradient-info'>".$countBookRoom."</span>" : "";
                                     }
 
                                     

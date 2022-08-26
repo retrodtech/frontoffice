@@ -1,5 +1,11 @@
 <?php
 
+if(isset($_SESSION['ADMIN_ID'])){
+    $hotelId = $_SESSION['ADMIN_ID'];
+}else{
+    $hotelId = '';
+}
+
 function redirect($link){
     ob_start();
     header('Location: '.$link);
@@ -45,7 +51,7 @@ function ErrorMsg(){
 
 function SuccessMsg(){
     if(isset($_SESSION['SuccessMsg'])){
-        $output = "<div class='alert success_box'><i class='ti-face-smile'></i>";
+        $output = "<div class='alert success_box'><i class='far fa-smile mr-4'></i>";
         $output .= $_SESSION['SuccessMsg'];
         $output .= "</div>";
         $_SESSION['SuccessMsg'] = null;
@@ -1128,6 +1134,21 @@ function getSlider($sid=''){
     return $data;
 }
 
+function getRatePlanArrById($rid){
+    global $conDB;
+    
+    $sql = mysqli_query($conDB, "select * from roomratetype where room_id = '$rid'");
+    $data = array();
+    while($row = mysqli_fetch_assoc($sql)){
+        $data[] = [
+            'id'=> $row['id'],
+            'rplan'=>$row['title'],
+            'price'=> $row['price']
+            ];
+    }
+    return $data;
+}
+
 
 function inventoryCheck($date, $rid='', $rdid=''){
     global $conDB;
@@ -1205,14 +1226,13 @@ function inventoryRateUpdate($updateId, $updateDId, $price='',$price2='',$date, 
 
 function buildRatePlanView($rid){
     global $conDB;
-    $sql = "SELECT room.*,room_detail.id as roomDetailID,room_detail.room_id FROM room, room_detail where room_detail.room_id = '$rid' and room.id = room_detail.room_id";
+    $sql = "SELECT room.*,roomratetype.id as roomDetailID,roomratetype.room_id FROM room, roomratetype where roomratetype.room_id = '$rid' and room.id = roomratetype.room_id";
     $query = mysqli_query($conDB, $sql);
     $data = array();
     if(mysqli_num_rows($query) > 0){
         while($row = mysqli_fetch_assoc($query)){
             $data[]=[
                 'id'=>$row['id'],
-                'pId'=>$row['pId'],
                 'adult'=>$row['noAdult'],
                 'rdid'=>$row['roomDetailID'],
             ];
@@ -1221,7 +1241,6 @@ function buildRatePlanView($rid){
 
     return $data;
 }
-
 
 function roomExist($rid,$date='',$date2='',$rdid=''){
     global $conDB;
@@ -1271,13 +1290,27 @@ function settingValue(){
 
 function countTotalBooking($rid, $date=''){
     global $conDB;
-    $BookSql ="SELECT booking.id FROM bookingdetail,booking where booking.id = bookingdetail.bid and bookingdetail.roomId = '$rid' and booking.payment_status='complete' and bookingdetail.checkIn <= '$date' && bookingdetail.checkOut > '$date'";
-                
-    // $check_sold_arr = mysqli_fetch_assoc(mysqli_query($conDB,$BookSql));
 
-    // $check_sold= $check_sold_arr['noRoom'];
-    $check_sold= 1;
-    return $check_sold;
+    $BookSql ="SELECT id FROM booking where payment_status='complete' and checkIn <= '$date' && checkOut > '$date'";
+                
+    $check_sql = mysqli_query($conDB,$BookSql);
+    $roomNo = 0;
+    if(mysqli_num_rows($check_sql) > 0){
+        while($row = mysqli_fetch_assoc($check_sql)){
+            $bId = $row['id'];
+            $roomNo += countTotalBookingDetailByBID($bId);
+        }
+    }
+
+    return $roomNo;
+}
+
+function countTotalBookingDetailByBID($bid){
+    global $conDB;
+    $sql = "select * from bookingdetail where bid = '$bid'";
+    $totalRow = mysqli_num_rows(mysqli_query($conDB, $sql));
+
+    return $totalRow;
 }
 
 function getTotalRoom($rid, $date,$date2=''){
@@ -1324,7 +1357,6 @@ function getRatePlanByRoomId($rid){
     }
     return $data;
 }
-
 
 function visiter_count($ip){
     global $conDB;
@@ -1445,7 +1477,6 @@ function loopRoomExist($rid,$date='',$date2='',$rdid=''){
         $countTotalBooking = array();
         for($i=1; $i<= $output; $i ++){
             $predate = date('Y-m-d',strtotime($date) + ($oneDay * $i) - $oneDay);
-            // $nxtDate= date('Y-m-d',strtotime($date) + ($oneDay * $i));
             $countTotalBooking[] = roomExist($rid, $predate, $predate,$rdid);  
         }
         if(in_array('0' ,$countTotalBooking))    {

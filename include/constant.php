@@ -4,7 +4,7 @@ define('SITE_NAME', 'Retrod');
 define('BOOK_GENERATE', 'jamindars_');
 define('QP_GENERATE', 'qpjamindars_');
 
-define('HOTEL_LOGIN', 'Retrod');
+define('HOTEL_LOGIN', 'Retrod'); 
 
 define('COMM_PRICE', '12');
 define('QPCOMM_PRICE', '11');
@@ -38,7 +38,7 @@ define('SERVER_ADMIN_PATH', SERVER_PATH);
 
 
 define('SERVER_ADMIN_LOGO', SERVER_BOOKING_PATH.'/admin/img/admin/');
-define('SERVER_ROOM_IMG', SERVER_BOOKING_PATH.'/admin/img/room/');
+define('SERVER_ROOM_IMG', SERVER_BOOKING_PATH.'/img/room/');
 define('SERVER_HERO_IMG', SERVER_BOOKING_PATH.'/admin/img/hero/');
 
 

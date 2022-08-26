@@ -1,3 +1,5 @@
+
+
 <nav id="topNavBar"
     class="navbar navbar-main navbar-expand-lg position-sticky mt-4 top-1 px-0 mx-4 shadow-none border-radius-xl z-index-sticky"
     id="navbarBlur" data-scroll="true">
@@ -43,8 +45,11 @@
                 </li>
                 <li>
                     <a href="">Booking Engine</a>
-                    <ul class="dropNav">
+                    <ul class="dropNav" style="width: 220px;">
+                        <li><a href="<?php echo FO_FRONT_SITE ?>/room-list.php">Room</a></li> 
                         <li><a href="<?php echo FO_FRONT_SITE ?>/inventory.php">Inventory</a></li>
+                        <li><a href="<?php echo FO_FRONT_SITE ?>/amenities.php">Amenities</a></li>
+                        <li><a href="<?php echo FO_FRONT_SITE ?>/coupon_code.php">Coupon</a></li>
                     </ul>
                 </li>
                 <li>

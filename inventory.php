@@ -368,7 +368,8 @@ if(isset($_POST['submit'])){
             type: 'post',
             data : {type:'inventoryUpdate', roomNo:roomNo, roomId:roomId, roomDate:roomDate},
             success : function(data){
-                loadInventory();
+                console.log(data);
+                // loadInventory();
                 // $html = "<div class='alert success_box'><i class='ti-face-smile'></i>";
                 // $html += "Successfull Update Inventory";
                 // $html += "</div>";

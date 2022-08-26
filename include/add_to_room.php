@@ -34,8 +34,11 @@ class add_to_room{
         $_SESSION['checkIn'] = $date;
         $_SESSION['checkout'] = $date2;
 
-        $_SESSION['room'][$key]['checkIn'] = $date;
+        foreach($_SESSION['room'] as $key => $val){
+            $_SESSION['room'][$key]['checkIn'] = $date;
             $_SESSION['room'][$key]['checkout'] = $date2;
+        }
+
         
     }
     function totalroom(){

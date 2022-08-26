@@ -32,6 +32,26 @@ body{
     overflow-x: hidden;
 }
 
+.alert{
+	position: relative;
+	text-align:  center;
+	font-weight: 600;
+	&.success_box{
+		color: #155724;
+		background-color: #d4edda;
+		border-color: #c3e6cb;
+	}
+	&.error_box{
+		color: #721c24;
+		background-color: #f8d7da;
+		border-color: #f5c6cb;
+	}
+  }
+
+  .mr-4{
+    margin-right: 5px;
+  }
+
 
 #indexSlidBar {
     position: fixed;
@@ -185,6 +205,12 @@ ul{
                 }
             }
         }
+    }
+}
+
+#manage_room .btnGroup{
+    li{
+        display: inline-block;
     }
 }
 

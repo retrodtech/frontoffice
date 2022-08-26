@@ -7,8 +7,6 @@ include (SERVER_INCLUDE_PATH.'function.php');
 checkLoginAuth();
 
 
-
-
 if(isset($_GET['status'])){
     $sid = $_GET['status'];
 
@@ -78,6 +76,28 @@ if(isset($_GET['delete'])){
                         
 
                         <div class="row">
+
+                            <div class="col-12 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <ul class="btnGroup">
+                                            <li>
+                                                <a href="<?php echo FO_FRONT_SITE ?>/room-add.php"><button type="button" class="btn bg-gradient-info">Add Room</button></a>
+                                            </li>
+
+                                            <li>
+                                                <a href="<?php echo FO_FRONT_SITE ?>/amenities.php"><button type="button" class="btn btn-outline-secondary">Amenities</button></a>
+                                            </li>
+
+                                            <li>
+                                                <a href="<?php echo FO_FRONT_SITE ?>/coupon_code.php"><button type="button" class="btn btn-outline-secondary">Coupon</button></a>
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="col-12 col-lg-12 m-auto">
                             <?php echo SuccessMsg(); echo ErrorMsg() ?>
                             <!-- <a href="<?php echo FRONT_BOOKING_SITE.'/admin/manage-room.php' ?>" class="btn dark mb15">Add Room</a> -->
@@ -95,7 +115,7 @@ if(isset($_GET['delete'])){
                                             </tr>
                                             <?php 
                                                 $si = 0;
-                                                $sql = mysqli_query($conDB, "select * from room");
+                                                $sql = mysqli_query($conDB, "select * from room where hotelId = '$hotelId'");
                                                 if(mysqli_num_rows($sql) > 0){
                                                     while($row = mysqli_fetch_assoc($sql)){
                                                         $si++;
