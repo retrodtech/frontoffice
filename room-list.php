@@ -6,6 +6,9 @@ include (SERVER_INCLUDE_PATH.'function.php');
 
 checkLoginAuth();
 
+checkPageBySupperAdmin('bookingEngine','Room', 'Room');
+
+
 
 if(isset($_GET['status'])){
     $sid = $_GET['status'];

@@ -74,9 +74,19 @@ function checkPageBySupperAdmin($pg='',$title='',$ttext=''){
     global $conDB;
     $hotelId = $_SESSION['ADMIN_ID'];
     $sql = "select * from hotel where status = '1' and id = '$hotelId'";
+
     if($pg == 'pms'){
         $sql .= " and pms = '1'";
     }
+
+    if($pg == 'webBilder'){
+        $sql .= " and webBilder = '1'";
+    }
+
+    if($pg == 'bookingEngine'){
+        $sql .= " and bookingEngine = '1'";
+    }
+
     $query = mysqli_query($conDB, $sql);
     if(mysqli_num_rows($query) > 0){
 

@@ -24,7 +24,6 @@ function success($msg){
     return $html;
 }
 
-
 function loadResorvation($reservation='',$arrive='',$failed='',$inHouse='',$search='') {
     var reservation = $reservation;
     var arrive = $arrive;
@@ -249,6 +248,10 @@ function closeContent($clickableId, $actionId){
         $(actionId).hide();
     });
 }
+
+$(document).on('click','#configBtn',function(){
+    $(this).parent().find('.dropdown-menu').toggleClass('show');
+});
 
 $(document).on('change','#roomQuntityNoId', function(){
     var roomNo = $('#roomQuntityNoId').val();

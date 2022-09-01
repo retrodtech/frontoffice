@@ -1,12 +1,10 @@
-
-
 <nav id="topNavBar"
     class="navbar navbar-main navbar-expand-lg position-sticky mt-4 top-1 px-0 mx-4 shadow-none border-radius-xl z-index-sticky"
     id="navbarBlur" data-scroll="true">
     <div class="container-fluid py-1 px-3">
         <div aria-label="breadcrumb" class="navFlex">
 
-            <div class="logo"><img src="<?php echo FRONT_SITE_IMG."logo/Jamindars_palace_663.png" ?>" alt=""></div>
+            <div class="logo"><img src="<?php echo FRONT_SITE_IMG." logo/Jamindars_palace_663.png" ?>" alt=""></div>
 
             <ul class="mainNav">
                 <li>
@@ -46,10 +44,8 @@
                 <li>
                     <a href="">Booking Engine</a>
                     <ul class="dropNav" style="width: 220px;">
-                        <li><a href="<?php echo FO_FRONT_SITE ?>/room-list.php">Room</a></li> 
                         <li><a href="<?php echo FO_FRONT_SITE ?>/inventory.php">Inventory</a></li>
                         <li><a href="<?php echo FO_FRONT_SITE ?>/amenities.php">Amenities</a></li>
-                        <li><a href="<?php echo FO_FRONT_SITE ?>/coupon_code.php">Coupon</a></li>
                     </ul>
                 </li>
                 <li>
@@ -77,6 +73,22 @@
                         <i class="fa fa-user me-sm-1"></i>
                         <span class="d-sm-inline d-none">Profile</span>
                     </a>
+                </li>
+                <li class="nav-item d-flex align-items-center mr-2" id="configBtn" data-bs-toggle="tooltip" data-bs-placement="left"
+                    title="Configuration" style="position:relative">
+                    <a href="javascript:void(0)" class="nav-link text-body font-weight-bold px-0">
+                        <i class="fas fa-users-cog"></i>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton" data-bs-popper="static" style="margin:0 !important">
+                        
+                        <li class="mb-2"><a href="<?php echo FO_FRONT_SITE ?>/room-list.php">Room Add</a></li>
+                        <li class="mb-2"><a href="<?php echo FO_FRONT_SITE ?>/room-list.php">Room List</a></li>
+                        <li class="mb-2"><a href="<?php echo FO_FRONT_SITE ?>/room-number .php">Room Number</a></li>
+                        <li class="mb-2"><a href="<?php echo FO_FRONT_SITE ?>/coupon_code.php">Coupon</a></li>
+
+                    </ul>
+
                 </li>
                 <!-- <li class="nav-item d-xl-none ps-3 d-flex align-items-center toggleNav">
                     <a href="javascript:;.html" class="nav-link text-body p-0" id="iconNavbarSidenav">

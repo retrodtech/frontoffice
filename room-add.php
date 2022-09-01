@@ -6,6 +6,8 @@ include (SERVER_INCLUDE_PATH.'function.php');
 
 checkLoginAuth();
 
+checkPageBySupperAdmin('bookingEngine','Room Add', 'Room Add');
+
 
 $header = '';
 $bedtype = '';
@@ -567,6 +569,12 @@ if(isset($_GET['removeImage'])){
                     }
                 });
             }
+        });
+
+        $(document).on('change','#header',function(){
+            var hotelName= $(this).val().toLowerCase();
+            let result = hotelName.replace(" ", "-");
+            $('#slug').val(result);
         });
   </script>
 
