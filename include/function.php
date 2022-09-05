@@ -215,6 +215,31 @@ function getRoomNumber($rNo='', $status = '', $rid='', $checkIn ='', $checkOut =
     return $data;
 } 
 
+function getRoomList($status='',$rid=''){
+    global $conDB;
+    if($status != ''){
+        $sql = "select * from room where status = '1'";
+    }else{
+        $sql = "select * from room where id != ''";
+    }
+
+    if($rid != ''){
+        $sql .= " and id = '$rid'";
+    }
+    
+    
+
+    $query = mysqli_query($conDB, $sql);
+    $data = array();
+    if(mysqli_num_rows($query) > 0){
+        while($row = mysqli_fetch_assoc($query)){
+            $data[] = $row;
+        }
+    }
+
+    return $data;
+} 
+
 function getGuestIdProofData($status='',$gip=''){
     global $conDB;
     if($status != ''){

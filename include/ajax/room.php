@@ -1066,6 +1066,11 @@ if(isset($_POST['type'])){
         $_SESSION['roomTotalPrice'] = $total;
         echo $total;
     }
+
+
+    if($type == 'submitRoomNumber'){
+        
+    }
    
 }
 

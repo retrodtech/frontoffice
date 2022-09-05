@@ -82,14 +82,15 @@
 
                     <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton" data-bs-popper="static" style="margin:0 !important">
                         
-                        <li class="mb-2"><a href="<?php echo FO_FRONT_SITE ?>/room-list.php">Room Add</a></li>
+                        <li class="mb-2"><a href="<?php echo FO_FRONT_SITE ?>/room-add.php">Room Add</a></li>
                         <li class="mb-2"><a href="<?php echo FO_FRONT_SITE ?>/room-list.php">Room List</a></li>
-                        <li class="mb-2"><a href="<?php echo FO_FRONT_SITE ?>/room-number .php">Room Number</a></li>
+                        <li class="mb-2"><a href="<?php echo FO_FRONT_SITE ?>/room-number.php">Room Number</a></li>
                         <li class="mb-2"><a href="<?php echo FO_FRONT_SITE ?>/coupon_code.php">Coupon</a></li>
 
                     </ul>
 
                 </li>
+                
                 <!-- <li class="nav-item d-xl-none ps-3 d-flex align-items-center toggleNav">
                     <a href="javascript:;.html" class="nav-link text-body p-0" id="iconNavbarSidenav">
                         <div class="sidenav-toggler-inner">

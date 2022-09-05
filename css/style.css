@@ -1843,4 +1843,53 @@ table .tableLine td, table .tableLine th {
   position: relative;
   overflow: auto;
   height: 84vh;
+}
+
+#popUpBox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  z-index: 21;
+  display: none;
+}
+#popUpBox.show {
+  display: block;
+}
+#popUpBox .closeBox {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.768627451);
+}
+#popUpBox .content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  max-width: 500px;
+  height: auto;
+  background: white;
+  padding: 25px 15px;
+  border-radius: 5px;
+}
+#popUpBox .content .closeBtn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: red;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  transform: translate(50%, -50%);
+  cursor: pointer;
 }/*# sourceMappingURL=style.css.map */
