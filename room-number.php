@@ -9,37 +9,6 @@ checkLoginAuth();
 checkPageBySupperAdmin('bookingEngine','Room', 'Room');
 
 
-
-if(isset($_GET['status'])){
-    $sid = $_GET['status'];
-
-    $sql = mysqli_fetch_assoc(mysqli_query($conDB, "select * from room where id='$sid'"));
-    if($sql['status'] == 1){
-        mysqli_query($conDB, "update room set status = '0' where id='$sid'");
-        $_SESSION['SuccessMsg'] = "Successfull Status Change";
-        redirect('room-list.php');
-    }else{
-        mysqli_query($conDB, "update room set status = '1' where id='$sid'");
-        $_SESSION['SuccessMsg'] = "Successfull Status Change";
-        redirect('room-list.php');
-    }
-}
-
-if(isset($_GET['delete'])){
-    $did = $_GET['delete']; 
-    $sql = "delete from room where id='$did'";
-    if (mysqli_query($conDB, $sql)) {
-        $_SESSION['SuccessMsg'] = "Successfull Delete record";
-        redirect('room-list.php');
-    }else{
-        $_SESSION['ErrorMsg'] = "Somthing Error";
-        redirect('room-list.php');
-    }
-}
-
-
-
-
 ?>
 
 
@@ -101,69 +70,9 @@ if(isset($_GET['delete'])){
                             <!-- <a href="<?php echo FRONT_BOOKING_SITE.'/admin/manage-room.php' ?>" class="btn dark mb15">Add Room</a> -->
                                 
                                 <div class="card" style="padding: 25px 10px;">
-                                    <div class="table table-responsive">
+                                    <div class="table table-responsive" id="loadRoomNumData">
 
-                                        <table class="table align-items-center mb-0 tableLine">
-
-                                            <tr>
-                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Sl</th>
-                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Room</th>
-                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Room Number</th>
-                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
-                                            </tr>
-
-                                            <?php 
-                                                $si = 0;
-                                                $sql = mysqli_query($conDB, "select * from roomnumber where hotelId = '$hotelId'");
-                                                if(mysqli_num_rows($sql) > 0){
-                                                    while($row = mysqli_fetch_assoc($sql)){
-                                                        $si++;
-                                                        $id = $row['id'];
-                                                        $time = formatingDate($row['addOn']);
-
-                                                        if($row['status'] == 1){
-                                                            $status = "<a class='tableIcon status bg-gradient-success deactive' href='room-list.php?status=$id' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-original-title='Deactive'><i class='far fa-eye'></i></a>";
-                                                        }else{
-                                                            $status = "<a class='tableIcon status bg-gradient-warning  active' href='room-list.php?status=$id' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-original-title='Active'><i class='far fa-eye-slash'></i></a>";
-                                                        }
-
-                                                        $delete = "<a class='tableIcon delete bg-gradient-danger' href='room-list.php?delete=$id' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-original-title='Delete'><i class='far fa-trash-alt'></i></a>";
-                                                        $update = "<a class='tableIcon update bg-gradient-info' href='room-add.php?update=$id' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-original-title='Edit'><i class='far fa-edit'></i></a>";
-                                                        
-                                                        echo "
-                                                        
-                                                            <tr>
-
-                                                                <td class='center mb-0 bold'>{$si}</td>
-                                                                <td class='center mb-0 bold'>{$row['roomNo']}</td>
-                                                                <td class='text-sm text-secondary mb-0'>{$row['roomId']}</td>
-                                                                <td>
-                                                                    <div class='tableCenter'>
-                                                                        <span class='tableHide'><i class='fas fa-ellipsis-h'></i></span>
-                                                                        <span class='tableHoverShow'>
-                                                                            $status
-                                                                            $update
-                                                                            $delete
-                                                                        </span>
-                                                                    </div>
-                                                                    
-                                                                </td>
-                                                            </tr>
-                                                        
-                                                        ";
-                                                    }
-                                                }else{
-                                                    echo "
-                                                        
-                                                            <tr>
-                                                                <td calspan='7'>No Data</td>
-                                                            </tr>
-                                                        
-                                                        ";
-                                                }
-                                            
-                                            ?>
-                                        </table>
+                                        
 
                                     </div>
                                 </div>
@@ -188,27 +97,7 @@ if(isset($_GET['delete'])){
             <div class="contentArea">
                 <form action="" method="post" id="addRoomNumberForm">
 
-                    <div class="form-group">
-                        <label for="">Room Number</label>
-                        <input type="number" class="form-control" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="">Room Name</label>
-                        <select class="form-control" name="" id="">
-                            <?php
-                            
-                                foreach(getRoomList('1') as $roomNameList){
-                                    $name = $roomNameList['header'];
-                                    $id = $roomNameList['id'];
-                                    echo "<option value='$id'>$name</option>";
-                                }
-                            
-                            ?>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn bg-gradient-primary">Add Room Number</button>
+                    
 
                 </form>
             </div>
@@ -224,28 +113,102 @@ if(isset($_GET['delete'])){
       $('.frontOfficeLink').addClass('active');
       $('.dashboardLink').addClass('active');   
 
-      $('#addRoomNumerBtn').on('click',function(){
-        $('#popUpBox').addClass('show');
-      });
-
-      $('#popUpBox .closeBox').on('click',function(){
-        $('#popUpBox').removeClass('show');
-      });
-
-      $(document).on('click','#popUpBox .closeBtn',function(){
-        $('#popUpBox').removeClass('show');
-      });
-
-      $(document).on('click','#popUpBox form',function(){
-        var data = $('#addRoomNumberForm').serialize();
+      function loadRoomNumber(){
         $.ajax({
-            url: 'include/ajax/resorvation.php' ,
+            url: 'include/ajax/room.php',
             type: 'post',
-            data: { type: 'generatrExcelSheet',  sheetType:idName },
+            data: {type: 'loadRoomNumber'},
             success: function (data) {
-                console.log(data);
+                $('#loadRoomNumData').html(data);
             }
         });
+      }
+    
+
+      $(document).ready(function(){
+
+        loadRoomNumber();
+
+        $('#addRoomNumerBtn').on('click',function(){
+            $('#popUpBox').addClass('show');
+
+            $.ajax({
+                url: 'include/ajax/room.php',
+                type: 'post',
+                data: {type: 'addRoomNumForm'},
+                success: function (data) {
+                    $('#addRoomNumberForm').html(data);
+                }
+            });
+
+        });
+
+        $('#popUpBox .closeBox').on('click',function(){
+            $('#popUpBox').removeClass('show');
+        });
+
+        $(document).on('submit','#addRoomNumberForm',function(e){
+            e.preventDefault();
+            var data = $('#addRoomNumberForm').serialize()+ '&type=submitRoomNumber';
+            
+            $.ajax({
+                url: 'include/ajax/room.php',
+                type: 'post',
+                data: data,
+                success: function (data) {
+                    loadRoomNumber();
+                    $('#popUpBox').removeClass('show');
+                }
+            });
+            
+        });
+
+        $(document).on('click','.status', function(){
+            var rnid = $(this).data('rnid');
+            $.ajax({
+                url: 'include/ajax/room.php',
+                type: 'post',
+                data: {type: 'statusUpdate', rnid : rnid},
+                success: function (data) {
+                    if(data == 1){
+                        loadRoomNumber();
+                    }
+                }
+            });
+        });
+
+        // $(document).on('click','.delete', function(){
+        //     var rnid = $(this).data('rnid');
+        //     $.ajax({
+        //         url: 'include/ajax/room.php',
+        //         type: 'post',
+        //         data: {type: 'deleteRoomNumber', rnid : rnid},
+        //         success: function (data) {
+        //             if(data == 1){
+        //                 loadRoomNumber();
+        //             }
+        //         }
+        //     });
+        // });
+
+        $(document).on('click','.delete', function(){
+            var rnid = $(this).data('rnid');
+            Confirm('Delete', 'Are you sure you want to Delete This Record', 'Yes', 'Cancel','rnid',rnid);
+        });
+
+        $(document).on('click', '.cancelAction', function(){
+            $.ajax({
+                url: 'include/ajax/room.php',
+                type: 'post',
+                data: {type: 'editRoomNumber', rnid : rnid},
+                success: function (data) {
+                    if(data == 1){
+                        loadRoomNumber();
+                    }
+                }
+            });
+        });
+
       });
       
   </script>

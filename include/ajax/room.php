@@ -7,7 +7,7 @@ include (SERVER_INCLUDE_PATH.'add_to_room.php');
 $obj = new add_to_room();
 $site = SERVER_INCLUDE_PATH;
 
-// pr($_POST);
+
 
 
 if(isset($_POST['type'])){
@@ -1067,10 +1067,147 @@ if(isset($_POST['type'])){
         echo $total;
     }
 
+    function roomNumberAddForm($id = ''){
+
+        $roomNameOption = '';
+        foreach(getRoomList('1') as $roomNameList){
+            $name = $roomNameList['header'];
+            $id = $roomNameList['id'];
+            $roomNameOption .= "<option value='$id'>$name</option>";
+        }
+
+        $html ='
+        
+            <div class="form-group">
+                <label for="roomNum">Room Number</label>
+                <input type="number" class="form-control" name="roomNum" id="roomNum" required>
+            </div>
+
+            <div class="form-group">
+                <label for="roomId">Room Name</label>
+                <select class="form-control" name="roomId" id="roomId">
+                    '.$roomNameOption.'
+                </select>
+            </div>
+
+            <button type="submit" class="btn bg-gradient-primary">Add Room Number</button>
+        
+        ';
+
+        return $html;
+    }
+
+    if($type== 'loadRoomNumber'){
+        $html = '<table class="table align-items-center mb-0 tableLine" ><tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Sl</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Room</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Room Number</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
+                </tr>';
+        
+                $si = 0;
+                $sql = mysqli_query($conDB, "select * from roomnumber where hotelId = '$hotelId'");
+                if(mysqli_num_rows($sql) > 0){
+                    while($row = mysqli_fetch_assoc($sql)){
+                        $si++;
+                        $id = $row['id'];
+                        $time = formatingDate($row['addOn']);
+
+                        if($row['status'] == 1){
+                            $status = "<a class='tableIcon status bg-gradient-success deactive' href='javascript:void(0)' data-rnid='$id' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-original-title='Deactive'><i class='far fa-eye'></i></a>";
+                        }else{
+                            $status = "<a class='tableIcon status bg-gradient-warning  active' href='javascript:void(0)' data-rnid='$id' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-original-title='Active'><i class='far fa-eye-slash'></i></a>";
+                        }
+
+                        $delete = "<a class='tableIcon delete bg-gradient-danger' href='javascript:void(0)' data-rnid='$id' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-original-title='Delete'><i class='far fa-trash-alt'></i></a>";
+                        $update = "<a class='tableIcon update bg-gradient-info' href='javascript:void(0)' data-rnid='$id' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-original-title='Edit'><i class='far fa-edit'></i></a>";
+                        
+                        $html .= "<tr>
+
+                                    <td class='center mb-0 bold'>{$si}</td>
+                                    <td class='center mb-0 bold'>{$row['roomNo']}</td>
+                                    <td class='text-sm text-secondary mb-0'>{$row['roomId']}</td>
+                                    <td>
+                                        <div class='tableCenter'>
+                                            <span class='tableHide'><i class='fas fa-ellipsis-h'></i></span>
+                                            <span class='tableHoverShow'>
+                                                $status
+                                                $update
+                                                $delete
+                                            </span>
+                                        </div>
+                                        
+                                    </td>
+                                </tr>";
+                    }
+                }else{
+                    $html .= "
+                        
+                    <tr>
+                        <td calspan='7'>No Data</td>
+                    </tr>
+                
+                ";
+                }
+
+                $html .= "</table>";
+
+                echo $html;
+    }
 
     if($type == 'submitRoomNumber'){
-        
+        $roomNum = $_POST['roomNum'];
+        $roomId = $_POST['roomId'];
+        $hId = $_SESSION['ADMIN_ID'];
+
+        $sql = "insert into roomnumber(hotelId,roomNo,roomId) values('$hId','$roomNum','$roomId')";
+
+        if(mysqli_query($conDB, $sql)){
+            echo 1;
+        }else{
+            echo 0;
+        }
     }
+
+    if($type == 'addRoomNumForm'){
+        echo roomNumberAddForm();
+    }
+
+    if($type == 'statusUpdate'){
+        $sid = $_POST['rnid'];
+
+        $sql = mysqli_fetch_assoc(mysqli_query($conDB, "select * from roomnumber where id='$sid'"));
+        if($sql['status'] == 1){
+            $query = "update roomnumber set status = '0' where id='$sid'";
+        }else{
+            $query = "update roomnumber set status = '1' where id='$sid'";          
+        }
+
+        if(mysqli_query($conDB, $query)){
+            echo 1;
+        }else{
+            echo 0;
+        }
+
+    }
+
+    if($type == 'deleteRoomNumber'){
+        $did = $_POST['rnid']; 
+        $sql = "delete from roomnumber where id='$did'";
+        if (mysqli_query($conDB, $sql)) {
+            // $_SESSION['SuccessMsg'] = "Successfull Delete record";
+            echo 1;
+        }else{
+            // $_SESSION['ErrorMsg'] = "Somthing Error";
+            echo 0;
+        }
+    }
+
+    if($type == 'editRoomNumber'){
+        $hid = $_POST['rnid'];
+        echo roomNumberAddForm();
+    }
+
    
 }
 
