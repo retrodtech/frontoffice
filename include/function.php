@@ -1,7 +1,7 @@
 <?php
 
-if(isset($_SESSION['ADMIN_ID'])){
-    $hotelId = $_SESSION['ADMIN_ID'];
+if(isset($_SESSION['HOTEL_ID'])){
+    $hotelId = $_SESSION['HOTEL_ID'];
 }else{
     $hotelId = '';
 }
@@ -60,7 +60,7 @@ function SuccessMsg(){
 }
 
 function checkLoginAuth(){
-    if(!isset($_SESSION['ADMIN_ID']) && !isset($_SESSION['SUPER_ADMIN_ID'])){
+    if(!isset($_SESSION['HOTEL_ID']) && !isset($_SESSION['SUPER_ADMIN_ID'])){
         $_SESSION['ErrorMsg'] = "Please login";
         redirect('login.php');
       }
@@ -72,8 +72,8 @@ function convertArryToJSON($arry){
 
 function checkPageBySupperAdmin($pg='',$title='',$ttext=''){
     global $conDB;
-    $hotelId = $_SESSION['ADMIN_ID'];
-    $sql = "select * from hotel where status = '1' and id = '$hotelId'";
+    $hotelId = $_SESSION['HOTEL_ID'];
+    $sql = "select * from hotel where status = '1' and hCode = '$hotelId'";
 
     if($pg == 'pms'){
         $sql .= " and pms = '1'";
@@ -153,7 +153,7 @@ function imgUploadWithData($img,$path,$oldImg=''){
 
 function generateRecipt(){
     global $conDB;
-    $hotelId = $_SESSION['ADMIN_ID'];
+    $hotelId = $_SESSION['HOTEL_ID'];
     $sql = "select MAX(reciptNo) as recipt from booking where hotelId = '$hotelId'";
     $query = mysqli_query($conDB, $sql);
 
@@ -178,16 +178,20 @@ function generateNumberById($oid){
     return $oid;
 }
 
-function getRoomNumber($rNo='', $status = '', $rid='', $checkIn ='', $checkOut = '',$ridRes = ''){
+function getRoomNumber($rNo='', $status = '', $rid='', $checkIn ='', $checkOut = '',$ridRes = '', $rnid = ''){
     global $conDB;
     if($status != ''){
-        $sql = "select * from roomnumber where status = '1'";
+        $sql = "select * from roomnumber where status = '1' and deleteRec= '1'";
     }else{
-        $sql = "select * from roomnumber where id != ''";
+        $sql = "select * from roomnumber where deleteRec= '1'";
     }
 
     if($rNo != ''){
         $sql .= " and roomNo = '$rNo'";
+    }
+
+    if($rnid != ''){
+        $sql .= " and id = '$rnid'";
     }
 
     if($rid != ''){
@@ -273,7 +277,7 @@ function getBookingIdByBVID($bvid){
 
 function getBookingData($bid = '', $rNum = '', $checkIn='',$id='',$onlyCheckIn=''){
     global $conDB;
-    $hotelId = $_SESSION['ADMIN_ID'];
+    $hotelId = $_SESSION['HOTEL_ID'];
     $query = "select booking.*,bookingdetail.*, bookingdetail.id as bookingdetailId from booking,bookingdetail where booking.id=bookingdetail.bid and booking.hotelId='$hotelId'";
     if($bid != ''){
         $query .= " and bookingdetail.bid = '$bid'";
@@ -339,6 +343,9 @@ function getGuestDetail($bId='',$group='',$gid=''){
 
 function getBookingDetailById($bid,$roomNo=''){
     global $conDB;
+
+    // $checkIn = getBookingData($bid)[0]['checkIn'];
+    // $checkOut = getBookingData($bid)[0]['checkOut'];
 
     $checkIn = getBookingData($bid)[0]['checkIn'];
     $checkOut = getBookingData($bid)[0]['checkOut'];
@@ -967,26 +974,28 @@ function checkRoomNumberExiist($rId, $checkIn='',$checkOut='',$rnum = ''){
     return $data;
 }
 
-function countBookingRow($reservation='',$arrive='',$failed='',$inHouse=''){
+function countBookingRow($rTab=''){
+
     global $conDB;
     $currentDate = date('y-m-d'); 
-    $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.id != ''";
+    $hotelId = $_SESSION['HOTEL_ID'];
+    $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.hotelId = '$hotelId'";
     
 
-    if($reservation != ''){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where bookingdetail.checkinstatus = '1' and booking.payment_status = '1'";
+    if($rTab == 'reservation'){        
+        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.hotelId = '$hotelId' and bookingdetail.checkinstatus = '1' and booking.payment_status = '1'";
     }
 
-    if($arrive != ''){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.checkIn = '$currentDate' and booking.payment_status = '1'";
+    if($rTab == 'arrives'){        
+        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.hotelId = '$hotelId' and booking.checkIn = '$currentDate' and booking.payment_status = '1'";
     }
 
-    if($failed != ''){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.payment_status = 'pending'";
+    if($rTab == 'failed'){        
+        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.hotelId = '$hotelId' and booking.payment_status = '2'";
     }
 
-    if($inHouse != ''){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where bookingdetail.checkinstatus = '2' and booking.payment_status = '1'";
+    if($rTab == 'inHouse'){        
+        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.hotelId = '$hotelId' and bookingdetail.checkinstatus = '2' and booking.payment_status = '1'";
     }
     
     $sql .= " and booking.id=bookingdetail.bid ";
@@ -1008,7 +1017,7 @@ function getPageName($page){
 
 // Reservation
 
-function reservationContent($bid,$reciptNo,$gname,$checkIn,$checkOut,$bDate,$nAdult,$nChild,$total,$paid,$preview=''){
+function reservationContent($bid,$reciptNo,$gname,$checkIn,$checkOut,$bDate,$nAdult,$nChild,$total,$paid,$preview='',$rTab = ''){
     if($checkIn == ''){
         $checkIn = date('Y-m-d');
     }
@@ -1064,7 +1073,7 @@ function reservationContent($bid,$reciptNo,$gname,$checkIn,$checkOut,$bDate,$nAd
 
 
     $html = "
-            <div class='reservationContent' data-bookingId='$bid'>
+            <div class='reservationContent' data-bookingId='$bid' data-reservationTab='$rTab'>
                             
                 <div class='head'>
                     <div class='leftSide'>

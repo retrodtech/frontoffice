@@ -24,10 +24,10 @@
                 <li>
                     <a href="">Cashiering</a>
                     <ul class="dropNav" style="max-width:426px">
-                        <li><a href="">Cashiering Center</a></li>
-                        <li><a href="">Travel Agent Database</a></li>
-                        <li><a href="">Sales Person Database</a></li>
-                        <li><a href="">Company Database</a></li>
+                        <li><a href="<?= FO_FRONT_SITE ?>/cashing/cashiering.php">Cashiering Center</a></li>
+                        <li><a href="<?= FO_FRONT_SITE ?>/cashing/travel-agent.php">Travel Agent Database</a></li>
+                        <li><a href="<?= FO_FRONT_SITE ?>/cashing/sale-person.php">Sales Person Database</a></li>
+                        <li><a href="<?= FO_FRONT_SITE ?>/cashing/company.php">Company Database</a></li>
                         <li><a href="">Expense Voucher</a></li>
                         <li><a href="">POS</a></li>
                         <li><a href="">Exchange Rate</a></li>
@@ -72,6 +72,19 @@
                     <a href="profile.php" class="nav-link text-body font-weight-bold px-0">
                         <i class="fa fa-user me-sm-1"></i>
                         <span class="d-sm-inline d-none">Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?= FO_FRONT_SITE ?>/night-audit.php">
+                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                            viewBox="0 0 80 80" style="fill: #67748e;width: 15px;" xml:space="preserve">
+                        <path id="XMLID_14_" d="M63.6,3.2c-2.6,2.8-4,6.6-3.6,10.7c0.7,7.5,7.4,13.1,14.9,12.3C76,26,77,25.8,78,25.5
+                            c-2.2,2.4-5.2,4-8.7,4.3c-7.5,0.7-14.2-4.8-14.9-12.3C53.7,11,57.7,5.2,63.6,3.2z"/>
+                        <path id="XMLID_5_" d="M58.4,57.3h-5.5L43.4,37c2.6-2.5,4.2-6,4.2-9.9c0-7.6-6.1-13.7-13.7-13.7c-7.6,0-13.7,6.1-13.7,13.7
+                            c0,4.1,1.8,7.7,4.6,10.2l-9.3,20H9.5c-3.3,0-6,2.7-6,6v5.2h60.9v-5.2C64.4,60,61.7,57.3,58.4,57.3z"/>
+                        <path id="XMLID_7_" d="M3.5,72.3h60.9v1.3c0,2-1.6,3.6-3.6,3.6H7c-2,0-3.6-1.6-3.6-3.6V72.3z"/>
+                    </svg>
+
                     </a>
                 </li>
                 <li class="nav-item d-flex align-items-center mr-2" id="configBtn" data-bs-toggle="tooltip" data-bs-placement="left"

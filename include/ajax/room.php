@@ -7,8 +7,7 @@ include (SERVER_INCLUDE_PATH.'add_to_room.php');
 $obj = new add_to_room();
 $site = SERVER_INCLUDE_PATH;
 
-
-
+// pr($_POST);
 
 if(isset($_POST['type'])){
     $type = $_POST['type'];
@@ -1067,7 +1066,7 @@ if(isset($_POST['type'])){
         echo $total;
     }
 
-    function roomNumberAddForm($id = ''){
+    function roomNumberAddForm($rnid = ''){
 
         $roomNameOption = '';
         foreach(getRoomList('1') as $roomNameList){
@@ -1075,23 +1074,35 @@ if(isset($_POST['type'])){
             $id = $roomNameList['id'];
             $roomNameOption .= "<option value='$id'>$name</option>";
         }
+        $formId = 'addRoomNumberForm';
+        $roomNumerValue =  '';
+        $roomNumBtn = 'Add Room Number';
+        $updateRoomNumIdHtml = '';
+        if($rnid != ''){
+            $formId = 'updateRoomNumberForm';
+            $roomNumArry = getRoomNumber('','','','','','',$rnid)[0];
+           
+            $roomNumerValue = $roomNumArry['roomNo'];
+            $roomNumBtn = 'Update Room Number';
+            $updateRoomNumIdHtml = '<input type="hidden" name="roomNumId" value="'.$rnid.'" required>';
+        }
 
         $html ='
-        
-            <div class="form-group">
-                <label for="roomNum">Room Number</label>
-                <input type="number" class="form-control" name="roomNum" id="roomNum" required>
-            </div>
+            <form action="" method="post" id="'.$formId.'">
+                <div class="form-group">
+                    <label for="roomNum">Room Number</label>
+                    <input type="number" class="form-control" name="roomNum" id="roomNum" value="'.$roomNumerValue.'" required>
+                </div>
+                '.$updateRoomNumIdHtml.'
+                <div class="form-group">
+                    <label for="roomId">Room Name</label>
+                    <select class="form-control" name="roomId" id="roomId">
+                        '.$roomNameOption.'
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="roomId">Room Name</label>
-                <select class="form-control" name="roomId" id="roomId">
-                    '.$roomNameOption.'
-                </select>
-            </div>
-
-            <button type="submit" class="btn bg-gradient-primary">Add Room Number</button>
-        
+                <button type="submit" class="btn bg-gradient-primary">'.$roomNumBtn.'</button>
+            </form>
         ';
 
         return $html;
@@ -1106,7 +1117,7 @@ if(isset($_POST['type'])){
                 </tr>';
         
                 $si = 0;
-                $sql = mysqli_query($conDB, "select * from roomnumber where hotelId = '$hotelId'");
+                $sql = mysqli_query($conDB, "select * from roomnumber where hotelId = '$hotelId' and deleteRec = '1'");
                 if(mysqli_num_rows($sql) > 0){
                     while($row = mysqli_fetch_assoc($sql)){
                         $si++;
@@ -1159,18 +1170,50 @@ if(isset($_POST['type'])){
         $roomNum = $_POST['roomNum'];
         $roomId = $_POST['roomId'];
         $hId = $_SESSION['ADMIN_ID'];
-
-        $sql = "insert into roomnumber(hotelId,roomNo,roomId) values('$hId','$roomNum','$roomId')";
-
-        if(mysqli_query($conDB, $sql)){
-            echo 1;
-        }else{
+        
+        $roomNumberArry = getRoomNumber($roomNum);
+        if(count($roomNumberArry) > 0){
             echo 0;
+        }else{
+            $sql = "insert into roomnumber(hotelId,roomNo,roomId) values('$hId','$roomNum','$roomId')";
+            if(mysqli_query($conDB, $sql)){
+                echo 1;
+            }else{
+                echo 0;
+            }
         }
-    }
+
+        
+    } 
+
+    if($type == 'updateSubmitRoomNumber'){
+        $roomNumId = $_POST['roomNumId'];
+        $roomNum = $_POST['roomNum'];
+        $roomId = $_POST['roomId'];
+        $hId = $_SESSION['ADMIN_ID'];
+
+        $roomNumberArry = getRoomNumber($roomNum);
+        if(count($roomNumberArry) > 0){
+            echo 0;
+        }else{
+            $sql = "update roomnumber set roomNo = '$roomNum', roomId='$roomId' where id = '$roomNumId'";
+            if(mysqli_query($conDB, $sql)){
+                echo 1;
+            }else{
+                echo 0;
+            }
+        }
+        
+
+    } 
 
     if($type == 'addRoomNumForm'){
         echo roomNumberAddForm();
+    }
+
+    if($type == 'editRoomNumberForm'){
+        $id = $_POST['rnid'];
+        echo roomNumberAddForm($id);
     }
 
     if($type == 'statusUpdate'){
@@ -1193,12 +1236,10 @@ if(isset($_POST['type'])){
 
     if($type == 'deleteRoomNumber'){
         $did = $_POST['rnid']; 
-        $sql = "delete from roomnumber where id='$did'";
+        $sql = "update roomnumber set deleteRec = '0' where id='$did'";
         if (mysqli_query($conDB, $sql)) {
-            // $_SESSION['SuccessMsg'] = "Successfull Delete record";
             echo 1;
         }else{
-            // $_SESSION['ErrorMsg'] = "Somthing Error";
             echo 0;
         }
     }
@@ -1207,6 +1248,542 @@ if(isset($_POST['type'])){
         $hid = $_POST['rnid'];
         echo roomNumberAddForm();
     }
+    
+    function addRoomForm($rid = ''){
+        
+        global $conDB;
+        $header = '';
+        $bedtype = '';
+        $totalroom = '';
+        $roomcapacity = '';
+        $uid = '';
+        $noAdult = '';
+        $extraAdult = '';
+        $extraChild = '';
+        $noChild = '';
+        $mrp='';
+        $btn = 'Add Room';
+        $header_text = 'Add Room';
+
+        $imgSize = '(900 x 1060)';
+        $formBtn ='manageForm';
+        if($rid != ''){
+            $id = $rid;
+            $formBtn ='updateManageForm';
+            $header_text = 'Update Room';
+            $sql = mysqli_query($conDB, "select * from room where id = '$id'");
+
+            if(mysqli_num_rows($sql) > 0){
+                $update_row = mysqli_fetch_assoc($sql);
+                $uid = $update_row['id'];
+                $header = $update_row['header'];
+                $bedtype = $update_row['bedtype'];
+                $totalroom = $update_row['totalroom'];
+                $roomcapacity = $update_row['roomcapacity'];
+        
+                $noAdult = $update_row['noAdult'];
+                $noChild = $update_row['noChild'];
+                $mrp = $update_row['mrp'];
+                $btn = 'Update Room';
+            }else{
+                
+                $_SESSION['ErrorMsg'] = "Room Id not exist";
+                redirect('list-room.php');
+            }
+
+        }
+
+        $inventoryHtml = '';
+        $roomCapacity = '';
+        $roomRateField = '';
+        $imgBoxContent = '';
+        for($i=0; $i<=5; $i++){
+            if($i == $totalroom){
+                $inventoryHtml .=  "<option selected value='$i'>$i</option>";
+            }else{
+                $inventoryHtml .= "<option value='$i'>$i</option>";
+            }
+        }
+
+        for($i=1; $i<=settingValue()['maxRoomCapacity']; $i++){
+            if($i == $roomcapacity){
+                $roomCapacity .= "<option selected value='$i'>$i</option>";
+            }else{
+                $roomCapacity .= "<option value='$i'>$i</option>";
+            }
+        }
+
+        if($rid != ''){
+            $imgBoxContent =  "<div class='row p0'>";
+            $imageSql = mysqli_query($conDB, "select * from room_img where room_id= {$rid}");
+
+            while($image_row = mysqli_fetch_assoc($imageSql)){
+
+                $img_path = FRONT_SITE_ROOM_IMG.$image_row['image'];
+                $img_remove_path = FRONT_BOOKING_SITE.'/admin/manage-room.php?removeImage='.$image_row['id'];
+
+                $imgBoxContent .=  "
+                    
+                    <div class='img_old'>
+                        <a href='$img_remove_path'>X</a>
+                        <img style='width:80px' src='$img_path' >
+                    </div>
+                    
+                ";
+            }
+            $imgBoxContent .=  "</div> <br/>";
+            
+            $imgBoxContent .=  '
+                <div class="row p0" id="roomImgContent">
+                    <div class="form_group col-md-6 col-sm-12 mb-3">
+                        <label for="roomImage1">Room Image '.$imgSize.'</label>
+                        <input class="form-control checkRoomImg" type="file" id="roomImage1" accept="image/png, image/jpeg" name="roomImage[]">
+                        <span id="errorImage1"></span>
+                    </div>
+                    <div class="form_group col-md-6 col-sm-12 mb-3">
+                        <label for="roomImage2">Room Image '.$imgSize.'</label>
+                        <input class="form-control checkRoomImg" type="file" id="roomImage2" accept="image/png, image/jpeg" name="roomImage[]">
+                        <span id="errorImage2"></span>
+                    </div>
+                </div>
+            
+            ';
+        }else{
+            $imgBoxContent .=  '
+            
+            <div class="row p0" id="roomImgContent">
+                <div class="form_group col-md-6 col-sm-12 mb-3">
+                    <label for="roomImage1">Room Image '.$imgSize.'</label>
+                    <input class="form-control checkRoomImg" type="file" id="roomImage1" accept="image/png, image/jpeg" name="roomImage[]">
+                    <span id="errorImage1"></span>
+                </div>
+                <div class="form_group col-md-6 col-sm-12 mb-3">
+                    <label for="roomImage2">Room Image '.$imgSize.'</label>
+                    <input class="form-control checkRoomImg" type="file" id="roomImage2" accept="image/png, image/jpeg" name="roomImage[]">
+                    <span id="errorImage2"></span>
+                </div>
+            </div>
+            
+            ';
+        }
+
+        $exInputField = '';
+
+        if($rid != ''){
+            $exInputField .=  '<input type="hidden" value="update_room" name="type">';
+            $exInputField .= "<input type='hidden' value='$uid' name='update_id'>";
+        }else{
+            $exInputField .= '<input type="hidden" value="add_room" name="type">';
+        }
+        $amenitiesField = '';
+        $hotelId = $_SESSION['ADMIN_ID'];
+        $query = "select * from amenities where hotelId = '$hotelId'";
+        $sql = mysqli_query($conDB, $query);
+
+        if(mysqli_num_rows($sql) > 0){
+            if($rid != ''){
+                $rid = $rid;
+                $amenitiesField .= "<input type='hidden' name='amenitieRoomId' value='$rid'>";
+            }else{
+                $rid = '';
+            }
+            
+            while($row = mysqli_fetch_assoc($sql)){
+                $title = ucfirst($row['title']);
+                $id = $row['id'];
+                
+                
+                if(checkAmenitiesById($rid, $row['id']) == 1){
+                    $amenitiesField .= "
+                
+                    <span style='display: inline-block;margin-right: 10px;'>
+                        <input checked type='checkbox' id='amenitie{$row['id']}' name='amenities[]' value='{$row['id']}'>
+                        <label for='amenitie{$row['id']}'> $title</label>
+                    </span>
+                
+                    ";
+                }else{
+                    $amenitiesField .= "
+                
+                    <span style='display: inline-block;margin-right: 10px;'>
+                        <input type='checkbox' id='amenitie{$row['id']}' name='amenities[]' value='{$row['id']}'>
+                        <label for='amenitie{$row['id']}'> $title</label>
+                    </span>
+                
+                ";
+                }
+                
+                
+            }
+        }
+        $roomRateField = '';
+        if($rid != ''){
+
+            $detail_sql = mysqli_query($conDB, "select * from roomratetype where room_id = '$rid'");
+            $count = 0;
+            if(mysqli_num_rows($sql)>0){
+
+                while($detail_row = mysqli_fetch_assoc($detail_sql)){ $count++;
+
+                    $roomRateField = '
+                        <input type="hidden" name="room_detail_id[]"
+                            value="'.$detail_row['id'].'">
+                        <div class="row p0" style="align-items: flex-end;">
+                            <div class="form_group col-md-4 mb-3">
+                                <label for="">Rate Plane</label>
+                                <input class="form-control" type="text" id="" name="titleUpload[]"
+                                    placeholder="Enter Title."
+                                    value="'.$detail_row['title'].'">
+                            </div>
+                            <div class="form_group col-md-3 col-sm-6 col-xs-12 mb-3">
+                                <label for="">Room Price</label>
+                                <input class="form-control mb-3" type="number" id=""
+                                    name="singleRoomPriceUpload[]" placeholder="Enter Room Price."
+                                    value="'.$detail_row['singlePrice'].'">
+                            </div>
+                            <div class="form_group col-md-3 col-sm-6 col-xs-12 mb-3">
+                                <label for="">Room Price</label>
+                                <input class="form-control" type="number" id=""
+                                    name="doubleRoomPriceUpload[]" placeholder="Enter Room Price."
+                                    value="'.$detail_row['doublePrice'].'">
+                            </div>
+                    ';
+                            if($count == 1){
+                                $roomRateField .= '<div class="add_sub col-md-2 "  data-id="1"><div class="btn update">Add</div></div>';
+                            }else{
+                                $roomRateField .= "<div class='col-md-2'><a href='manage-room.php?remove={$detail_row['id']}'><div class='btn delete'>Remove</div></a></div>";
+                            }
+                        
+                        
+                $roomRateField .= '
+                        <div class="col-md-4 col-sm-6 col-xs-12 mb-3">
+                            <div class="form_group">
+                                <label for="">Extra charge of Adult</label>
+                                <input class="form-control" type="number" id=""
+                                    name="extraAdultUpload[]"
+                                    placeholder="Enter Extra charge of Adult"
+                                    value="'.$detail_row['extra_adult'].'">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 col-sm-6 col-xs-12 mb-3">
+                            <div class="form_group">
+                                <label for="">Extra charge of Child</label>
+                                <input class="form-control" type="number" id=""
+                                    name="extraChildUpload[]"
+                                    placeholder="Enter Extra charge of Child"
+                                    value="'.$detail_row['extra_child'].'">
+                            </div>
+                        </div>
+
+                    </div>
+                ';
+                }
+            }
+        }else{ 
+
+            $roomRateField .= '
+            
+                <div class="row p0" style="align-items: flex-end;" id="add_content_id1">
+
+                    <div class="form_group col-md-4 mb-3">
+                        <label for="title">Rate Plan</label>
+                        <input class="form-control" type="text" id="title" name="title[]"
+                            placeholder="Enter Title.">
+                    </div>
+                    <div class="form_group col-md-3 col-sm-6 col-xs-12 mb-3">
+                        <label for="singleRoomPrice">Single occupancy</label>
+                        <input class="form-control" type="number" id="singleRoomPrice"
+                            name="singleRoomPrice[]" placeholder="Enter Single Price.">
+                    </div>
+                    <div class="form_group col-md-3 col-sm-6 col-xs-12 mb-3">
+                        <label for="doubleRoomPrice">Double occupancy</label>
+                        <input class="form-control" type="number" id="doubleRoomPrice"
+                            name="doubleRoomPrice[]" placeholder="Enter Double Price.">
+                    </div>
+                    <div class="add_sub col-md-2 mb-3 " data-id="1">
+                        <div class="btn update">Add</div>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6 col-xs-12 mb-3">
+                        <div class="form_group">
+                            <label for="extraAdult">Extra charge of Adult</label>
+                            <input class="form-control" type="number" id="extraAdult"
+                                name="extraAdult[]" placeholder="Enter Extra charge of Adult"
+                                value="<?php echo $extraAdult ?>">
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6 col-xs-12 mb-3">
+                        <div class="form_group">
+                            <label for="extraChild">Extra charge of Child</label>
+                            <input class="form-control" type="number" id="extraChild"
+                                name="extraChild[]" placeholder="Enter Extra charge of Child"
+                                value="<?php echo $extraChild ?>">
+                        </div>
+                    </div>
+
+                </div>
+            
+            ';
+
+                }
+
+        
+        
+            $html = '
+            
+                <form action="" id="'.$formBtn.'" method="post" enctype="multipart/form-data">
+
+
+
+                    <div class="row p0">
+                        <div class="form_group col-12 col-sm-6 mb-3">
+                            <label for="header">Room</label>
+                            <input class="form-control" type="text" id="header" name="header"
+                                placeholder="Enter Room Name." value="'.$header.'">
+                        </div>
+                        <div class="form_group col-12 col-sm-6 mb-3">
+                            <label for="bedType">Bed Type</label>
+                            <input class="form-control" type="text" id="bedType" name="bedType"
+                                placeholder="Enter Bed Type" value="'.$bedtype.'">
+                        </div>
+                    </div>
+
+                    <div class="row p0">
+                        <div class="form_group col_12 mb-3">
+                            <label for="slug">Slug</label>
+                            <input class="form-control" type="text" id="slug" name="slug"
+                                placeholder="Enter Slug." value="'.$header.'">
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="type" value="add_room">
+
+                    <div class="row p0">
+                        <div class="form_group col-12 col-sm-6 mb-3">
+                            <label for="totalRoom">Total Inventory</label>
+                            <select class="form-control" name="totalRoom" id="totalRoom">
+                                <option value="">Total no. of Inventory</option>
+                                '.$inventoryHtml.'
+                            </select>
+                        </div>
+                        <div class="form_group col-12 col-sm-6 mb-3">
+                            <label for="roomCapacity">Room Capacity</label>
+                            <select class="form-control" name="roomCapacity" id="roomCapacity">
+                                <option value="">Select Room Capacity</option>
+                                '.$roomCapacity.'
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row p0">
+
+                        <div class="col-md-4 mb-3">
+                            <div class="form_group">
+                                <label for="noAdult">No of Adult</label>
+                                <input class="form-control" type="text" id="noAdult" name="noAdult"
+                                    placeholder="Enter No of Adult" value="'.$noAdult.'">
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form_group">
+                                <label for="noChild">No of Child ( Above 5 Years )</label>
+                                <input class="form-control" type="text" id="noChild" name="noChild"
+                                    placeholder="Enter No of Child" value="'.$noChild.'">
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form_group">
+                                <label for="mrp">Rack Rate</label>
+                                <input class="form-control" type="number" id="mrp" name="mrp"
+                                    placeholder="Enter Room MRP" value="'.$mrp.'">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    '.$imgBoxContent.$exInputField.'
+
+                    <div class="s25"></div>
+
+
+
+                    <div class="form_group amenities mb-3" id="amenitiesContent">
+                        <label for="amenities">Amenities</label> <br /><br /> '.$amenitiesField.'
+                    </div>
+
+                    '.$roomRateField.'
+
+                    <div id="add_content"></div>
+                    <div class="s25"></div>
+                    <button class="btn bg-gradient-primary mb-0 mt-lg-auto deactive" type="submit"
+                        name="addRoom">
+                        '. $btn.'
+                    </button>
+                </form>
+            
+            ';
+
+        return $html;
+    }
+
+    if($type == 'loadRoomList'){
+
+        $si = 0;
+        $sql = mysqli_query($conDB, "select * from room where hotelId = '$hotelId' and deleteRec = '1'");
+        $roomRowData = '';
+        if(mysqli_num_rows($sql) > 0){
+            while($row = mysqli_fetch_assoc($sql)){
+                $si++;
+                $id = $row['id'];
+                $time = formatingDate($row['add_on']);
+                if($row['status'] == 1){
+                    $status = "<a class='tableIcon status bg-gradient-success deactive' href='javascript:void(0)' data-rid='$id' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-original-title='Deactive'><i class='far fa-eye'></i></a>";
+                }else{
+                    $status = "<a class='tableIcon status bg-gradient-warning  active' href='javascript:void(0)' data-rid='$id' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-original-title='Active'><i class='far fa-eye-slash'></i></a>";
+                }
+                $delete = "<a class='tableIcon delete bg-gradient-danger' href='javascript:void(0)' data-rid='$id' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-original-title='Delete'><i class='far fa-trash-alt'></i></a>";
+                $update = "<a class='tableIcon update bg-gradient-info' href='javascript:void(0)' data-rid='$id' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-original-title='Edit'><i class='far fa-edit'></i></a>";
+                $imgCon = '<div class="imgGrid">';
+                foreach(getImageById($id) as $key=>$imgList){
+                    if($key<3){
+                        $img = FRONT_SITE_ROOM_IMG.$imgList;
+                        $imgCon .= "<span><img style='width:50px' src='$img'></span>";
+                    }
+                }
+                $imgCon .= '</div>';
+                $roomRowData .= "
+                
+                    <tr>
+                        <td class='center'>$imgCon</td>
+                        <td class='center mb-0 bold'>{$row['header']}</td>
+                        <td class='text-sm text-secondary mb-0'>{$row['bedtype']}</td>
+                        <td class='text-sm text-secondary mb-0'>{$row['totalroom']}</td>
+                        <td class='text-sm text-secondary mb-0'>{$row['roomcapacity']}</td>
+                        <td>
+                            <div class='tableCenter'>
+                                <span class='tableHide'><i class='fas fa-ellipsis-h'></i></span>
+                                <span class='tableHoverShow'>
+                                    $status
+                                    $update
+                                    $delete
+                                </span>
+                            </div>
+                            
+                        </td>
+                    </tr>
+                
+                ";
+            }
+        }else{
+            echo "
+                
+                    <tr>
+                        <td calspan='7'>No Data</td>
+                    </tr>
+                
+                ";
+        }
+        
+        $html = '
+        
+                <table class="table align-items-center mb-0 tableLine">
+                    <tr>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Header</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Bedtype</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Total Room</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Room capacity</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
+                    </tr>
+                    '.$roomRowData.'
+                </table>
+        
+        ';
+
+        echo $html;
+    }
+
+    if($type == 'showAddRoomForm'){
+        echo addRoomForm();
+    }
+
+    if($type == 'showUpdateRoomFrom'){
+        $rid = $_POST['rid'];
+        echo addRoomForm($rid);
+    }
+
+    if($type == 'deleteRoom'){
+        $removeId =  $_POST['rid'];
+        $sql = mysqli_query($conDB, "select * from room where id = '$removeId' ");
+        if(mysqli_num_rows($sql)>0){
+            $sql = "update room set deleteRec = '0' where id='$removeId'";
+            
+            if(mysqli_query($conDB, $sql)){
+                echo 1;
+            }
+        }
+    }
+
+    if($type == 'deleteRoomRecord'){
+        $removeRNo =  $_POST['roomNumber'];
+        // $sql = mysqli_query($conDB, "select * from bookingdetail where room_number = '$removeRNo' ");
+        $sql = "update bookingdetail set deleteRec = '0' where room_number='$removeRNo'";
+        if(mysqli_query($conDB, $sql)){
+            echo 1;
+        }
+    }
+
+
+    if($type == 'statusUpdateForRoom'){
+        $sid = $_POST['rid'];
+
+        $sql = mysqli_fetch_assoc(mysqli_query($conDB, "select * from room where id='$sid'"));
+        if($sql['status'] == 1){
+            $query = "update room set status = '0' where id='$sid'";
+        }else{
+            $query = "update room set status = '1' where id='$sid'";          
+        }
+
+        if(mysqli_query($conDB, $query)){
+            echo 1;
+        }else{
+            echo 0;
+        }
+
+    }
+
+
+    if($type == 'loadReservationCountNavBar'){
+        
+        if($_POST['rTab']  == ''){
+            $rTab  = 'reservation';
+        }else{
+            $rTab  = $_POST['rTab'];
+        }
+
+        $reservationBtn = ['reservation', 'arrives', 'failed', 'inHouse'];
+
+        $data = '';
+        
+        foreach($reservationBtn as $rTabList){
+            $active = '';
+            if($rTabList == $rTab){
+                $active = 'active';
+            }
+            $count = countBookingRow($rTabList);
+            $name = ucfirst($rTabList);
+            $data .= '<li><a id="'.$rTabList.'Btn" class="reservationTab '.$active.'" href="javascript:void(0)">'.$name.' <span>'.$count.'
+            </span></a></li>';
+        }
+
+        echo $data;
+    }
+
+   
+   
+   
 
    
 }

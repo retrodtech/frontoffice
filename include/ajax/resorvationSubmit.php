@@ -21,6 +21,7 @@ $selectRoom = $_POST['selectRoom'];
 $selectRateType = $_POST['selectRateType'];
 $selectAdult = $_POST['selectAdult'];
 $selectChild = $_POST['selectChild'];
+$roomNumArry = $_POST['roomNum'];
 
 $guestName = safeData($_POST['guestName']);
 $guestMobile = safeData($_POST['guestMobile']);
@@ -36,11 +37,12 @@ $paidAmount = safeData($_POST['paidAmount']);
 
 $reciptNo = generateRecipt();
 
-$hotrlId = $_SESSION['ADMIN_ID'];
+$addBy = $_SESSION['ADMIN_ID'];
+$hotrlId = $_SESSION['HOTEL_ID'];
 
 
 
-mysqli_query($conDB, "insert into booking(bookinId,hotelId,reciptNo,checkIn,checkOut,payment_status,bookingSource,bussinessSource,paymethodId,userPay,couponCode) values('$bookId','$hotrlId','$reciptNo','$checkIn','$checkOut','$reservationType','$bookinSource','$businessSource','$paymentMethod','$paidAmount','$couponCode')");
+mysqli_query($conDB, "insert into booking(bookinId,hotelId,reciptNo,checkIn,checkOut,payment_status,bookingSource,bussinessSource,paymethodId,userPay,couponCode,addBy) values('$bookId','$hotrlId','$reciptNo','$checkIn','$checkOut','$reservationType','$bookinSource','$businessSource','$paymentMethod','$paidAmount','$couponCode','$addBy')");
 
 $lastId = mysqli_insert_id($conDB);
 
@@ -52,15 +54,13 @@ if(isset($selectRoom)){
         $rateType = $selectRateType[$key];
         $adult = $selectAdult[$key];
         $child = $selectChild[$key];
+        $roomNum = $roomNumArry[$key];
 
         $roomPrice = getRoomPriceById($room,$rateType,$adult,$checkIn);
         $adultPrice = getAdultPriceByNoAdult($adult,$lastId,$room,$checkIn);
         $childPrice = getChildPriceByNoChild($child,$lastId,$room,$checkIn);
-        if(isset(getRoomNumber('','',1,$room,$checkIn)[0])){
-            
-            $roomNum = getRoomNumber('',1,$room,$checkIn,$checkOut)[0]['roomNo'];
+
             mysqli_query($conDB, "insert into bookingdetail(bid,roomId,roomDId,adult,child,room_number) values('$lastId','$room','$rateType','$adult','$child','$roomNum')");
-        }
     }
 }
 

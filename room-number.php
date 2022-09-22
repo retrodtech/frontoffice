@@ -95,11 +95,7 @@ checkPageBySupperAdmin('bookingEngine','Room', 'Room');
         <div class="content">
             <div class="closeBtn">X</div>
             <div class="contentArea">
-                <form action="" method="post" id="addRoomNumberForm">
-
-                    
-
-                </form>
+                
             </div>
         </div>
     </div>
@@ -137,14 +133,10 @@ checkPageBySupperAdmin('bookingEngine','Room', 'Room');
                 type: 'post',
                 data: {type: 'addRoomNumForm'},
                 success: function (data) {
-                    $('#addRoomNumberForm').html(data);
+                    $('#popUpBox .contentArea').html(data);
                 }
             });
 
-        });
-
-        $('#popUpBox .closeBox').on('click',function(){
-            $('#popUpBox').removeClass('show');
         });
 
         $(document).on('submit','#addRoomNumberForm',function(e){
@@ -157,6 +149,13 @@ checkPageBySupperAdmin('bookingEngine','Room', 'Room');
                 data: data,
                 success: function (data) {
                     loadRoomNumber();
+                    if(data == 0){
+                        swal("Something error?", "Already exist room number.", "error");
+                    }
+                    if(data == 1){
+                        swal("Good job!", "Successfull add room number.", "success");
+                    }
+                    
                     $('#popUpBox').removeClass('show');
                 }
             });
@@ -172,41 +171,83 @@ checkPageBySupperAdmin('bookingEngine','Room', 'Room');
                 success: function (data) {
                     if(data == 1){
                         loadRoomNumber();
+                        swal("Good job!", "Successfull change status.", "success");
                     }
                 }
             });
         });
-
-        // $(document).on('click','.delete', function(){
-        //     var rnid = $(this).data('rnid');
-        //     $.ajax({
-        //         url: 'include/ajax/room.php',
-        //         type: 'post',
-        //         data: {type: 'deleteRoomNumber', rnid : rnid},
-        //         success: function (data) {
-        //             if(data == 1){
-        //                 loadRoomNumber();
-        //             }
-        //         }
-        //     });
-        // });
 
         $(document).on('click','.delete', function(){
             var rnid = $(this).data('rnid');
-            Confirm('Delete', 'Are you sure you want to Delete This Record', 'Yes', 'Cancel','rnid',rnid);
-        });
+            swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this room number record!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                })
+                .then((willDelete) => {
+                    function deleteRoomNumber(){
+                        $.ajax({
+                            url: 'include/ajax/room.php',
+                            type: 'post',
+                            data: {type: 'deleteRoomNumber', rnid : rnid},
+                            success: function (data) {
+                                if(data == 1){
+                                    loadRoomNumber();
+                                    swal("Poof! Your room number record has been deleted!", {
+                                        icon: "success",
+                                    });
+                                }else {
+                                    swal("Your room number record is safe!");
+                                }
+                            }
+                        });
+                    }
+                    
+                    if (willDelete) {
+                        deleteRoomNumber();
+                    } else {
+                        swal("Your room number record is safe!");
+                    }
+                    
+                });
+        });  
 
-        $(document).on('click', '.cancelAction', function(){
+
+        $(document).on('click', '.update', function(){
+            var rnid= $(this).data('rnid');
+            $('#popUpBox').addClass('show');
             $.ajax({
                 url: 'include/ajax/room.php',
                 type: 'post',
-                data: {type: 'editRoomNumber', rnid : rnid},
+                data: {type: 'editRoomNumberForm', rnid : rnid},
                 success: function (data) {
-                    if(data == 1){
-                        loadRoomNumber();
-                    }
+                    $('#popUpBox .contentArea').html(data);
                 }
             });
+        });
+
+        $(document).on('submit','#updateRoomNumberForm',function(e){
+            e.preventDefault();
+            var data = $('#updateRoomNumberForm').serialize()+ '&type=updateSubmitRoomNumber';
+            
+            $.ajax({
+                url: 'include/ajax/room.php',
+                type: 'post',
+                data: data,
+                success: function (data) {
+                    loadRoomNumber();
+                    if(data == 0){
+                        swal("Something error?", "Already exist room number.", "error");
+                    }
+                    if(data == 1){
+                        swal("Good job!", "Successfull update room number.", "success");
+                    }
+                    $('#popUpBox').removeClass('show');
+                }
+            });
+            
         });
 
       });

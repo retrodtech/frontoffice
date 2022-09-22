@@ -24,6 +24,7 @@ if(isset($_POST['loginSubmit'])){
                     if(mysqli_num_rows($sql) > 0){
                       $row = mysqli_fetch_assoc($sql);
                       $_SESSION['ADMIN_ID']= $row['id'];
+                      $_SESSION['HOTEL_ID']= $row['hCode'];
                       
                       $_SESSION['SuccessMsg'] = "Welcome to ".$admin_name;
                         redirect('index.php');
@@ -69,6 +70,7 @@ if(isset($_GET['username'])){
                     if(mysqli_num_rows($sql) > 0){
                       $row = mysqli_fetch_assoc($sql);
                       $_SESSION['ADMIN_ID']= $row['id'];
+                      $_SESSION['HOTEL_ID']= $row['hCode'];
                       
                       $_SESSION['SuccessMsg'] = "Welcome to ".$admin_name;
                         redirect('index.php');

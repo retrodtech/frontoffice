@@ -756,6 +756,9 @@ table .tableLine td, table .tableLine th {
 
 #resorvationContent {
   position: relative;
+  min-height: 500px;
+  height: auto;
+  background: white;
 }
 
 .reservationContent {
@@ -1872,11 +1875,12 @@ table .tableLine td, table .tableLine th {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 70%;
-  max-width: 500px;
+  max-width: 700px;
   height: auto;
   background: white;
-  padding: 25px 15px;
+  padding: 25px 0;
   border-radius: 5px;
+  max-height: 90vh;
 }
 #popUpBox .content .closeBtn {
   position: absolute;
@@ -1892,6 +1896,13 @@ table .tableLine td, table .tableLine th {
   color: white;
   transform: translate(50%, -50%);
   cursor: pointer;
+}
+#popUpBox .content .contentArea {
+  overflow: auto;
+  position: relative;
+  max-height: 86vh;
+  overflow-x: hidden;
+  padding: 0 20px;
 }
 
 .dialog-ovelay {
@@ -1976,4 +1987,12 @@ table .tableLine td, table .tableLine th {
 .link {
   padding: 5px 10px;
   cursor: pointer;
+}
+
+.loadingIcon {
+  display: flex;
+  justify-content: center;
+}
+.loadingIcon img {
+  width: 128px;
 }/*# sourceMappingURL=style.css.map */

@@ -11,30 +11,29 @@ if(isset($_POST['type'])){
 }
 
 if($type == 'load_resorvation'){ 
-
-    $hotelId = $_SESSION['ADMIN_ID'];
+    // pr($_POST);
+    $hotelId = $_SESSION['HOTEL_ID'];
         
     $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.id != ''";
     $currentDate = date('y-m-d');
-    $reservation = $_POST['reservation'];
-    $arrive = $_POST['arrive'];
-    $failed = $_POST['failed'];
-    $inHouse = $_POST['inHouse'];
     $search = $_POST['search'];
 
-    if($reservation != ''){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where bookingdetail.checkinstatus = '1' and payment_status = '1'";
+    $rTabType = $_POST['rTab'];
+
+
+    if($rTabType == 'reservation'){        
+        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where bookingdetail.checkinstatus = '1' and booking.payment_status = '1'";
     }
 
-    if($arrive != ''){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.checkIn = '$currentDate' and payment_status = '1'";
+    if($rTabType == 'arrives'){        
+        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.checkIn = '$currentDate' and booking.payment_status = '1'";
     }
 
-    if($failed != ''){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.payment_status = 'pending'";
+    if($rTabType == 'failed'){        
+        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.payment_status = '2'";
     }
 
-    if($inHouse != ''){        
+    if($rTabType == 'inHouse'){        
         $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where bookingdetail.checkinstatus = '2' and payment_status = '1'";
     }
 
@@ -61,12 +60,12 @@ if($type == 'load_resorvation'){
     
     $offset = ($page -1) * $limit_per_page;
     
-    $sql .= " and booking.id=bookingdetail.bid and booking.hotelId = $hotelId group by booking.id ORDER BY booking.id DESC ";
+    $sql .= " and booking.id=bookingdetail.bid and booking.hotelId = '$hotelId' group by booking.id ORDER BY booking.id DESC ";
     // $sql .= " ORDER BY id DESC limit {$offset}, {$limit_per_page}";
 
     $html = '<div class="row">';
 
-
+    
     
     $query = mysqli_query($conDB, $sql);
     $si = $si + ($limit_per_page *  $page) - $limit_per_page;
@@ -77,6 +76,7 @@ if($type == 'load_resorvation'){
             $si ++;
 
             $bid = $row['id'];
+  
             $bookinId = $row['bookinId'];
             $reciptNo = $row['reciptNo'];
             $grossCharge = getBookingDetailById($bid)['totalPrice'];
@@ -105,7 +105,7 @@ if($type == 'load_resorvation'){
             $nChild = getBookingDetailById($bid)['totalChild'];
            
             
-            $html .= reservationContent($bookinId,$reciptNo,$gname,$checkIn,$checkOut,$add_on,$nAdult,$nChild,$grossCharge,$userPay,'','yes');
+            $html .= reservationContent($bookinId,$reciptNo,$gname,$checkIn,$checkOut,$add_on,$nAdult,$nChild,$grossCharge,$userPay,'yes',$rTabType);
 
             $html .= '</div>';
 
@@ -909,6 +909,7 @@ if($type == 'loadAddGuestReservationForm'){
     $guestKycNumber = '';
     $guestKycType = '';
     $guestImgHtml  = '';
+    $guestPImgHtml = '';
     
     if($gid != ''){
         $title = 'Edit Guest';

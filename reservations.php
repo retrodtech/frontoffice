@@ -98,11 +98,12 @@ checkPageBySupperAdmin('pms','Reservation', 'Reservation');
                         <div class="card-body">
                             <div class="dFlex jcsb">
                                 <div class="left">
-                                    <ul>
-                                        <li><a id="reservationBtn" class="reservationTab active" href="javascript:void(0)">Reservations <span><?php echo countBookingRow('1') ?></span></a></li>
-                                        <li><a id="ariveBtn" class="reservationTab" href="javascript:void(0)">Arrivals <span><?php echo countBookingRow('','1') ?></span></a></li>
-                                        <li><a id="failedBtn" class="reservationTab" href="javascript:void(0)">Failed <span><?php echo countBookingRow('','','1') ?></span></a></li>
-                                        <li><a id="inHouseBtn" class="reservationTab" href="javascript:void(0)">In house <span><?php echo countBookingRow('','','','1') ?></span></a></li>
+                                    <ul id="loadReservationCountContent">
+                                        <li><a id="reservationBtn" class="reservationTab active" href="javascript:void(0)">Reservations <span><?= countBookingRow('reservation')?>
+                                        </span></a></li>
+                                        <li><a id="ariveBtn" class="reservationTab" href="javascript:void(0)">Arrivals <span><?= countBookingRow('arrives')?></span></a></li>
+                                        <li><a id="failedBtn" class="reservationTab" href="javascript:void(0)">Failed <span><?= countBookingRow('failed')?></span></a></li>
+                                        <li><a id="inHouseBtn" class="reservationTab" href="javascript:void(0)">In house <span><?= countBookingRow('inHouse')?></span></a></li>
                                     </ul>
                                 </div>
                                 <div class="right">
@@ -124,8 +125,8 @@ checkPageBySupperAdmin('pms','Reservation', 'Reservation');
                     
                     <div id="errorBox"></div>
                     <div id="resorvationContent">
-                        <div class="row">
-                            
+                        <div class="loadingIcon">
+                            <img src="<?= FRONT_SITE_IMG.'/loading.gif'?>" alt="">
                         </div>
                     </div>
 
@@ -158,30 +159,50 @@ checkPageBySupperAdmin('pms','Reservation', 'Reservation');
         closeContent('#reservationAddGuestForm .card-head a', '#addGestOnReservation');
         closeContent('#reservationAddGuestForm .card-foot .btn-outline-secondary', '#addGestOnReservation');
 
+        function reservationCountNavBar($rTab = ''){
+            var rTab = $rTab;
+            $.ajax({
+                url: 'include/ajax/room.php',
+                type: 'post',
+                data: {type: 'loadReservationCountNavBar', rTab:rTab},
+                success: function (data) {
+                    $('#loadReservationCountContent').html(data);
+                }
+            });
+        }
+
         $(document).ready(() => {
 
-            loadResorvation('1');
-            
+            loadResorvation('reservation');
+            reservationCountNavBar();
 
             $(document).on('click','#reservationBtn',function(){
                 $('.reservationTab').removeClass('active');
                 $(this).addClass('active');
-                loadResorvation('1');
+                loadResorvation('reservation');
             });
+
             $(document).on('click','#ariveBtn',function(){
                 $('.reservationTab').removeClass('active');
                 $(this).addClass('active');
-                loadResorvation('','1');
+                loadResorvation('arrives');
             });
+
             $(document).on('click','#failedBtn',function(){
                 $('.reservationTab').removeClass('active');
                 $(this).addClass('active');
-                loadResorvation('','','1');
+                loadResorvation('failed');
             });
+
             $(document).on('click','#inHouseBtn',function(){
                 $('.reservationTab').removeClass('active');
                 $(this).addClass('active');
-                loadResorvation('','','','1');
+                loadResorvation('inHouse');
+            });
+
+            $(document).on('click', '.reservationTab ', function(){
+                $('.reservationTab').removeClass('active');
+                $(this).addClass('active');
             });
         });
 
