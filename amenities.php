@@ -10,7 +10,7 @@ checkLoginAuth();
     $title = '';
     if(isset($_GET['delete'])){
         $uid = $_GET['delete'];
-        $sql = "delete from amenities where id ='$uid'";
+        $sql = "update amenities set deleteRec = '0' where id ='$uid' ";
         if(mysqli_query($conDB, $sql)){
             $_SESSION['SuccessMsg'] = "Delete Record";
             $link = FO_FRONT_SITE."/amenities.php";
@@ -109,7 +109,8 @@ checkLoginAuth();
                                         <?php
 
                                             $si = 0;
-                                            $sql = mysqli_query($conDB, "select * from amenities where hotelId = '$hotelId'");
+                                            
+                                            $sql = mysqli_query($conDB, "select * from amenities where hotelId = '$hotelId' and deleteRec = '1'");
                                             if(mysqli_num_rows($sql) > 0){
                                                 while($row = mysqli_fetch_assoc($sql)){
                                                     $si ++ ;

@@ -8,9 +8,10 @@ checkLoginAuth();
 
 
 checkPageBySupperAdmin('webBilder','Offer', 'Offer Record');
+$hotelId = $_SESSION['HOTEL_ID'];
 
 
-$sql = mysqli_query($conDB, "select * from offersection where id ='1'");
+$sql = mysqli_query($conDB, "select * from offersection where hotelId ='$hotelId'");
 while($row = mysqli_fetch_assoc($sql)){
     $otitle = $row['title'];
     $price = $row['price'];
@@ -34,10 +35,10 @@ if(isset($_POST['submit'])){
         $ext=pathinfo($roomImgName,PATHINFO_EXTENSION);
         
         $newfilename="offer_room.".$ext;
-        move_uploaded_file($roomImgTemp, SERVER_ADMIN_IMG.$newfilename);
-        $sql = "update offersection set title='$otitle',price='$price',percentage='$percentage',code='$code',img='$newfilename' where id ='1'";
+        move_uploaded_file($roomImgTemp, SERVER_IMG.$newfilename);
+        $sql = "update offersection set title='$otitle',price='$price',percentage='$percentage',code='$code',img='$newfilename' where hotelId ='$hotelId'";
     }else{
-        $sql = "update offersection set title='$otitle',price='$price',percentage='$percentage',code='$code' where id ='1'";
+        $sql = "update offersection set title='$otitle',price='$price',percentage='$percentage',code='$code' where hotelId ='$hotelId'";
     }
 
     
@@ -62,7 +63,7 @@ if(isset($_POST['submit'])){
     <meta name="keywords" content="">
     <meta name="description" content="">
 
-    <title>Blog </title>
+    <title>Offer </title>
 
     <?php include(FO_SERVER_SCREEN_PATH.'link.php') ?>
 

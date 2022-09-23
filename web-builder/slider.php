@@ -7,7 +7,7 @@ include (SERVER_INCLUDE_PATH.'function.php');
 checkLoginAuth();
 
 checkPageBySupperAdmin('webBilder','Slider', 'Slider Record');
-
+$hotelId = $_SESSION['HOTEL_ID'];
 
 if(isset($_GET['remove'])){
     $remove_img = $_GET['remove'];
@@ -16,10 +16,11 @@ if(isset($_GET['remove'])){
     $subTitle = getSlider($remove_img)[0]['subtitle'];
     $oldImg = getSlider($remove_img)[0]['img'];
     
-    $sql = "delete from herosection where id = '$remove_img'";
+    
+    $sql = "update herosection set deleteRec = '0' where id = '$remove_img'";
  
     if(mysqli_query($conDB,$sql)){
-        unlink(SERVER_HERO_IMG.$oldImg);
+        // unlink(SERVER_HERO_IMG.$oldImg);
         $_SESSION['SuccessMsg'] = "Successfull Delete";
             redirect('slider.php');
     }else{
@@ -88,7 +89,7 @@ if(isset($_GET['update'])){
             $subTitle = $_POST['subTitle'];
             move_uploaded_file($roomImgTemp, SERVER_IMG.'hero/'.$newfilename);
             
-            $sql = "insert into herosection(img,title,subTitle) values('$newfilename','$title','$subTitle')";
+            $sql = "insert into herosection(img,title,subTitle,hotelId) values('$newfilename','$title','$subTitle','$hotelId')";
             
         }
         
@@ -195,7 +196,7 @@ if(isset($_GET['update'])){
                                 <div class="row p0" style="align-items: center;">
                                     <div class="form_group col-md-6 mb-3">
                                         <label for="roomImage1">Hero Image(1350 x 450)</label>
-                                        <input class="form-control" type="file" id="roomImage1" name="heroImage">
+                                        <input class="form-control" type="file" accept="image/*" id="roomImage1" name="heroImage">
                                     </div>
                                     <div class="form_group col-md-6 mb-3">
                                         <label for="title">Title</label>
@@ -248,8 +249,8 @@ if(isset($_GET['update'])){
                                                                 <div class="tableCenter">
                                                                     <span class="tableHide"><i class="fas fa-ellipsis-h"></i></span>
                                                                     <span class="tableHoverShow">
-                                                                        <a class="tableIcon update bg-gradient-info" href="slider.php?update='.$id.'" style="margin-right:10px"><i class="far fa-edit"></i></a>
-                                                                        <a class="tableIcon delete bg-gradient-danger" href="slider.php?remove='.$id.'"><i class="far fa-trash-alt"></i></a>
+                                                                        <a class="tableIcon update bg-gradient-info" href="slider.php?update='.$id.'" style="margin-right:10px" data-tooltip-top="Edit"><i class="far fa-edit"></i></a>
+                                                                        <a class="tableIcon delete bg-gradient-danger" href="slider.php?remove='.$id.'" data-tooltip-top="Delete"><i class="far fa-trash-alt"></i></a>
                                                                     </span>
                                                                 </div>
                                                             </th>

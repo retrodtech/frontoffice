@@ -8,6 +8,7 @@ checkLoginAuth();
 
 
 checkPageBySupperAdmin('webBilder','Gallery', 'Gallery Record');
+$hotelId = $_SESSION['HOTEL_ID'];
 
 
 if(isset($_GET['delete'])){
@@ -16,9 +17,9 @@ if(isset($_GET['delete'])){
     $query = mysqli_fetch_assoc($sql);
     $old_img = $query['img'];
     if(mysqli_num_rows($sql)>0){
-        $sql = "delete from gallery where id = '$remove_id'";
+        $sql = "update gallery set deleteRec='0' where id = '$remove_id'";
         if(mysqli_query($conDB,$sql)){
-            unlink(SERVER_ADMIN_IMG.'gallery/'.$old_img);
+            // unlink(SERVER_ADMIN_IMG.'gallery/'.$old_img);
             $_SESSION['SuccessMsg'] = "Successfull Delete";
             redirect('gallery.php');
         }else{
@@ -58,8 +59,8 @@ if(isset($_GET['update'])){
         $ext=pathinfo($galleryImgName,PATHINFO_EXTENSION);
         if(in_array($ext,$extension)){
             $newfilename=rand(100000,999999).".".$ext;
-            move_uploaded_file($galleryImgTemp, SERVER_ADMIN_IMG.'gallery/'.$newfilename);
-            mysqli_query($conDB, "insert into gallery(text,img) values('$text','$newfilename')");
+            move_uploaded_file($galleryImgTemp, SERVER_IMG.'gallery/'.$newfilename);
+            mysqli_query($conDB, "insert into gallery(text,img,hotelId) values('$text','$newfilename','$hotelId')");
             $_SESSION['SuccessMsg'] = "Successfull Add Record";
         }
         redirect('gallery.php');
@@ -81,7 +82,7 @@ if(isset($_GET['update'])){
     <meta name="keywords" content="">
     <meta name="description" content="">
 
-    <title>Blog </title>
+    <title>Gallery </title>
 
     <?php include(FO_SERVER_SCREEN_PATH.'link.php') ?>
 
@@ -166,9 +167,9 @@ if(isset($_GET['update'])){
                                             <?php
                                             
                                                 if(isset($_GET['update'])){
-                                                    echo '<input disabled class="form-control" type="file" id="galleryimg" name="galleryimg">';
+                                                    echo '<input disabled class="form-control" type="file" accept="image/*"  id="galleryimg" name="galleryimg">';
                                                 }else{
-                                                    echo '<input required class="form-control" type="file" id="galleryimg" name="galleryimg">';
+                                                    echo '<input required class="form-control" type="file" accept="image/*"  id="galleryimg" name="galleryimg">';
                                                 }
                                             
                                             ?>
@@ -197,7 +198,7 @@ if(isset($_GET['update'])){
                                             <tr>
                                                 <?php
                                                 
-                                                    $sql = mysqli_query($conDB, "select * from gallery order by id DESC");
+                                                    $sql = mysqli_query($conDB, "select * from gallery where hotelId = '$hotelId' and deleteRec = '1' order by id DESC");
                                                     $si = 0;
                                                     if(mysqli_num_rows($sql)>0){
                                                     while($imgrow = mysqli_fetch_assoc($sql)){
@@ -213,8 +214,8 @@ if(isset($_GET['update'])){
                                                                     <div class="tableCenter">
                                                                         <span class="tableHide"><i class="fas fa-ellipsis-h"></i></span>
                                                                         <span class="tableHoverShow">
-                                                                            <a class="tableIcon update bg-gradient-info" href="gallery.php?update='.$id.'" style="margin-right:10px"><i class="far fa-edit"></i></a>
-                                                                            <a class="tableIcon delete bg-gradient-danger" href="gallery.php?delete='.$id.'"><i class="far fa-trash-alt"></i></a>
+                                                                            <a class="tableIcon update bg-gradient-info" href="gallery.php?update='.$id.'" style="margin-right:10px" data-tooltip-top="Edit"><i class="far fa-edit"></i></a>
+                                                                            <a class="tableIcon delete bg-gradient-danger" href="gallery.php?delete='.$id.'" data-tooltip-top="Delete"><i class="far fa-trash-alt"></i></a>
                                                                         </span>
                                                                     </div>
                                                                 </th>

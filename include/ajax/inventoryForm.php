@@ -11,8 +11,8 @@ if(isset($_POST['type'])){
 }
 
 if($type == 'updateRoom'){
-    $form = getDataBaseDate2($_POST['from']);
-    $to = getDataBaseDate2($_POST['to']);
+    $form = $_POST['from'];
+    $to = $_POST['to'];
     $oneDay = strtotime('1 day 30 second', 0);
     
     $datediff = strtotime($to) - strtotime($form);
@@ -34,8 +34,8 @@ if($type == 'updateRoom'){
 
 if($type == 'updateRate'){
     // pr($_POST);
-    $form = getDataBaseDate2($_POST['from']);
-    $to = getDataBaseDate2($_POST['to']);
+    $form = $_POST['from'];
+    $to = $_POST['to'];
     $oneDay = strtotime('1 day 30 second', 0);
     
     $datediff = strtotime($to) - strtotime($form);
@@ -60,8 +60,8 @@ if($type == 'updateRate'){
 
 if($type == 'blockId'){
     // pr($_POST);
-    $form = getDataBaseDate2($_POST['from']);
-    $to = getDataBaseDate2($_POST['to']);
+    $form = $_POST['from'];
+    $to = $_POST['to'];
     $oneDay = strtotime('1 day 30 second', 0);
     
     $datediff = strtotime($to) - strtotime($form);
@@ -133,7 +133,6 @@ if($type == 'inlineRoomPrice'){
     inventoryRateUpdate($roomId, $roomDId, $roomPrice,$roomPrice2,$roomDate,$child,$adult);
 
 }
-
 
 if($type == 'viewRateForm'){
     $rdid = $_POST['id'];

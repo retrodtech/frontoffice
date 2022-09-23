@@ -3,7 +3,7 @@
 include ('../constant.php');
 include (SERVER_INCLUDE_PATH.'db.php');
 include (SERVER_INCLUDE_PATH.'function.php');
-
+$hotelId = $_SESSION['HOTEL_ID'];
 $type = '';
 
 if(isset($_POST['type'])){
@@ -54,7 +54,7 @@ if($_POST['inventoryAction'] == 'rate'){
         
         <?php
             $si = 0;
-            $sql = mysqli_query($conDB, "select * from room ");
+            $sql = mysqli_query($conDB, "select * from room where hotelId = '$hotelId'");
             $rowCount = 0;
             if(mysqli_num_rows($sql)>0){
                 while($row = mysqli_fetch_assoc($sql)){
@@ -84,7 +84,7 @@ if($_POST['inventoryAction'] == 'rate'){
                             $rdid = $getRatePlanByRoomId[$key]['id'];
                             
                             ?>
-                            <tr>
+                            <tr style="height: 100px;">
                                 <td class="center">
                                    <b> <?php echo $sl2 ?></b>
                                     
@@ -92,7 +92,7 @@ if($_POST['inventoryAction'] == 'rate'){
                                 <td width="200">
                                     <span class="db" style="margin-bottom: 5px;"><?php echo $getRatePlanByRoomId[$key]['title'] ?></span>
                                     <span class="tableHoverShow">
-                                        <img class="rate_update in_btn edit btn bg-gradient-success dib mr8" data-id="<?php echo $rdid ?>" data-rid="<?php echo $room_id ?>" src="<?php echo FRONT_SITE_IMG.'/icon/edit.png' ?>" alt="">
+                                        <i data-tooltip-top="Rate"><img class="rate_update in_btn edit btn bg-gradient-success dib mr8" data-id="<?php echo $rdid ?>" data-rid="<?php echo $room_id ?>" src="<?php echo FRONT_SITE_IMG.'/icon/edit.png' ?>" alt=""></i>
                                         <!-- <img class="reload_rate in_btn remove" data-id="<?php echo $rdid ?>" data-rid="<?php echo $room_id ?>" src="<?php echo FRONT_SITE_IMG.'/icon/reload.png' ?>" alt=""> -->
                                     </span>
                                 </td>
@@ -187,12 +187,12 @@ if($_POST['inventoryAction'] == 'rate'){
                 </tr>
                 <?php
                     $si = 0;
-                    $sql = mysqli_query($conDB, "select * from room ");
+                    $sql = mysqli_query($conDB, "select * from room where hotelId = '$hotelId'");
                     if(mysqli_num_rows($sql)>0){
                         while($row = mysqli_fetch_assoc($sql)){
                             $room_id = $row['id'];
                             $si++; ?>
-                                <tr>
+                                <tr style="height: 100px;">
                                 <td class="mb-0 text-xs">
                                     <span><b><?php echo $si ?></b></span>
                                     
@@ -200,9 +200,9 @@ if($_POST['inventoryAction'] == 'rate'){
                                 <td class="mb-0 text-xs">
                                     <span class="db bold"><?php echo $row['header'] ?></span> <br/> 
                                     <span class="tableHoverShow">
-                                        <img class="room_update in_btn edit btn bg-gradient-success dib mr8" data-id="<?php echo $room_id ?>" src="<?php echo FRONT_SITE_IMG.'icon/edit.png' ?>" alt="">
+                                        <i data-tooltip-top="Inventory" ><img class="room_update in_btn edit btn bg-gradient-success dib mr8" data-id="<?php echo $room_id ?>" src="<?php echo FRONT_SITE_IMG.'icon/edit.png' ?>" alt=""></i>
                                         <!-- <img class="room_reload in_btn remove" data-id="<?php echo $room_id ?>" src="<?php echo FRONT_SITE_IMG.'icon/reload.png' ?>" alt=""> -->
-                                        <img class="room_block in_btn remove btn bg-gradient-danger " data-id="<?php echo $room_id ?>" src="<?php echo FRONT_SITE_IMG.'icon/block.png' ?>" alt="" style="padding: 7px;">
+                                        <i data-tooltip-top="Block" ><img class="room_block in_btn remove btn bg-gradient-danger " data-id="<?php echo $room_id ?>" src="<?php echo FRONT_SITE_IMG.'icon/block.png' ?>" alt="" style="padding: 7px;"></i>
                                     </span>
                                 </td>
                                 <?php

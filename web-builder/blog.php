@@ -8,15 +8,17 @@ checkLoginAuth();
 
 checkPageBySupperAdmin('webBilder','Blog', 'Blog Record');
 
+$hotelId = $_SESSION['HOTEL_ID'];
+$category = '';
 if(isset($_GET['delete'])){
     $remove_id = $_GET['delete'];
-    $sql = mysqli_query($conDB, "select * from blog where id = '$remove_id'");
+    $sql = mysqli_query($conDB, "select * from wb_blog where id = '$remove_id'");
     $query = mysqli_fetch_assoc($sql);
     $old_img = $query['img'];
     if(mysqli_num_rows($sql)>0){
-        $sql = "delete from blog where id = '$remove_id'";
+        $sql = "update wb_blog set deleteRec='0' where id = '$remove_id'";
         if(mysqli_query($conDB,$sql)){
-            unlink(SERVER_ADMIN_IMG.'post/'.$old_img);
+            // unlink(SERVER_ADMIN_IMG.'post/'.$old_img);
             $_SESSION['SuccessMsg'] = "Successfull Delete";
             redirect('blog.php');
         }else{
@@ -36,7 +38,7 @@ $Desc = '';
 $required = 'required';
 if(isset($_GET['update'])){
     $updateId = $_GET['update']; 
-    $sql = mysqli_query($conDB, "select * from blog where id = '$updateId'");
+    $sql = mysqli_query($conDB, "select * from wb_blog where id = '$updateId'");
     $query = mysqli_fetch_assoc($sql);
     $updateText =  $query['title'];
     $category =  $query['category'];
@@ -60,10 +62,10 @@ if(isset($_GET['update'])){
                 $sql = mysqli_query($conDB, "select * from blog where id = '$updateId'");
                 $query = mysqli_fetch_assoc($sql);
                 $old_img = $query['img'];
-                unlink(SERVER_ADMIN_IMG.'post/'.$old_img);
+                unlink(SERVER_IMG.'post/'.$old_img);
 
                 $newfilename=rand(100000,999999).".".$ext;
-                move_uploaded_file($galleryImgTemp, SERVER_ADMIN_IMG.'post/'.$newfilename);
+                move_uploaded_file($galleryImgTemp, SERVER_IMG.'post/'.$newfilename);
                 $sql = "update blog set title='$text',description='$desc',img='$newfilename' where id = '$updateId'";
             }
         }
@@ -86,8 +88,8 @@ if(isset($_GET['update'])){
         $ext=pathinfo($galleryImgName,PATHINFO_EXTENSION);
         if(in_array($ext,$extension)){
             $newfilename=rand(100000,999999).".".$ext;
-            move_uploaded_file($galleryImgTemp, SERVER_ADMIN_IMG.'post/'.$newfilename);
-            mysqli_query($conDB, "insert into blog(title,img,description,category) values('$text','$newfilename','$desc','$category')");
+            move_uploaded_file($galleryImgTemp, SERVER_IMG.'post/'.$newfilename);
+            mysqli_query($conDB, "insert into wb_blog(title,img,description,category,hotelId) values('$text','$newfilename','$desc','$category','$hotelId')");
             $_SESSION['SuccessMsg'] = "Successfull Add Record";
         }
         redirect('blog.php');
@@ -109,7 +111,7 @@ if(isset($_GET['update'])){
     <meta name="keywords" content="">
     <meta name="description" content="">
 
-    <title>Blog  </title>
+    <title>Blog</title>
 
     <?php include(FO_SERVER_SCREEN_PATH.'link.php') ?>
 
@@ -203,7 +205,7 @@ if(isset($_GET['update'])){
                                         <label for="galleryimg">Image ( 700 X 812 )</label>
                                         <?php
                                         
-                                            echo '<input '.$required.' class="form-control" type="file" id="galleryimg" name="galleryimg">';
+                                            echo '<input '.$required.' class="form-control" type="file" accept="image/*"  id="galleryimg" name="galleryimg">';
                                         
                                         ?>
                                         
@@ -236,7 +238,7 @@ if(isset($_GET['update'])){
                                         <tr>
                                             <?php
                                             
-                                                $sql = mysqli_query($conDB, "select * from blog order by id DESC");
+                                                $sql = mysqli_query($conDB, "select * from wb_blog where hotelId='$hotelId' and deleteRec = '1' order by id DESC");
                                                 $si = 0;
                                                 if(mysqli_num_rows($sql)>0){
                                                 while($imgrow = mysqli_fetch_assoc($sql)){
@@ -255,8 +257,8 @@ if(isset($_GET['update'])){
                                                                 <div class="tableCenter">
                                                                     <span class="tableHide"><i class="fas fa-ellipsis-h"></i></span>
                                                                     <span class="tableHoverShow">
-                                                                    <a class="tableIcon update bg-gradient-info" href="blog.php?update='.$id.'" style="margin-right:10px" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Edit"><i class="far fa-trash-alt"></i></a>
-                                                                    <a class="tableIcon delete bg-gradient-danger" href="blog.php?delete='.$id.'" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Delete"><i class="far fa-edit"></i></a>
+                                                                    <a class="tableIcon update bg-gradient-info" href="blog.php?update='.$id.'" style="margin-right:10px" data-tooltip-top="Edit"><i class="far fa-edit"></i></a>
+                                                                    <a class="tableIcon delete bg-gradient-danger" href="blog.php?delete='.$id.'" data-tooltip-top="Delete"><i class="far fa-trash-alt"></i></a>
                                                                     </span>
                                                                 </div>
                                                             </th>

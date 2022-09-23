@@ -221,10 +221,11 @@ function getRoomNumber($rNo='', $status = '', $rid='', $checkIn ='', $checkOut =
 
 function getRoomList($status='',$rid=''){
     global $conDB;
+    $hotelId = $_SESSION['HOTEL_ID'];
     if($status != ''){
-        $sql = "select * from room where status = '1'";
+        $sql = "select * from room where status = '1' and hotelId = '$hotelId'";
     }else{
-        $sql = "select * from room where id != ''";
+        $sql = "select * from room where hotelId = '$hotelId'";
     }
 
     if($rid != ''){
@@ -1154,11 +1155,13 @@ function reservationContent($bid,$reciptNo,$gname,$checkIn,$checkOut,$bDate,$nAd
 
 function getSlider($sid=''){
     global $conDB;
+    $hotelId = $_SESSION['HOTEL_ID'];
     $sidStatus = '';
     if($sid != ''){
-        $sidStatus = " where id = '$sid'";
+        $sidStatus = " and id = '$sid'";
     }
-    $sql = mysqli_query($conDB, "select * from herosection $sidStatus");
+    
+    $sql = mysqli_query($conDB, "select * from herosection where hotelId = '$hotelId' and deleteRec='1' $sidStatus");
     $data = array();
     
     if(mysqli_num_rows($sql)>0){
@@ -1196,12 +1199,14 @@ function getRatePlanArrById($rid){
 
 function inventoryCheck($date, $rid='', $rdid=''){
     global $conDB;
+    global $hotelId;
     $data = 1;
     $rdidStatus = '';
     if($rdid !=''){
         $rdidStatus = " and room_detail_id = '$rdid' ";
     }
-    $sql = mysqli_query($conDB, "select status from inventory where add_date = '$date' and room_id = '$rid' $rdidStatus");
+    
+    $sql = mysqli_query($conDB, "select status from inventory where add_date = '$date' and room_id = '$rid' and hotelId='$hotelId' $rdidStatus");
     if(mysqli_num_rows($sql)>0){
         $row = mysqli_fetch_assoc($sql);
         $data = $row['status'];
@@ -1212,6 +1217,7 @@ function inventoryCheck($date, $rid='', $rdid=''){
 
 function inventoryRoomUpdate($updateId, $room, $date,$status){
     global $conDB;
+    global $hotelId;
     $oneDay = strtotime('1 day 30 second', 0);
     $nxtDate = date('Y-m-d',strtotime($date) + $oneDay);
     $countTotalBooking = countTotalBooking($updateId, $date, $nxtDate);
@@ -1232,9 +1238,9 @@ function inventoryRoomUpdate($updateId, $room, $date,$status){
             
             $reExistQuery = mysqli_query($conDB, "select * from inventory where room_id='$roomId' and room_detail_id='$rdid' and add_date = '$date' ");
             if(mysqli_num_rows($reExistQuery) > 0){
-                mysqli_query($conDB, "update inventory set room='$Bookroom',status='$status' where room_id='$updateId' and room_detail_id='$rdid' and add_date = '$date' ");
+                mysqli_query($conDB, "update inventory set room='$Bookroom',status='$status' where room_id='$updateId' and room_detail_id='$rdid' and add_date = '$date' and hotelId='$hotelId'");
             }else{
-                mysqli_query($conDB, "insert into inventory(room_id,room_detail_id,add_date,room,status) values('$roomId','$rdid','$date','$Bookroom','$status')");
+                mysqli_query($conDB, "insert into inventory(room_id,room_detail_id,add_date,room,status,hotelId) values('$roomId','$rdid','$date','$Bookroom','$status','$hotelId')");
             }
 
         }
@@ -1245,6 +1251,7 @@ function inventoryRoomUpdate($updateId, $room, $date,$status){
 
 function inventoryRateUpdate($updateId, $updateDId, $price='',$price2='',$date, $child,$adult){
     global $conDB;
+    global $hotelId;
     $oneDay = strtotime('1 day 30 second', 0);
 
     if($price != ''){
@@ -1260,7 +1267,7 @@ function inventoryRateUpdate($updateId, $updateDId, $price='',$price2='',$date, 
             $sql= "update inventory set $priceUpade, eAdult='$adult', eChild='$child' where  room_id='$updateId' and room_detail_id='$updateDId' and add_date = '$date'";
             mysqli_query($conDB,$sql);
         }else{
-            $sql= "insert into inventory(room_id,room_detail_id,add_date,price,price2,eAdult,eChild) values('$updateId','$updateDId','$date','$price','$price2','$adult','$child')";
+            $sql= "insert into inventory(room_id,room_detail_id,add_date,price,price2,eAdult,eChild,hotelId) values('$updateId','$updateDId','$date','$price','$price2','$adult','$child','$hotelId')";
             mysqli_query($conDB,$sql);
         }
     
@@ -1711,6 +1718,23 @@ function checkLive(){
     return $sql['status'];
 }
 
+function buildSGLView($rid,$rdid){
+    global $conDB;
+    $sql = "select room.*,roomratetype.*, roomratetype.id as roomDetailID from room,roomratetype where room.id = '$rid'  and roomratetype.room_id = room.id and roomratetype.id='$rdid'";
+    $query = mysqli_query($conDB, $sql);
+    $data = array();
+    if(mysqli_num_rows($query) > 0){
+        while($row = mysqli_fetch_assoc($query)){
+            $data[]=[
+                'id'=>$row['id'],
+                'singlePrice'=>$row['singlePrice'],
+                'doublePrice'=>$row['doublePrice'],
+            ];
+        }
+    }
+
+    return $data;
+}
 
 
 ?>

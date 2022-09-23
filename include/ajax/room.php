@@ -320,7 +320,7 @@ if(isset($_POST['type'])){
         $roomdesc = '';
         $added_on=date('Y-m-d h:i:s');
 
-        $hotelId = $_SESSION['ADMIN_ID'];
+        $hotelId = $_SESSION['HOTEL_ID'];
 
         mysqli_query($conDB, "insert into room(slug,hotelId,header,bedtype,roomcapacity,noAdult,noChild,description,add_on,status,totalroom,mrp) values('$slug','$hotelId','$header','$bedType','$roomCapacity','$noAdult','$noChild','$roomdesc','$added_on','1','$room','$mrp')");
         $rid = mysqli_insert_id($conDB);
@@ -1169,7 +1169,7 @@ if(isset($_POST['type'])){
     if($type == 'submitRoomNumber'){
         $roomNum = $_POST['roomNum'];
         $roomId = $_POST['roomId'];
-        $hId = $_SESSION['ADMIN_ID'];
+        $hId = $_SESSION['HOTEL_ID'];
         
         $roomNumberArry = getRoomNumber($roomNum);
         if(count($roomNumberArry) > 0){
@@ -1190,7 +1190,7 @@ if(isset($_POST['type'])){
         $roomNumId = $_POST['roomNumId'];
         $roomNum = $_POST['roomNum'];
         $roomId = $_POST['roomId'];
-        $hId = $_SESSION['ADMIN_ID'];
+        $hId = $_SESSION['HOTEL_ID'];
 
         $roomNumberArry = getRoomNumber($roomNum);
         if(count($roomNumberArry) > 0){
@@ -1376,7 +1376,7 @@ if(isset($_POST['type'])){
             $exInputField .= '<input type="hidden" value="add_room" name="type">';
         }
         $amenitiesField = '';
-        $hotelId = $_SESSION['ADMIN_ID'];
+        $hotelId = $_SESSION['HOTEL_ID'];
         $query = "select * from amenities where hotelId = '$hotelId'";
         $sql = mysqli_query($conDB, $query);
 
@@ -1677,7 +1677,7 @@ if(isset($_POST['type'])){
                 ";
             }
         }else{
-            echo "
+            $html= "
                 
                     <tr>
                         <td calspan='7'>No Data</td>

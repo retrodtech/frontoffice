@@ -1,4 +1,5 @@
 
+// var webUrl = 'https://admin.retrod.in/';
 var webUrl = 'http://localhost/pms/';
 
 
@@ -29,12 +30,12 @@ function loadResorvation($rTab='',$search='') {
     var rTab = $rTab;
     var search = $search;
 
-    
     $.ajax({
         url: webUrl+'include/ajax/resorvation.php' ,
         type: 'post',
         data: { type: 'load_resorvation',rTab:rTab,search:search},
         success: function (data) {
+            console.log(data);
             $('#resorvationContent').html(data);
             reservationCountNavBar(rTab);
         }

@@ -168,9 +168,6 @@ if(isset($_POST['submit'])){
 
 
 
-    
-
-
     <div id="alertCon"></div>
 
 
@@ -186,7 +183,31 @@ if(isset($_POST['submit'])){
         $('.stayViewLink').addClass('active');
 
 
-        
+        var poupUpBox = '<div id="popup">'+
+        '<div class="content">'+
+            '<div id="closepopup">X</div>'+
+            '<div class="box">'+
+                '<form action="" method="post" id="updateInventoryForm">'+
+                    '<div class="row">'+
+                        '<div class="form-group col-md-6">'+
+                            '<label for="from">From</label>'+
+                            '<input type="date" id="upfrom" autocomplete="off" name="from" class="form-control" value="<?php echo date('d/m/Y',$current_date) ?>">'+
+                        '</div>'+
+                        '<div class="form_group col-md-6">'+
+                            '<label for="to">to</label>'+
+                            '<input type="date" id="upto" autocomplete="off" name="to" class="form-control" value="<?php echo date('d/m/Y',$current_date) ?>">'+
+                        '</div>'+
+                    '</div>'+
+                    '<div id="load_form_input"></div>'+
+                    '<div class="row">'+
+                        '<div class="col-md-12">'+
+                        '<input type="submit" value="Update" name="submit" class="form-control btn bg-gradient-info btn-sm mb-0">'+
+                        '</div>'+
+                    '</div>'+
+                '</form>'+
+            '</div>'+
+        '</div>'+
+    '</div>';
 
 
         $(document).on('click','.toggle',function(e) {
@@ -273,7 +294,7 @@ if(isset($_POST['submit'])){
     $(document).on('click','.room_update',function(e){
         e.preventDefault();
         var id = $(this).data('id');
-        $('#popup').show();
+        $('body').append(poupUpBox);
         $html = '<div class="row"><div class="form-group col-md-12 mb-3"><label for="">No Of Rooms *:</label><input type="number" name="room" class="form-control"></div></div>';
         $html += '<input type="hidden" value="updateRoom" id="updateType" name="type">';
         $html += '<input type="hidden" value='+id+' name="updateId">';
@@ -297,12 +318,13 @@ if(isset($_POST['submit'])){
         e.preventDefault();
         var id = $(this).data('id');
         var rid = $(this).data('rid');
-        $('#popup').show();
+        $('body').append(poupUpBox);
         $.ajax({
             url: 'include/ajax/inventoryForm.php',
             type: 'post',
             data : {type:'viewRateForm', id:id, rid:rid},
             success : function(data){
+                
                 $('#load_form_input').html(data);
             }
         });
@@ -327,11 +349,11 @@ if(isset($_POST['submit'])){
     $(document).on('click','.room_block',function(e){
         e.preventDefault();
         var id = $(this).data('id');
+        $('body').append(poupUpBox);
    
         $html = '<input type="hidden" value='+id+' name="updateId">';
         $html += '<input type="hidden" value="blockId" name="type">';
         $('#load_form_input').html($html);
-        $('#popup').show();
     });
 
     $(document).on('submit','#updateInventoryForm',function(e){
@@ -356,7 +378,7 @@ if(isset($_POST['submit'])){
     });
 
     $(document).on('click','#closepopup',function(){
-        $('#popup').hide();
+        $('#popup').remove();
     });
 
     $(document).on('change','.inlineRoomNo',function(){
