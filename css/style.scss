@@ -1941,11 +1941,15 @@ table {
     }
 }
 
+.guestProofImgSec{
+    cursor: pointer;
+}
 .guestImgSec,.guestProofImgSec {
     position: relative;
     width: 160px;
     height: 160px;
     overflow: hidden;
+    border: 1px dashed black;
     label{
         position: absolute;
         width: 100%;
@@ -2154,5 +2158,88 @@ table {
     
     img {
         width: 128px;
+    }
+}
+
+
+#guestPopupFixContent,#webCamPopupFixContent{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    .closeGuestPopupFixContent{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba($black ,.8);
+    }
+    .guestDocContent{
+        width: 80%;
+        max-width: 500px;
+        height: 350px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%);
+        background: #fff;
+        border-radius: 15px;
+        padding: 15px 25px;
+        .leftSide,.rightSide{
+            width: 50%;
+            padding: 5px 15px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .leftSide{
+            background: $pclr;
+            color: $white;
+            font-weight: 600;
+        }
+        .rightSide{
+            background: lighten($black, 95%);
+        }
+        .inputField{
+            position: relative;
+            margin-top: 20px;
+            label{
+                border: 2px dashed lighten($black, 85%);
+                width: 100%;
+                height: 250px;
+                border-radius: 5px;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+            }
+            input{
+                opacity: 0;
+            }
+        }
+        .closeContent{
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 25px;
+            height: 25px;
+            background: $red;
+            color: $white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translate(50%, -50%);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    }
+}
+
+#webCamPopupFixContent{
+    z-index: 35;
+    .guestDocContent{
+        max-width: none;
     }
 }

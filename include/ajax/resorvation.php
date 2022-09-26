@@ -930,7 +930,8 @@ if($type == 'loadAddGuestReservationForm'){
         $guestImgHtml = "<img width='80' src='$guestImgUrl' />";
 
         $guestPImgUrl = FRONT_SITE_IMG.'guestP/'.$guestKycFile;
-        $guestPImgHtml = "<img width='80' src='$guestPImgUrl' />";
+
+        $guestPImgHtml =  ($guestPImgUrl == '')?  "<img width='80' src='$guestPImgUrl' />" : '';
     }
 
     $idProofHtml = '';
@@ -1054,8 +1055,6 @@ if($type == 'loadAddGuestReservationForm'){
                                     <div class="form-group">
                                         <div class="guestProofImgSec">
                                             '.$guestPImgHtml.'
-                                            <label for="guestIdProofImg"><span>Choose Guest Proof Image</span></label>
-                                            <input type="file" name="guestIdProofImg" id="guestIdProofImg">
                                         </div>
                                     </div>
                                 </div>

@@ -1782,11 +1782,16 @@ table .tableLine td, table .tableLine th {
   padding: 15px 10px;
 }
 
+.guestProofImgSec {
+  cursor: pointer;
+}
+
 .guestImgSec, .guestProofImgSec {
   position: relative;
   width: 160px;
   height: 160px;
   overflow: hidden;
+  border: 1px dashed black;
 }
 .guestImgSec label, .guestProofImgSec label {
   position: absolute;
@@ -1995,4 +2000,86 @@ table .tableLine td, table .tableLine th {
 }
 .loadingIcon img {
   width: 128px;
+}
+
+#guestPopupFixContent, #webCamPopupFixContent {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+}
+#guestPopupFixContent .closeGuestPopupFixContent, #webCamPopupFixContent .closeGuestPopupFixContent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+}
+#guestPopupFixContent .guestDocContent, #webCamPopupFixContent .guestDocContent {
+  width: 80%;
+  max-width: 500px;
+  height: 350px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 15px;
+  padding: 15px 25px;
+}
+#guestPopupFixContent .guestDocContent .leftSide, #guestPopupFixContent .guestDocContent .rightSide, #webCamPopupFixContent .guestDocContent .leftSide, #webCamPopupFixContent .guestDocContent .rightSide {
+  width: 50%;
+  padding: 5px 15px;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+}
+#guestPopupFixContent .guestDocContent .leftSide, #webCamPopupFixContent .guestDocContent .leftSide {
+  background: #cb0c9f;
+  color: white;
+  font-weight: 600;
+}
+#guestPopupFixContent .guestDocContent .rightSide, #webCamPopupFixContent .guestDocContent .rightSide {
+  background: #f2f2f2;
+}
+#guestPopupFixContent .guestDocContent .inputField, #webCamPopupFixContent .guestDocContent .inputField {
+  position: relative;
+  margin-top: 20px;
+}
+#guestPopupFixContent .guestDocContent .inputField label, #webCamPopupFixContent .guestDocContent .inputField label {
+  border: 2px dashed #d9d9d9;
+  width: 100%;
+  height: 250px;
+  border-radius: 5px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+#guestPopupFixContent .guestDocContent .inputField input, #webCamPopupFixContent .guestDocContent .inputField input {
+  opacity: 0;
+}
+#guestPopupFixContent .guestDocContent .closeContent, #webCamPopupFixContent .guestDocContent .closeContent {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 25px;
+  height: 25px;
+  background: red;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(50%, -50%);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+#webCamPopupFixContent {
+  z-index: 35;
+}
+#webCamPopupFixContent .guestDocContent {
+  max-width: none;
 }/*# sourceMappingURL=style.css.map */

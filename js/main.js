@@ -1,6 +1,7 @@
 
 // var webUrl = 'https://admin.retrod.in/';
 var webUrl = 'http://localhost/pms/';
+var loadingGif = 'http://localhost/pms/img/loading.gif';
 
 
 function error($msg){
@@ -35,7 +36,7 @@ function loadResorvation($rTab='',$search='') {
         type: 'post',
         data: { type: 'load_resorvation',rTab:rTab,search:search},
         success: function (data) {
-            console.log(data);
+            
             $('#resorvationContent').html(data);
             reservationCountNavBar(rTab);
         }
@@ -201,6 +202,7 @@ function showGuestDetailPopUp($roomNum = '', $bid='',$id = '',$btn = '',$rTab = 
     var btn = $btn;
     var rTab = $rTab;
 
+    $('#bookindDetail .content').html('<div class="loadingIcon"><img src="'+loadingGif+'"></div>');
     $.ajax({
         url : webUrl+'include/ajax/roomView.php',
         type : 'post',
@@ -541,6 +543,30 @@ $(document).on('click', '#bookindDetail .closeContent', function(){
 
 // Reservation Btn Start
 
+function guestPopUpBox(){
+    
+    var html = '<div id="guestPopupFixContent">'+
+                '<div class="closeGuestPopupFixContent"></div>'+
+                '<div class="guestDocContent">'+
+                    '<div class="closeContent">x</div>'+
+                    '<div class="content">'+
+                        '<div class="dFlex jcsb">'+
+                            '<div id="guestPhotoWithWebCam" class="leftSide"><i class="fas fa-camera"></i> <span>Webcam</span></div>'+
+                            '<div id="guestPhotoWithWebsite" class="rightSide"><i class="fas fa-globe"></i> <span>Website</span></div>'+
+                        '</div>'+
+                        '<div class="dFlex">'+
+                            '<div class="inputField">'+
+                                '<label for="guestIdProofImg"><span>Choose Guest Proof Image</span></label>'+
+                                '<input type="file" name="guestIdProofImg" id="guestIdProofImg">'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+            +'</div>';
+
+    return html;
+};
+
 $(document).on('click','#checkInStatus', function(){
     var roomNumber = $(this).data('roomnum');
     var rTab = $(this).data('reservationtab');
@@ -788,6 +814,36 @@ $(document).on('click','#addGestOnReservation .closeContent', function(){
 
 $(document).on('click','#addGestOnReservation .closeGuestSec', function(){
     $('#addGestOnReservation').hide();
+});
+
+$(document).on('click', '.guestProofImgSec', function(){
+    var html = guestPopUpBox();
+    var script ='<script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>';
+    $('head').append(script);
+    $('body').append(html);
+});
+
+$(document).on('click', '#guestPhotoWithWebCam', function(){
+
+    var html = '<div id="webCamPopupFixContent">'+
+                '<div class="closeGuestPopupFixContent"></div>'+
+                '<div class="guestDocContent">'+
+                    '<div class="closeContent">x</div>'+
+                    '<div class="content">'+
+                        '<video id="webcam" autoplay playsinline width="640" height="480"></video>'+
+                        '<canvas id="canvas" class="d-none"></canvas>'+
+                        '<audio id="snapSound" src="audio/snap.wav" preload="auto"></audio>'+
+                    
+                        '<button>Sart Cam</button>'+
+                    
+                        '<div id="download">Download</div>'+
+                        '<div id="downloadImg">Save Img</div>'+
+                        '<div id="stop">stop</div>'+
+                    '</div>'+
+                '</div>'+
+            +'</div>';
+
+    $('body').append(html);
 });
 
 
