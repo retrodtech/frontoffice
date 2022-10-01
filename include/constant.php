@@ -6,6 +6,8 @@ define('QP_GENERATE', 'qpjamindars_');
 
 define('HOTEL_LOGIN', 'Retrod'); 
 
+define('KEY', 'Retrod@123');
+
 define('COMM_PRICE', '12');
 define('QPCOMM_PRICE', '11');
 
@@ -43,8 +45,6 @@ define('SERVER_HERO_IMG', SERVER_BOOKING_PATH.'/admin/img/hero/');
 
 
 
-
-
 define('FRONT_SITE','http://localhost/pms');
 
 define('SA_FRONT_SITE',FRONT_SITE.'/superadmin');
@@ -61,6 +61,8 @@ define('FRONT_SITE_IMG', FRONT_SITE.'/img/');
 define('WS_FRONT_SITE_IMG', FRONT_SITE.'/img/');
 
 define('FRONT_BOOKING_SITE', FRONT_SITE);
+
+define('GUEST_QR_CODE', 'https://retrod.in/guest-photo.php');
 
 
 

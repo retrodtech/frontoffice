@@ -64,7 +64,7 @@ if(isset($selectRoom)){
     }
 }
 
-mysqli_query($conDB, "insert into guest(hotelId,bookId,roomnum,owner,name,email,phone,country) values('$hotrlId','$lastId','$roomNum','1','$guestName','$guestEmail','$guestMobile','$guestCuntry')");
+mysqli_query($conDB, "insert into guest(hotelId,bookId,roomnum,serial,name,email,phone,country) values('$hotrlId','$lastId','$roomNum','1','$guestName','$guestEmail','$guestMobile','$guestCuntry')");
 $guestLastId = mysqli_insert_id($conDB);
 
 echo $page;

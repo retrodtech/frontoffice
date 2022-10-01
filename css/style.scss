@@ -71,6 +71,7 @@ body{
         height: 100%;
         background: #0000003b;
         transition: .4s ease-in-out;
+        user-select: none;
     }
 
     .close {
@@ -2241,5 +2242,66 @@ table {
     z-index: 35;
     .guestDocContent{
         max-width: none;
+        height: auto;
+    }
+    .webCamContent{
+        position: relative;
+        width: 100%;
+        height: 350px;
+        border: 2px solid #d9d9d9;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        #webcam,#canvas{
+            width: 50%;
+            height: 100%;
+            display: block !important;
+        }
+    }
+    .btnGroup{
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        padding: 10px 0;
+        button{
+            text-transform: capitalize;
+            padding: 5px 15px;
+            border: none;
+            margin-right: 25px;
+            border-radius: 4px;
+            user-select: none;
+            &.pinkBtn{
+                background: #ffc0cb;
+            }
+            &.greenBtn{
+                background: #008000;
+                color: #fff;
+            }
+            &.yellowBtn{
+                background: #ffa500;
+            }
+            &.redBtn{
+                background: #d32f2f;
+                color: #fff;
+            }
+            &.disabled{
+                opacity: .5;
+            }
+        }
+    }
+}
+.websiteGuestPhotoLinkCopyBtn{
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #dddddd;
+    color: black;
+    border: none;
+    transition: .2s ease-in-out;
+    &:hover{
+        background: #bdbdbd;
     }
 }

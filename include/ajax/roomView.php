@@ -382,7 +382,7 @@ if($type == 'showPopUpGuestDetail'){
             </div>
     ';
     
-        if($gusetArray['owner'] == 1){
+        if($gusetArray['serial'] == 1){
             $groupGuestName = ucfirst($gusetArray['name']);
             $goupGuestImg = checkImg($gusetArray['image'], 'guest');
         }
@@ -883,8 +883,6 @@ if($type == 'roomMoveBtnClickFormSubmit'){
     }
 
 }
-
-
 
 if($type == 'addGuestResurvationForm'){
     $html = '

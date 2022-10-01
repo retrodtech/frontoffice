@@ -721,7 +721,7 @@ if(isset($_POST['type'])){
                 
                 
 
-                mysqli_query($conDB, "insert into guest(hotelId,bookId,roomnum,owner,name,email,phone,company_name,comGst) values('$hotelId','$bookingId','$roomNumStr','1','$personName','$personEmail','$personPhoneNo','$companyName','$companyGst')");
+                mysqli_query($conDB, "insert into guest(hotelId,bookId,roomnum,serial,name,email,phone,company_name,comGst) values('$hotelId','$bookingId','$roomNumStr','1','$personName','$personEmail','$personPhoneNo','$companyName','$companyGst')");
                    
         
                 unset($_SESSION['room']);

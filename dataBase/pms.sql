@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 27, 2022 at 01:04 AM
+-- Generation Time: Oct 01, 2022 at 03:32 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -113,7 +113,7 @@ CREATE TABLE `booking` (
 --
 
 INSERT INTO `booking` (`id`, `hotelId`, `bookinId`, `reciptNo`, `userPay`, `checkIn`, `checkOut`, `nroom`, `couponCode`, `pickUp`, `payment_status`, `payment_id`, `bookingSource`, `bussinessSource`, `voucherNumber`, `comPlanId`, `comValue`, `coompanyId`, `paymethodId`, `paytypeId`, `addBy`, `add_on`, `status`, `deleteRec`) VALUES
-(1, '7ae36', 'jamindars_65655', '001', 1000, '2022-09-24', '2022-09-26', 0, '', NULL, '1', NULL, 1, 0, NULL, NULL, NULL, NULL, 6, NULL, '1', '2022-09-24 00:31:24', 1, 1);
+(1, '7ae36', 'jamindars_b8d39', '001', 2000, '2022-09-30', '2022-10-02', 0, '', NULL, '1', NULL, 1, 0, NULL, NULL, NULL, NULL, 6, NULL, '1', '2022-09-29 13:38:19', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -312,7 +312,7 @@ CREATE TABLE `guest` (
   `hotelId` int(11) NOT NULL,
   `bookId` int(11) DEFAULT NULL,
   `roomnum` int(11) NOT NULL,
-  `owner` varchar(11) NOT NULL DEFAULT '0',
+  `serial` varchar(11) NOT NULL DEFAULT '0',
   `name` varchar(250) NOT NULL,
   `email` varchar(250) NOT NULL,
   `phone` varchar(20) NOT NULL,
@@ -335,8 +335,10 @@ CREATE TABLE `guest` (
 -- Dumping data for table `guest`
 --
 
-INSERT INTO `guest` (`id`, `hotelId`, `bookId`, `roomnum`, `owner`, `name`, `email`, `phone`, `gender`, `company_name`, `comGst`, `country`, `state`, `city`, `zip`, `image`, `kyc_file`, `kyc_number`, `kyc_type`, `addBy`, `addOn`) VALUES
-(1, 7, 1, 201, '1', 'Avinab', '', '', NULL, NULL, NULL, '', '', '', 0, 'guest_880338.jpeg', '', '', NULL, '1', '2022-09-24 00:31:24');
+INSERT INTO `guest` (`id`, `hotelId`, `bookId`, `roomnum`, `serial`, `name`, `email`, `phone`, `gender`, `company_name`, `comGst`, `country`, `state`, `city`, `zip`, `image`, `kyc_file`, `kyc_number`, `kyc_type`, `addBy`, `addOn`) VALUES
+(1, 7, 1, 201, '1', 'Avinab', 'avinabgiri9439@gmail.com', '1234567890', NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, 'guest_137745.jpeg', NULL, NULL, NULL, '2022-09-29 13:38:19'),
+(4, 1, 1, 201, '2', 'Avinab2', 'avinabgiri9439@gmail.com', '123232', NULL, NULL, NULL, '', '', '', 0, '', 'guestP_225255.png', '121568', 1, '1', '2022-09-30 14:22:18'),
+(10, 1, 1, 201, '3', 'Avinab3', 'avinabgiri9439@gmail.com', '123232', NULL, NULL, NULL, '', '', '', 0, '', '', '121568', 2, '1', '2022-09-30 15:03:54');
 
 -- --------------------------------------------------------
 
@@ -1210,7 +1212,7 @@ ALTER TABLE `gallery`
 -- AUTO_INCREMENT for table `guest`
 --
 ALTER TABLE `guest`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `guestidproof`

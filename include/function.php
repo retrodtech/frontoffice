@@ -25,17 +25,19 @@ function safeData($data){
    return mysqli_real_escape_string($conDB, $data);
 }
 
-function str_openssl_dec($data,$iv){
+function str_openssl_dec($data,$iv=''){
     $key = KEY; 
     $cipher = "aes128"; 
     $option = 0; 
+    $iv = '1234567891234567';
     return openssl_decrypt($data, $cipher, $key, $option, $iv);
 }
 
-function str_openssl_enc($data,$iv){
+function str_openssl_enc($data,$iv=''){
     $key = KEY; 
     $cipher = "aes128"; 
     $option = 0; 
+    $iv = '1234567891234567';
     return openssl_encrypt($data, $cipher, $key, $option, $iv);
 }
 
@@ -328,7 +330,7 @@ function getGuestDetail($bId='',$group='',$gid=''){
         $query .= " and bookId = '$bId'";
     }
     if($group != ''){
-        $query .= " and owner = '1'";
+        $query .= " and serial = '$group'";
     }
     if($gid  != ''){
         $query .= " and id = '$gid'";

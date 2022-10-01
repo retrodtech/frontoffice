@@ -893,6 +893,7 @@ if($type == 'loadAddGuestReservationForm'){
     $bid = safeData($_POST['bid']);
     $rNum = safeData($_POST['rNum']);
     $gid = safeData($_POST['gid']);
+    $serial = safeData($_POST['serial']);
 
 
     $title = 'Add Guest';
@@ -910,10 +911,20 @@ if($type == 'loadAddGuestReservationForm'){
     $guestKycType = '';
     $guestImgHtml  = '';
     $guestPImgHtml = '';
-    
+    $guestSerialNum ='';
+
+    if($gid != ''){
+        $guestArray = getGuestDetail($bid,'',$gid)[0];
+    }
+
+    if($serial != ''){
+        $guestArray = getGuestDetail($bid,$serial)[0];
+    }
+    // pr($guestArray);
     if($gid != ''){
         $title = 'Edit Guest';
-        $guestArray = getGuestDetail('','',$gid)[0];
+        
+        
         $guestName = $guestArray['name'];
         $guestEmail = $guestArray['email'];
         $guestPhone = $guestArray['phone'];
@@ -925,13 +936,14 @@ if($type == 'loadAddGuestReservationForm'){
         $guestImage = $guestArray['image'];
         $guestKycFile = $guestArray['kyc_file'];
         $guestKycNumber = $guestArray['kyc_number'];
+        $guestSerialNum = $guestArray['serial'];
         $guestKycType = $guestArray['kyc_type'];
         $guestImgUrl = FRONT_SITE_IMG.'guest/'.$guestImage;
         $guestImgHtml = "<img width='80' src='$guestImgUrl' />";
 
         $guestPImgUrl = FRONT_SITE_IMG.'guestP/'.$guestKycFile;
 
-        $guestPImgHtml =  ($guestPImgUrl == '')?  "<img width='80' src='$guestPImgUrl' />" : '';
+        $guestPImgHtml =  ($guestKycFile == '')? '' : "<img width='80' src='$guestPImgUrl' />";
     }
 
     $idProofHtml = '';
@@ -1053,7 +1065,7 @@ if($type == 'loadAddGuestReservationForm'){
                             <div class="row">
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <div class="guestProofImgSec">
+                                        <div class="guestProofImgSec" data-bid="'.$bid.'" data-serial="'.$guestSerialNum.'">
                                             '.$guestPImgHtml.'
                                         </div>
                                     </div>
@@ -1100,7 +1112,7 @@ if($type == 'loadAddGuestReservationForm'){
 
 if($type == 'loadAddGuestReservationFormSubmit'){
 
-
+   
     $guestName = safeData($_POST['guestName']);
     $guestPhone = safeData($_POST['guestPhone']);
     $guestEmail = safeData($_POST['guestEmail']);
@@ -1117,8 +1129,9 @@ if($type == 'loadAddGuestReservationFormSubmit'){
     $roomnum = safeData($_POST['roomNum']);
     $addBy = 1;
 
-    $guestImg = $_FILES['guestImg'];
-    $kycImg = $_FILES['guestIdProofImg'];
+    isset($_FILES['guestImg']) ? $guestImg = $_FILES['guestImg'] : $guestImg['name'] = '';
+    isset($_FILES['guestIdProofImg']) ? $kycImg = $_FILES['guestIdProofImg'] : $kycImg['name'] = '';
+
 
     $guestImage = '';
     $guestKycFile = '';
@@ -1148,8 +1161,16 @@ if($type == 'loadAddGuestReservationFormSubmit'){
         $guestProofStrSql = ",kyc_file='$guestProofStr'"; 
     }
 
+    if(!empty(getGuestDetail($bookId))){
+        $lastKey = array_key_last(getGuestDetail($bookId));
+        $getSerialNo = getGuestDetail($bookId)[$lastKey]['serial'];
+        $serialNo = $getSerialNo + 1;
+    }else{
+        $serialNo = 1;
+    }
 
-    $sql = "insert into guest(hotelId,bookId,roomnum,name,email,phone,country,state,city,zip,image,kyc_file,kyc_number,kyc_type,addBy) values('$hotelId','$bookId','$roomnum','$guestName','$guestEmail','$guestPhone','$guestCountry','$guestIdState','$guestIdcity','$guestZip','$guestImgStr','$guestProofStr','$guestIdNumber','$guestIdType','$addBy')";
+
+    $sql = "insert into guest(hotelId,bookId,roomnum,name,email,phone,country,state,city,zip,image,kyc_file,kyc_number,kyc_type,addBy,serial) values('$hotelId','$bookId','$roomnum','$guestName','$guestEmail','$guestPhone','$guestCountry','$guestIdState','$guestIdcity','$guestZip','$guestImgStr','$guestProofStr','$guestIdNumber','$guestIdType','$addBy','$serialNo')";
 
     if($_POST['guestId'] != ''){
         
@@ -1183,7 +1204,7 @@ if($type == 'getRoomNumByRID'){
 
 if(isset($_POST['submitStatus'])){
     if($_POST['submitStatus'] == 'addReservationSubmit'){
-        pr($_POST);
+        
         
         $bookId = BOOK_GENERATE.unique_id(5);
         
@@ -1222,7 +1243,7 @@ if(isset($_POST['submitStatus'])){
     
         $lastId = mysqli_insert_id($conDB);
     
-        mysqli_query($conDB, "insert into guest(hotelId,bookId,owner,name,email,phone,country) values('$hotrlId','$lastId','1','$guestName','$guestEmail','$guestMobile','$guestCuntry')");
+        mysqli_query($conDB, "insert into guest(hotelId,bookId,serial,name,email,phone,country) values('$hotrlId','$lastId','1','$guestName','$guestEmail','$guestMobile','$guestCuntry')");
         $guestLastId = mysqli_insert_id($conDB);
         
         if(isset($selectRoom)){
@@ -1242,6 +1263,55 @@ if(isset($_POST['submitStatus'])){
             }
         }
     }
+}
+
+
+
+if($type == 'guestPhotoWithWebsite'){
+    $bid = $_POST['bid'];
+    $serial = $_POST['serial'];
+    $prameter = $bid.'-'.$serial;
+    $prmtr = str_openssl_enc($prameter);
+    $link = GUEST_QR_CODE.'?id='.$prmtr;
+    $url = 'https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl='.$link.'';
+    $html = '<div id="webCamPopupFixContent">
+                 <div class="closeGuestPopupFixContent"></div>
+                 <div class="guestDocContent" style="max-width: 500px;">
+                     <div class="closeContent">x</div>
+                     <div class="content">
+
+                         <div class="websiteContent">
+                             <div class="form-group" style="display: flex;align-items: center;justify-content: center;border: 1px solid #d2d6da;border-radius: .3rem;">
+                             <img src="'.$url.'">
+                             </div>
+                         </div>
+
+                     </div>
+                 </div>
+             </div>';
+
+    echo $html;
+}
+
+if($type == 'guestIdProofImgSubmit'){
+    $file = $_FILES['file'];
+    $post = $_POST;
+    $bid = $post['bid'];
+    $serial = $post['serial'];
+
+    $oldImg = getGuestDetail($bid, $serial)[0]['kyc_file'];
+    $guestImgStr = imgUploadWithData($file,'guestP',$oldImg)['img'];
+    
+    $sql = "update guest set kyc_file = '$guestImgStr' where bookId = '$bid' and serial = '$serial'";
+
+    if(mysqli_query($conDB, $sql)){
+        $data = [
+            'name'=>$guestImgStr,
+            'msg'=>'Successfull update guest image',
+        ];
+    };
+
+    echo json_encode($data);
 }
 
 
