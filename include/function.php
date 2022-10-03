@@ -322,7 +322,7 @@ function getBookingData($bid = '', $rNum = '', $checkIn='',$id='',$onlyCheckIn='
 //     return $data;
 // }
 
-function getGuestDetail($bId='',$group='',$gid=''){
+function getGuestDetail($bId='',$group='',$gid='', $rNum = ''){
     global $conDB;
     $data =  array();
     $query = "select * from guest where id != ''";
@@ -334,6 +334,9 @@ function getGuestDetail($bId='',$group='',$gid=''){
     }
     if($gid  != ''){
         $query .= " and id = '$gid'";
+    }
+    if($rNum != ''){
+        $query .= " and roomnum = '$rNum'";
     }
     $sql = mysqli_query($conDB, $query);
     if(mysqli_num_rows($sql) > 0){

@@ -214,16 +214,18 @@ function showGuestDetailPopUp($roomNum = '', $bid='',$id = '',$btn = '',$rTab = 
     });
 }
 
-function loadAddGuestReservationForm($bId = '', $target, $rNum='',$gid = '',$serial=''){
+function loadAddGuestReservationForm($bId = '', $target, $rNum='',$gid = '',$serial='', $gustImg = '', $guestProofImg = ''){
     var bid = $bId;
     var target = $target;
     var rNum = $rNum;
     var gid = $gid;
     var serial = $serial;
+    var gustImg = $gustImg;
+    var guestProofImg = $guestProofImg;
     $.ajax({
         url : webUrl+'include/ajax/resorvation.php',
         type: 'post',
-        data: {'type':'loadAddGuestReservationForm', bid:bid, rNum:rNum,gid:gid,serial:serial},
+        data: {'type':'loadAddGuestReservationForm', bid:bid, rNum:rNum,gid:gid,serial:serial,gustImg:gustImg,guestProofImg:guestProofImg},
         success: function (data) {
             $(target).html(data);
         }
@@ -440,6 +442,15 @@ $(document).on('submit','#reservationAddGuestForm',function(e){
     $('#addGestOnReservation').hide();
 });
 
+$(document).on('submit','#reservationUpdateGuestForm',function(e){
+    e.preventDefault();
+    loadAddGuestReservationUpdateFormSubmit();
+    var bid = $(this).data('bid');
+    
+    showGuestDetailPopUp('','',bid);
+    $('#addGestOnReservation').hide();
+});
+
 $('#addReservationBtn').click(function(){
     var page = $(this).data('page');
     
@@ -543,26 +554,26 @@ $(document).on('click', '#bookindDetail .closeContent', function(){
 
 // Reservation Btn Start
 
-function guestPopUpBox($bid = '', $serial = ''){
+function guestPopUpBox($bid = '', $serial = '', $gid = '', $type = ''){
     var bid = $bid;
     var serial = $serial;
-    var html = '<div id="guestPopupFixContent">'+
+    var type = $type;
+    var gid = $gid;
+    
+    var html = '<div id="guestPopupFixContent" class="'+type+'">'+
                 '<div class="closeGuestPopupFixContent"></div>'+
                 '<div class="guestDocContent">'+
                     '<div class="closeContent">x</div>'+
                     '<div class="content">'+
                         '<div class="dFlex jcsb">'+
-                            '<div id="guestPhotoWithWebCam" data-bid="'+bid+'" data-serial="'+serial+'" class="leftSide"><i class="fas fa-camera"></i> <span>Webcam</span></div>'+
-                            '<div id="guestPhotoWithWebsite" data-bid="'+bid+'" data-serial="'+serial+'" class="rightSide"><i class="fas fa-qrcode"></i> <span>QR Code</span></div>'+
+                            '<div id="guestPhotoWithWebCam" data-bid="'+bid+'" data-serial="'+serial+'" data-gid="'+gid+'" class="leftSide"><i class="fas fa-camera"></i> <span>Webcam</span></div>'+
+                            '<div id="guestPhotoWithWebsite" data-bid="'+bid+'" data-serial="'+serial+'" data-gid="'+gid+'" class="rightSide"><i class="fas fa-qrcode"></i> <span>QR Code</span></div>'+
                         '</div>'+
                         '<div class="dFlex">'+
-                            '<form id="guestIdProofImgForm">'+
-                                '<input type="hidden" name="type" value="guestIdProofImgSubmit"/>'+
                                 '<div class="inputField">'+
                                     '<label for="guestIdProofImg"><span>Choose Guest Proof Image</span></label>'+
-                                    '<input type="file" data-bid="'+bid+'" accept="image/gif, image/jpeg, image/png" data-serial="'+serial+'" name="guestIdProofImg" id="guestIdProofImg">'+
+                                    '<input type="file" data-bid="'+bid+'" data-gid="'+gid+'" accept="image/gif, image/jpeg, image/png" data-serial="'+serial+'" name="guestIdProofImg" id="guestIdProofImg">'+
                                 '</div>'+
-                            '</form>'
                         '</div>'+
                     '</div>'+
                 '</div>'+
@@ -800,6 +811,7 @@ $(document).on('click','#addGustBtn', function(){
     $('#addGestOnReservation').show();
      var bid = $(this).data('bookingid');
      var rNum = $(this).data('roomnum');
+    
     loadAddGuestReservationForm(bid,'#addGestOnReservation .content',rNum);
 
 });
@@ -824,8 +836,9 @@ $(document).on('click','#addGestOnReservation .closeGuestSec', function(){
 $(document).on('click', '.guestProofImgSec', function(){
     var bid = $(this).data('bid');
     var serial = $(this).data('serial');
+    var gid = $(this).data('gid');
     
-    var html = guestPopUpBox(bid, serial);
+    var html = guestPopUpBox(bid, serial,gid, 'proof');
     var s = document.createElement("script");
     s.type = "text/javascript";
     s.src = webcamScript;
@@ -833,7 +846,7 @@ $(document).on('click', '.guestProofImgSec', function(){
     $('body').append(html);
 });
 
-$(document).on('click', '#guestPhotoWithWebCam', function(){
+$(document).on('click', '.proof #guestPhotoWithWebCam', function(){
 
     var html = '<div id="webCamPopupFixContent">'+
                 '<div class="closeGuestPopupFixContent"></div>'+
@@ -859,7 +872,7 @@ $(document).on('click', '#guestPhotoWithWebCam', function(){
     $('body').append(html);
 });
 
-$(document).on('click', '#startWebCamBtn', function(){
+$(document).on('click', '.proof #startWebCamBtn', function(){
     const webcamElement = document.getElementById("webcam");
     const canvasElement = document.getElementById("canvas");
     const snapSoundElement = document.getElementById("snapSound");
@@ -879,7 +892,7 @@ $(document).on('click', '#startWebCamBtn', function(){
 
 });
 
-$(document).on('click', '#captureWebCamBtn', function(){
+$(document).on('click', '.proof #captureWebCamBtn', function(){
     if($(this).hasClass('disabled')){
         alert('Please start the webcam');
     }else{
@@ -898,7 +911,7 @@ $(document).on('click', '#captureWebCamBtn', function(){
     
 });
 
-$(document).on('click', '#SaveWebCamBtn', function(){
+$(document).on('click', '.proof #SaveWebCamBtn', function(){
     if($(this).hasClass('disabled')){
         alert('Please Capture Image.');
     }else{
@@ -923,7 +936,7 @@ $(document).on('click', '#SaveWebCamBtn', function(){
     
 });
 
-$(document).on('click', '#stopWebCamBtn', function(){
+$(document).on('click', '.proof #stopWebCamBtn', function(){
     if($(this).hasClass('disabled')){
         alert('Please start the webcam');
     }else{
@@ -966,19 +979,15 @@ $(document).on('click', '#guestPhotoWithWebsite', function(){
     $.ajax({
         url : webUrl+'include/ajax/resorvation.php',
         type: 'post',
-        data: { type: 'guestPhotoWithWebsite', bid:bid, serial:serial},
+        data: { type: 'guestPhotoProofeWithWebsite', bid:bid, serial:serial},
         success: function (data) {
             $('body').append(data);
         }
     });
-
-    
-
-    
     
 });
 
-$(document).on('change', '#guestIdProofImg', function(){
+$(document).on('change', '.proof #guestIdProofImg', function(){
 
     var property = document.getElementById('guestIdProofImg').files[0];
     var image_name = property.name;
@@ -991,12 +1000,13 @@ $(document).on('change', '#guestIdProofImg', function(){
     var form_data = new FormData();
     var bid = $(this).data('bid');
     var serial = $(this).data('serial');
+    var gid = $(this).data('gid');
     form_data.append("file", property);
     form_data.append("type", 'guestIdProofImgSubmit');
     form_data.append("bid", bid);
     form_data.append("serial", serial);
+    form_data.append("gid", gid);
 
-   
     $.ajax({
         url: url,
         method: 'POST',
@@ -1008,11 +1018,195 @@ $(document).on('change', '#guestIdProofImg', function(){
           $('#msg').html('Loading......');
         },
         success: function(data) {
+
+        $result = JSON.parse(data);
+        var guestPImg = $result.name;
+        $('#guestPopupFixContent').remove();
+        var guestImg = $('.guestImgSec img').data('img');
+        loadAddGuestReservationForm(bid,'#addGestOnReservation .content','',gid,serial,guestImg, guestPImg);
+
+        }
+    });
+    
+});
+
+$(document).on('click', '.guestImgSec', function(){
+    var bid = $(this).data('bid');
+    var serial = $(this).data('serial');
+    var gid = $(this).data('gid');
+  
+    var html = guestPopUpBox(bid, serial,gid, 'guestImg');
+    var s = document.createElement("script");
+    s.type = "text/javascript";
+    s.src = webcamScript;
+    $("head").append(s);
+    $('body').append(html);
+});
+
+$(document).on('click', '.guestImg #guestPhotoWithWebCam', function(){
+
+    var html = '<div id="webCamPopupFixContent">'+
+                '<div class="closeGuestPopupFixContent"></div>'+
+                '<div class="guestDocContent">'+
+                    '<div class="closeContent">x</div>'+
+                    '<div class="content">'+
+                        '<div class="webCamContent">'+
+                            '<video id="webcam" autoplay playsinline height="250px"></video>'+
+                            '<canvas id="canvas" class="d-none"></canvas>'+
+                            '<audio id="snapSound" src="audio/snap.wav" preload="auto"></audio>'+
+                        '</div>'+
+                    
+                        '<div class="btnGroup">'+
+                            '<button id="startWebCamBtn" class="pinkBtn">Sart Cam</button>'+
+                            '<button id="captureWebCamBtn" class="disabled greenBtn">Capture</button>'+
+                            '<button id="SaveWebCamBtn" class="disabled yellowBtn">Save Image</button>'+
+                            '<button id="stopWebCamBtn" class="disabled redBtn">stop</button>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+            +'</div>';
+
+    $('body').append(html);
+});
+
+$(document).on('click', '.guestImg #startWebCamBtn', function(){
+    const webcamElement = document.getElementById("webcam");
+    const canvasElement = document.getElementById("canvas");
+    const snapSoundElement = document.getElementById("snapSound");
+    const webcam = new Webcam(
+    webcamElement,
+    "user",
+    canvasElement,
+    snapSoundElement
+    );
+    $('#captureWebCamBtn').removeClass('disabled');
+    $('#stopWebCamBtn').removeClass('disabled');
+    webcam.start().then((result) => {
+              console.log("webcam started");
+            }).catch((err) => {
+              console.log(err);
+            });
+
+});
+
+$(document).on('click', '.guestImg #captureWebCamBtn', function(){
+    if($(this).hasClass('disabled')){
+        alert('Please start the webcam');
+    }else{
+        const webcamElement = document.getElementById("webcam");
+        const canvasElement = document.getElementById("canvas");
+        const snapSoundElement = document.getElementById("snapSound");
+        const webcam = new Webcam(
+            webcamElement,
+            "user",
+            canvasElement,
+            snapSoundElement
+            );
+            $('#SaveWebCamBtn').removeClass('disabled');
+        webcam.snap();
+    }
+    
+});
+
+$(document).on('click', '.guestImg #SaveWebCamBtn', function(){
+    if($(this).hasClass('disabled')){
+        alert('Please Capture Image.');
+    }else{
+        const webcamElement = document.getElementById("webcam");
+        const canvasElement = document.getElementById("canvas");
+        const snapSoundElement = document.getElementById("snapSound");
+        const webcam = new Webcam(
+            webcamElement,
+            "user",
+            canvasElement,
+            snapSoundElement
+            );
+        var canvas = document.getElementById("canvas");
+        image = canvas
+        .toDataURL("image/png", 1.0)
+        .replace("image/png", "image/octet-stream");
+        var link = document.createElement("a");
+        link.download = "my-image.png";
+        link.href = image;
+        link.click();
+    }
+    
+});
+
+$(document).on('click', '.guestImg #stopWebCamBtn', function(){
+    if($(this).hasClass('disabled')){
+        alert('Please start the webcam');
+    }else{
+        const webcamElement = document.getElementById("webcam");
+        const canvasElement = document.getElementById("canvas");
+        const snapSoundElement = document.getElementById("snapSound");
+        const webcam = new Webcam(
+                webcamElement,
+                "user",
+                canvasElement,
+                snapSoundElement
+            );
+        webcam.stop();
+    }
+    
+});
+
+$(document).on('click', '.guestImg #guestPhotoWithWebsite', function(){
+    var bid = $(this).data('bid');
+    var serial = $(this).data('serial');
+
+    $.ajax({
+        url : webUrl+'include/ajax/resorvation.php',
+        type: 'post',
+        data: { type: 'guestPhotoWithWebsite', bid:bid, serial:serial},
+        success: function (data) {
+            $('body').append(data);
+        }
+    });
+
+    
+
+    
+    
+});
+
+$(document).on('change', '.guestImg #guestIdProofImg', function(){
+
+    var property = document.getElementById('guestIdProofImg').files[0];
+    var image_name = property.name;
+    var image_extension = image_name.split('.').pop().toLowerCase();
+    var url = 'include/ajax/resorvation.php';
+    if (jQuery.inArray(image_extension, ['jpg', 'jpeg', 'png']) == -1) {
+        $('#msg').html('Invalid image file');
+        return false;
+    }
+    var form_data = new FormData();
+    var bid = $(this).data('bid');
+    var serial = $(this).data('serial');
+    var gid = $(this).data('gid');
+    form_data.append("file", property);
+    form_data.append("type", 'guestIdImgSubmit');
+    form_data.append("bid", bid);
+    form_data.append("serial", serial);
+    form_data.append("gid", gid);
+
+    $.ajax({
+        url: url,
+        method: 'POST',
+        data: form_data,
+        contentType: false,
+        cache: false,
+        processData: false,
+        beforeSend: function() {
+          $('#msg').html('Loading......');
+        },
+        success: function(data) {
+            $result = JSON.parse(data);
+            var guestImg = $result.name;
             $('#guestPopupFixContent').remove();
-            loadAddGuestReservationForm(bid,'#addGestOnReservation .content','','',serial);
-        //   const obj = JSON.parse(data);
-        //   $('.image').attr('src', 'upload/' + obj['data']);
-        //   $('#msg').html(obj['msg']);
+            var guestPImg = $('.guestProofImgSec img').data('img');
+            loadAddGuestReservationForm(bid,'#addGestOnReservation .content','',gid,serial,guestImg,guestPImg);
+            
         }
     });
     

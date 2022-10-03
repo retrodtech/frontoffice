@@ -1796,6 +1796,7 @@ table .tableLine td, table .tableLine th {
   height: 160px;
   overflow: hidden;
   border: 1px dashed black;
+  cursor: pointer;
 }
 .guestImgSec label, .guestProofImgSec label {
   position: absolute;
@@ -1826,7 +1827,7 @@ table .tableLine td, table .tableLine th {
      object-position: top;
 }
 
-#reservationAddGuestForm .card-head {
+#reservationAddGuestForm .card-head, #reservationUpdateGuestForm .card-head {
   display: flex;
   justify-content: space-between;
   position: fixed;
@@ -1839,7 +1840,7 @@ table .tableLine td, table .tableLine th {
   align-items: center;
   padding: 0 13px;
 }
-#reservationAddGuestForm .card-head a {
+#reservationAddGuestForm .card-head a, #reservationUpdateGuestForm .card-head a {
   width: 30px;
   height: 30px;
   background: transparent;
@@ -1847,10 +1848,10 @@ table .tableLine td, table .tableLine th {
   justify-content: center;
   align-items: center;
 }
-#reservationAddGuestForm .card-head a:hover {
+#reservationAddGuestForm .card-head a:hover, #reservationUpdateGuestForm .card-head a:hover {
   background: #f2f2f2;
 }
-#reservationAddGuestForm .card-body {
+#reservationAddGuestForm .card-body, #reservationUpdateGuestForm .card-body {
   margin-top: 35px;
   position: relative;
   overflow: auto;
@@ -2079,6 +2080,10 @@ table .tableLine td, table .tableLine th {
   transform: translate(50%, -50%);
   border-radius: 50%;
   cursor: pointer;
+}
+#guestPopupFixContent .guestDocContent .websiteContent, #webCamPopupFixContent .guestDocContent .websiteContent {
+  position: relative;
+  height: 250px;
 }
 
 #webCamPopupFixContent {

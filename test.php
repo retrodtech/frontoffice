@@ -4,7 +4,7 @@ include (SERVER_INCLUDE_PATH.'db.php');
 include (SERVER_INCLUDE_PATH.'function.php');
 $_SESSION['ADMIN_ID']=1;
 
-pr(getGuestDetail(1, 2))
+pr(getGuestDetail(2, '', '', '101'))
 
 
 
