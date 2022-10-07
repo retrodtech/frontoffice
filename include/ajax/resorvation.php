@@ -22,19 +22,19 @@ if($type == 'load_resorvation'){
 
 
     if($rTabType == 'reservation'){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where bookingdetail.checkinstatus = '1' and booking.payment_status = '1'";
+        $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where bookingdetail.checkinstatus = '1' and booking.payment_status = '1'";
     }
 
     if($rTabType == 'arrives'){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.checkIn = '$currentDate' and booking.payment_status = '1'";
+        $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where booking.checkIn = '$currentDate' and booking.payment_status = '1'";
     }
 
     if($rTabType == 'failed'){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.payment_status = '2'";
+        $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where booking.payment_status = '2'";
     }
 
     if($rTabType == 'inHouse'){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where bookingdetail.checkinstatus = '2' and payment_status = '1'";
+        $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where bookingdetail.checkinstatus = '2' and payment_status = '1'";
     }
 
     if($search != ''){        
@@ -72,7 +72,7 @@ if($type == 'load_resorvation'){
     if(mysqli_num_rows($query) > 0){
         while($row = mysqli_fetch_assoc($query)){
           $html .= '<div class="col-md-3 col-sm-6 col-xs-12">';
-            
+        
             $si ++;
 
             $bid = $row['id'];
@@ -91,8 +91,11 @@ if($type == 'load_resorvation'){
             $payment_id = $row['payment_id'];
             $bookingSource = $row['bookingSource'];
             $add_on = $row['add_on'];
-
-            
+            $bookingDetailMainId = '';
+            if(isset($row['bookingDetailMainId'])){
+                $bookingDetailMainId = $row['bookingDetailMainId'];
+            }
+                        
 
             $addBy = explode(',',$row['addBy']);
             $maxAddBy = count($addBy);
@@ -105,7 +108,7 @@ if($type == 'load_resorvation'){
             $nChild = getBookingDetailById($bid)['totalChild'];
            
             
-            $html .= reservationContent($bookinId,$reciptNo,$gname,$checkIn,$checkOut,$add_on,$nAdult,$nChild,$grossCharge,$userPay,'yes',$rTabType);
+            $html .= reservationContent($bookinId,$reciptNo,$gname,$checkIn,$checkOut,$add_on,$nAdult,$nChild,$grossCharge,$userPay,'yes',$rTabType,$bookingDetailMainId);
 
             $html .= '</div>';
 
@@ -355,6 +358,13 @@ if($type == 'load_add_resorvation'){
         $paymentMethodHtml .= "<option value='$paymentId'>$paymentName</option>";
     }
 
+    $couponCodeHtml = "<option value='0'>No Coupon</option>";
+    foreach(getCouponList(1,1) as $couponList){
+        $code = $couponList['coupon_code'];
+        $value = $couponList['coupon_value'];
+        $couponCodeHtml .= "<option value='$code'>$code</option>";
+    }
+
     $html ='
             <form action="" method="post" id="addReservationForm">
                 <div class="row">
@@ -424,7 +434,9 @@ if($type == 'load_add_resorvation'){
                                                     <label for="couponCode">Coupon Code</label>
                                                     
                                                     <div class="couponContent">
-                                                        <input id="couponCode" name="couponCode" class="form-control" placeholder="Coupon Code">
+                                                        <select name="couponCode" class="form-control" id="couponCode">
+                                                        '.$couponCodeHtml.'
+                                                        </select>
                                                     </div>
 
                                                 </div>
@@ -538,13 +550,15 @@ if($type == 'load_add_resorvation'){
                                             
 
                                         </div>
-                                        <br/>
+                                        <br/>'.
 
-                                        <div class="row">
-                                            <div class="col-md-2">
-                                                <a href="" class="btn btn-outline-primary" id="roomDetailIncBtnId">Add Room</a>
-                                            </div>
-                                        </div>
+                                        // <div class="row">
+                                        //     <div class="col-md-2">
+                                        //         <a href="" class="btn btn-outline-primary" id="roomDetailIncBtnId">Add Room</a>
+                                        //     </div>
+                                        // </div>
+                                        
+                                        '
 
                                         <br/>
                                         <hr/>
@@ -921,7 +935,8 @@ if($type == 'loadAddGuestReservationForm'){
     $actionBtn = 'reservationAddGuestForm';
     if($gid != '' && !empty(getGuestDetail($bid,'',$gid))){
         $guestArray = getGuestDetail($bid,'',$gid)[0];
-        $actionBtn = 'reservationUpdateGuestForm';
+        $actionBtn = 'reservationAddGuestForm';
+        // $actionBtn = 'reservationUpdateGuestForm';
     }
 
     if($serial != '' && !empty(getGuestDetail($bid,$serial))){
@@ -964,7 +979,7 @@ if($type == 'loadAddGuestReservationForm'){
     if(!empty($guestArray) || $gustImg != '' || $guestProofImg != ''){
 
         ($gustImg == '') ? '' : $guestImage = $gustImg;
-        ($guestKycFile == '') ? '' : $guestKycFile = $guestProofImg;
+        ($guestProofImg == '') ? '' : $guestKycFile = $guestProofImg;
 
         $guestImgUrl = FRONT_SITE_IMG.'guest/'.$guestImage;
         $guestPImgUrl = FRONT_SITE_IMG.'guestP/'.$guestKycFile;
@@ -1141,6 +1156,19 @@ if($type == 'loadAddGuestReservationFormSubmit'){
     $hotelId = $_SESSION['ADMIN_ID'];
     $bookId = safeData($_POST['bookingId']);
     $roomnum = safeData($_POST['roomNum']);
+
+    $guestImgSec ='';
+    $guestProofImgSec = '';
+
+    if(isset($_POST['guestImgSec'])){
+        $guestImgSec = safeData($_POST['guestImgSec']);
+    }
+    if(isset($_POST['guestProofImgSec'])){
+        $guestProofImgSec = safeData($_POST['guestProofImgSec']);
+    }
+    
+    echo $guestImgSec;
+
     $addBy = 1;
 
     isset($_FILES['guestImg']) ? $guestImg = $_FILES['guestImg'] : $guestImg['name'] = '';
@@ -1184,7 +1212,7 @@ if($type == 'loadAddGuestReservationFormSubmit'){
     }
 
 
-    $sql = "insert into guest(hotelId,bookId,roomnum,name,email,phone,country,state,city,zip,image,kyc_file,kyc_number,kyc_type,addBy,serial) values('$hotelId','$bookId','$roomnum','$guestName','$guestEmail','$guestPhone','$guestCountry','$guestIdState','$guestIdcity','$guestZip','$guestImgStr','$guestProofStr','$guestIdNumber','$guestIdType','$addBy','$serialNo')";
+    $sql = "insert into guest(hotelId,bookId,roomnum,name,email,phone,country,state,city,zip,image,kyc_file,kyc_number,kyc_type,addBy,serial) values('$hotelId','$bookId','$roomnum','$guestName','$guestEmail','$guestPhone','$guestCountry','$guestIdState','$guestIdcity','$guestZip','$guestImgSec','$guestProofImgSec','$guestIdNumber','$guestIdType','$addBy','$serialNo')";
 
     if($_POST['guestId'] != ''){
         
@@ -1310,19 +1338,23 @@ if($type == 'guestIdProofImgSubmit'){
     $file = $_FILES['file'];
     $post = $_POST;
     $bid = $post['bid'];
-    $serial = $post['serial'];
-
-    $oldImg = getGuestDetail($bid, $serial)[0]['kyc_file'];
-    $guestImgStr = imgUploadWithData($file,'guestP',$oldImg)['img'];
+    $gid = $post['gid'];
     
-    $sql = "update guest set kyc_file = '$guestImgStr' where bookId = '$bid' and serial = '$serial'";
+    (getGuestDetail($bid,'', $gid)[0]['kyc_file'] == '') ? $oldImg = getGuestDetail($bid,'', $gid)[0]['kyc_file'] : $oldImg ='';
 
-    if(mysqli_query($conDB, $sql)){
-        $data = [
-            'name'=>$guestImgStr,
-            'msg'=>'Successfull update guest image',
-        ];
-    };
+
+    (file_exists(SERVER_IMG.'/guestP/'.$oldImg) == 1) ? $guestImgStr = imgUploadWithData($file,'guestP',$oldImg)['img'] : $guestImgStr = imgUploadWithData($file,'guestP')['img'];
+    
+    if($gid != ''){
+        $sql = "update guest set kyc_file = '$guestImgStr' where id = '$gid' ";
+        mysqli_query($conDB, $sql);
+    }   
+
+
+    $data = [
+        'name'=>$guestImgStr,
+        'msg'=>'Successfull update guest image',
+    ];
 
     echo json_encode($data);
 }
@@ -1359,21 +1391,22 @@ if($type == 'guestIdImgSubmit'){
     $file = $_FILES['file'];
     $post = $_POST;
     $bid = $post['bid'];
-    $serial = $post['serial'];
+    $gid = $post['gid'];
 
-    (getGuestDetail($bid, $serial)[0]['image'] == '')? $oldImg = getGuestDetail($bid, $serial)[0]['image'] : $oldImg ='';
-    
-    $guestImgStr = imgUploadWithData($file,'guest',$oldImg)['img'];
-    
-    $sql = "update guest set image = '$guestImgStr' where bookId = '$bid' and serial = '$serial'";
+    (getGuestDetail($bid,'', $gid)[0]['image'] == '') ? $oldImg = getGuestDetail($bid,'', $gid)[0]['image'] : $oldImg ='';
     
 
-    if(mysqli_query($conDB, $sql)){
-        $data = [
-            'name'=>$guestImgStr,
-            'msg'=>'Successfull update guest image',
-        ];
-    };
+    (file_exists(SERVER_IMG.'/guest/'.$oldImg) == 1) ? $guestImgStr = imgUploadWithData($file,'guest',$oldImg)['img'] : $guestImgStr = imgUploadWithData($file,'guest')['img'];
+    
+    if($gid != ''){
+        $sql = "update guest set image = '$guestImgStr' where id = '$gid' ";
+        mysqli_query($conDB, $sql);
+    }
+
+    $data = [
+        'name'=>$guestImgStr,
+        'msg'=>'Successfull update guest image',
+    ];
 
     echo json_encode($data);
 }

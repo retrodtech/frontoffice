@@ -3,7 +3,7 @@
 include ('../constant.php');
 include (SERVER_INCLUDE_PATH.'db.php');
 include (SERVER_INCLUDE_PATH.'function.php');
-
+// pr($_POST);
 $page = $_POST['page'];
 
 $bookId = BOOK_GENERATE.unique_id(5);

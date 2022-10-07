@@ -111,6 +111,22 @@ function unique_id($l = 8){
 
 }
 
+function printBooingId($bid, $obid = '', $or = ''){
+    $reciptNum = getBookingData($bid)[0]['reciptNo'];
+    $bookingId = getBookingData($bid)[0]['bookinId'];
+
+    $data = $bookingId.' / '.$reciptNum;
+    if($obid != ''){
+        $data = $bookingId;
+    }
+
+    if($or != ''){
+        $data = $reciptNum;
+    }
+
+    return $data;
+}
+
 function checkImg($path,$demo=''){
 
     $data = $path; 
@@ -270,6 +286,52 @@ function getGuestIdProofData($status='',$gip=''){
     return $data;
 }
 
+
+function getCouponList($status='',$hid = '', $cid =''){
+    global $conDB; 
+    global $hotelId;
+    if($status != ''){
+        $sql = "select * from couponcode where status = '1'";
+    }else{
+        $sql = "select * from couponcode where id != ''";
+    }
+
+    if($cid != ''){
+        $sql .= " and id = '$cid'";
+    }
+
+    if($hid != ''){
+        $sql .= " and hotelId = '$hotelId'";
+    }
+
+    $query = mysqli_query($conDB, $sql);
+    $data = array();
+    if(mysqli_num_rows($query) > 0){
+        while($row = mysqli_fetch_assoc($query)){
+            $data[] = $row;
+        }
+    }
+
+    return $data;
+}
+
+function getGstPriceByBid($bid,$rNum,$bdid){
+    $bookingDetailArry = getBookingData($bid, $rNum, '', $bdid)[0];
+    $rid = $bookingDetailArry['roomId'];
+    $rdid = $bookingDetailArry['roomDId'];
+    $adult = $bookingDetailArry['adult'];
+    $child = $bookingDetailArry['child'];
+    $checkIn = $bookingDetailArry['checkIn'];
+    $checkOut = $bookingDetailArry['checkOut'];
+    $couponCode = $bookingDetailArry['couponCode'];
+    $nNight = getNightByTwoDates($checkIn, $checkOut);
+    $roomPice = getSingleRoomPrice($rid, $rdid, $adult, $child ,$checkIn, $nNight,$couponCode='');
+    // $gstPer = getGSTPercentage();
+    // $gstPer = 12;
+    // $GstPrice = getGSTPrice($roomPice);
+    return $roomPice;
+}
+
 // Booking Detail Start
 
 function getBookingIdByBVID($bvid){
@@ -349,12 +411,16 @@ function getGuestDetail($bId='',$group='',$gid='', $rNum = ''){
 
 function getBookingDetailById($bid,$roomNo=''){
     global $conDB;
-
-    // $checkIn = getBookingData($bid)[0]['checkIn'];
-    // $checkOut = getBookingData($bid)[0]['checkOut'];
+    
 
     $checkIn = getBookingData($bid)[0]['checkIn'];
     $checkOut = getBookingData($bid)[0]['checkOut'];
+    $userPay = getBookingData($bid)[0]['userPay'];
+    $paymentStatus = getBookingData($bid)[0]['payment_status'];
+    $paymentId = getBookingData($bid)[0]['payment_id'];
+    $addOn = getBookingData($bid)[0]['add_on'];
+    $couponCode = getBookingData($bid)[0]['couponCode'];
+    $pickUp = getBookingData($bid)[0]['pickUp'];
     $night = getNightByTwoDates($checkIn, $checkOut);
 
     $guestRow = array();
@@ -414,8 +480,16 @@ function getBookingDetailById($bid,$roomNo=''){
         'totalAdult'=> $totalAdult,
         'totalChild'=> $totalChild,
         'night'=> $night,
+        'checkIn'=> $checkIn,
+        'checkOut'=> $checkOut,
+        'couponCode'=> $couponCode,
+        'pickUp'=> $pickUp,
+        'paymentStatus'=> $paymentStatus,
+        'paymentId'=> $paymentId,
+        'userPay'=> $userPay,
         'subTotalPrice'=>$subTotalPrice,
-        'totalPrice'=>$totalPrice
+        'totalPrice'=>$totalPrice,
+        'addOn'=>$addOn,
     ];
 
     return $data;
@@ -1023,7 +1097,7 @@ function getPageName($page){
 
 // Reservation
 
-function reservationContent($bid,$reciptNo,$gname,$checkIn,$checkOut,$bDate,$nAdult,$nChild,$total,$paid,$preview='',$rTab = ''){
+function reservationContent($bid,$reciptNo,$gname,$checkIn,$checkOut,$bDate,$nAdult,$nChild,$total,$paid,$preview='',$rTab = '',$BDId){
     if($checkIn == ''){
         $checkIn = date('Y-m-d');
     }
@@ -1079,7 +1153,7 @@ function reservationContent($bid,$reciptNo,$gname,$checkIn,$checkOut,$bDate,$nAd
 
 
     $html = "
-            <div class='reservationContent' data-bookingId='$bid' data-reservationTab='$rTab'>
+            <div class='reservationContent' data-bookingId='$bid' data-reservationTab='$rTab' data-bdid='$BDId'>
                             
                 <div class='head'>
                     <div class='leftSide'>
@@ -1739,6 +1813,464 @@ function buildSGLView($rid,$rdid){
     }
 
     return $data;
+}
+
+
+function hotelPolicyEmail(){
+    $checkInTime = hotelDetail()["checkIn"];
+    $checkOutTime = hotelDetail()['checkOut'];
+    $html = "
+    <h4 style='background: #cce6cc;padding: 5px 10px;'>IMPORTANT INFORMATION</h4>
+    <table style='width:100%; '>
+    <tr style='vertical-align: top;'>
+        <td>                    
+            <h5>POLICY</h5>
+            <ul style='list-style: circle;'>
+                <li>
+                    <span>Check In </span><span>$checkInTime</span>
+                </li>
+                <li>
+                    <span>Check Out </span><span>$checkOutTime</span>
+                </li>
+            </ul>
+            
+        </td>
+    </tr>
+    </table>
+
+    <table style='width:100%; '>
+
+        <tr>
+            <td>
+                        
+                <h5>CANCELLATION POLICY</h5>
+                <ul>
+                    <li>
+                        <p>Visit our website <a href=''>Click Here</a>.</p>
+                    </li>
+                </ul>
+                
+            </td>
+        </tr>
+
+    </table>
+
+    <table style='width:100%; '>
+        <tr>
+            <td>
+                
+                <h4>ID proof</h4>
+                <ul style='list-style: circle;'>
+                    <li>
+                        <span>Voter ID, </span> <span>Aadhar card, </span> <span>DL, </span> <span>Pass Port</span> 
+                    </li>
+                    <li>
+                        <span>Pan Card * Not Acceptable</span>
+                    </li>
+                </ul>
+                
+            </td>
+        </tr>
+    </table>
+    ";
+
+    return $html;
+}
+
+function getBookingIdById($bid){
+    global $conDB;
+    $sql = mysqli_fetch_assoc(mysqli_query($conDB, "select bookinId from booking where id = '$bid'"));
+    return $sql['bookinId'];
+}
+
+function getRoomNameById($rid){
+    global $conDB;
+    $sql = mysqli_fetch_assoc(mysqli_query($conDB, "select header from room where id = '$rid'"));
+    return $sql['header'];
+}
+function getRatePlanByRoomDetailId($rdid){
+    global $conDB;
+    $sql = mysqli_query($conDB, "select * from roomratetype where id  = '$rdid'");
+    $row = mysqli_fetch_assoc($sql);
+    return $row['title'];
+}
+function getOrderDetailByOrderId($oid){
+    global $conDB;
+    $sql = mysqli_query($conDB, "select * from booking where id= '$oid'");
+    $row = mysqli_fetch_assoc($sql);
+    return $row;
+}
+
+function getOrderDetailArrByOrderId($oid){
+    global $conDB;
+    $data=array();
+    $sql = "select booking.*, bookingdetail.*, bookingdetail.id as bookindetailId from booking,bookingdetail where booking.id = '$oid' and booking.id = bookingdetail.bid";
+    $query = mysqli_query($conDB,$sql);
+    while($row = mysqli_fetch_assoc($query)){
+        $data[]= $row;
+    }
+    return $data;
+}
+
+function orderEmail($oid){
+
+    $invoiceNo = printBooingId($oid);
+    $name = getGuestDetail($oid)[0]['name'];
+    $email = getGuestDetail($oid)[0]['email'];
+    $phone = getGuestDetail($oid)[0]['phone'];
+    $company_name = getGuestDetail($oid)[0]['company_name'];
+    $gst = getGuestDetail($oid)[0]['comGst'];
+    $bid = $oid;
+    $userPay = getBookingDetailById($oid)['userPay'];
+    
+    
+    $price = getBookingDetailById($oid)['userPay'];
+    $grossCharge = getBookingDetailById($oid)['totalPrice'];
+    $payment_status = getBookingDetailById($oid)['paymentStatus'];
+    $payment_id = getBookingDetailById($oid)['paymentId'];
+    $add_on = date('d-m-Y g:i A', strtotime(getBookingDetailById($oid)['addOn']));
+    
+
+    
+
+    $couponCode = getBookingDetailById($oid)['couponCode'];
+    $pickUp = getBookingDetailById($oid)['pickUp'];
+    $pickupHtml = '';
+
+    $sitename = SITE_NAME;
+    $bookingSite = FRONT_BOOKING_SITE;
+    
+    $img = FRONT_SITE_IMG.hotelDetail()['logo'];
+    
+    
+    $priceHtml = '';
+    $couponCodeHtml = '';
+    $buttomBar = '';
+
+
+
+    if($payment_status == 'pending'){
+        $priceHtml = '<div style="background-color:#ffffff;margin-bottom:6px;padding:20px;max-width:550px;text-align:center;margin-left:auto;margin-right:auto;border-top-width:medium;border-top-style:solid;border-top-color:#b51d0e">
+                        <p
+                            style="font-family:Trebuchet MS;font-style:normal;font-size:18px;line-height:25px;text-align:center;color:#515978">
+                            <strong>₹ '. $price.'</strong>
+                            amount has been failed payment on <br/>
+                            '.$add_on.'
+                        </p>
+                    </div>';
+
+        if($partial == 'Yes'){
+            $priceHtml = '<div style="background-color:#ffffff;margin-bottom:6px;padding:20px;max-width:550px;text-align:center;margin-left:auto;margin-right:auto;border-top-width:medium;border-top-style:solid;border-top-color:#b51d0e">
+                        <p style="font-family:Trebuchet MS;font-style:normal;font-size:18px;line-height:25px;text-align:center;color:#515978">
+                            50%, <strong>₹ '. $price.'</strong>
+                            amount has been Failed Payment on <br/>
+                            '.$add_on.'
+                        </p>
+                    </div>';
+            
+        }
+    }
+    
+    
+    
+    if($payment_status == 'complete'){
+        
+        $priceHtml = '<div style="background-color:#ffffff;margin-bottom:6px;padding:20px;max-width:550px;text-align:center;margin-left:auto;margin-right:auto;border-top-width:medium;border-top-style:solid;border-top-color:#0eb550">
+                        <p style="font-family:Trebuchet MS;font-style:normal;font-size:18px;line-height:25px;text-align:center;color:#515978">
+                            <strong>₹ '. $price.'</strong>
+                            amount has been Successful Payment <br/> with Payment ID is <b>'.$payment_id.'</b> on <br/>
+                            '.$add_on.'
+                        </p>
+                    </div>';
+        
+        
+        
+            if($grossCharge > $price){
+                $userPercentage = getPercentageValueByAmount($userPay, $grossCharge);
+                $payAtHotel = number_format($grossCharge - $userPay);
+                $buttomBar = '
+                                <tr>
+                                    <td style="width:50%;text-align:left;padding-left:8px;color:#7b8199">'.$userPercentage.'% Paid</td>
+                                    <td style="width:50%;text-align:right;padding-left:8px;color:#7b8199">₹ '.$price.'</td>
+                                </tr>
+                                ';
+                                
+                $priceHtml = '<div style="background-color:#ffffff;margin-bottom:6px;padding:20px;max-width:550px;text-align:center;margin-left:auto;margin-right:auto;border-top-width:medium;border-top-style:solid;border-top-color:#0eb550">
+                                    <p style="font-family:Trebuchet MS;font-style:normal;font-size:18px;line-height:25px;text-align:center;color:#515978">
+                                        '.$userPercentage.'%, <strong>₹ '. $price.'</strong>
+                                        amount has been Successful Payment <br/> with Payment ID is <b>'.$payment_id.'</b> <br/>
+                                        on  '.$add_on.' and <br/> Pay at Hotel Rs <strong>'.$payAtHotel.'</strong>.
+                                    </p>
+                                </div>';
+            }
+    }
+
+
+
+    
+
+    $html = '
+        
+            <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>'.$sitename.' || Payment Invoice</title>
+                </head>
+                <body>
+                    <blockquote style="font-family:Trebuchet MS">
+                        <div style="background-image:linear-gradient(to bottom,#e54b76 0%,#cc1e4f 200px,#f8f9f9 200px,#f8f9f9 90%);height:100%">
+
+                            <div style="text-align:center;margin-bottom:30px; max-width:588px;margin:auto;">
+                                <table style="width:100%; max-width:600px; min-height:90px">
+                                    <tr>
+                                    <td align="left"><img width="80px" src="'.$img.'"></td>
+                                    <td align="right"><strong style="color:#000">Invoice #'.$invoiceNo.'</strong></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            ​
+                            <div style="max-width:588px;margin:auto">
+
+                                <div style="max-width:588px;margin:auto">
+                                    <div
+                                    style="background-color:#ffffff;margin-bottom:20px;padding:20px;max-width:550px;text-align:center;margin-left:auto;margin-right:auto">
+                                    <table style="width:100%; margin-bottom: 35px; max-width:600px;">
+                                        <tr>
+                                        <td align="left" style="width:10%">
+                                            <div> Hello <b>'.$name.'</b>,</div>
+                                            <div> '.$email.'</div>
+                                            <div> '.$company_name.'</div>
+                                            <div> '.$gst.'</div>
+                                        </td>
+
+                                        <td align="right" style="width:70%">
+                                            <div><b>'.hotelDetail()['name'].'</b></div>
+                                            <div>'.hotelDetail()['pincode'].'</div>
+                                            <div>'.ucfirst(hotelDetail()['district']).'</div>
+                                            <div>'.ucfirst(hotelDetail()['address']).'</div>
+                                            <div>GST:- '.hotelDetail()['gst'].'</div>
+                                        </td>
+                                        </tr>
+                                    </table>
+                                    </div>
+                                    '.$priceHtml.'
+                                </div>
+                                ​
+
+                                <div style="max-width:588px;margin:auto">
+                                    <div style="background-color:#ffffff;padding:20px 20px 2px 20px;max-width:550px;margin-left:auto;margin-right:auto;margin-top:15px;font-size:15px">
+                                        <table style="background-color:white;width:100%;margin-bottom: 20px;">
+                                            <tr>
+                                                <td style="text-align:left;font-size:17px;padding:15px 0px;border-bottom:1px solid #ebedf2;margin-bottom:20px">Booking details</td>
+                                                <td style="text-align:right;font-size:17px;padding:15px 0px;border-bottom:1px solid #ebedf2;margin-bottom:20px;color:#528ff0;">Booking guide</td>
+                                            </tr>
+                                        </table>';
+
+                                    foreach(getOrderDetailArrByOrderId($oid) as $bidrow){
+                                      
+                                        $checkIn = $bidrow['checkIn'];
+                                        $checkOut = $bidrow['checkOut'];
+                                        $roomId = $bidrow['roomId'];
+                                        $room_detail_id = $bidrow['roomDId'];
+
+                                        $adult = $bidrow['adult'];
+                                        $child = $bidrow['child'];
+
+                                        $room_name = getRoomNameById($roomId);
+                                        $rate_plane = getRatePlanByRoomDetailId($room_detail_id);
+
+                                        $checkDate = getDateFormatByTwoDate($checkIn,$checkOut);
+
+                                        $html .= '<table style="background-color:white;width:100%">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td style="color:#7b8199;text-align:left;padding:0px 0px 20px 10px">
+                                                            <b>'.$room_name.'</b>
+                                                            </td>
+                                                            <td style="text-align:right;padding:0px 10px 20px 0px">
+                                                            <small>'.$checkDate.'</small>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="color:#7b8199;text-align:left;padding:0px 0px 20px 10px">
+                                                                <table>
+                                                                    <tr>
+                                                                        <td><strong>Adult</strong>: '.$adult.'</td>
+                                                                        <td><strong>Child</strong>: '.$child.'</td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                            <td style="text-align:right;padding:0px 10px 20px 0px">
+                                                                <strong>'.$rate_plane.'</strong>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                <p style="font-size:18px;line-height:25px;text-align:center;color:#515978;padding:20px 0px 0px 0px;border-top-style:solid;border-top-color:#ebedf2;border-top-width:2px;background-color:white">
+                                                </p>' ;
+                                    };
+
+                                    
+
+                            $html .= '
+
+                                    </div>
+                                </div>
+
+
+                                <div style="max-width:588px;margin:auto">
+                                    <div
+                                    style="background-color:#ffffff;padding:20px 20px 2px 20px;max-width:550px;margin-left:auto;margin-right:auto;margin-top:15px;font-size:15px">
+                                    <p
+                                        style="font-family:Trebuchet MS;font-style:normal;font-size:18px;line-height:25px;color:#515978;text-align:center;margin-top:0px;border-bottom-style:solid;border-bottom-color:#ebedf2;border-bottom-width:2px;padding-bottom:18px">
+                                        Breakup for Payout
+                                    </p>
+                                    <table style="background-color:white;width:100%;border-spacing:0px">
+                                        <thead style="color:#7b8199">
+                                        <tr>
+                                            <th style="padding:0px 0px 20px 0px;text-align:start;border-bottom:1px solid #ebedf2">
+                                            Room Name
+                                            </th>
+                                            <th style="padding:0px 0px 20px 0px;text-align:center;border-bottom:1px solid #ebedf2">
+                                            Amount
+                                            </th>
+                                            <th style="padding:0px 0px 20px 0px;text-align:center;border-bottom:1px solid #ebedf2">
+                                            Adult
+                                            </th>
+                                            <th style="padding:0px 10px 20px 0px;text-align:center;border-bottom:1px solid #ebedf2">
+                                            Child
+                                            </th>
+                                            <th style="padding:0px 10px 20px 0px;text-align:center;border-bottom:1px solid #ebedf2">
+                                            GST
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>';
+                                        $total_price = 0;
+                                        $gst_price = 0;
+                                        $couponBalance =0;
+                                        foreach(getOrderDetailArrByOrderId($oid) as $bidrow){
+                                            // pr($bidrow);
+                                            $rid = $bidrow['roomId'];
+                                            $rdid = $bidrow['roomDId'];
+
+                                            $room_name = getRoomNameById($rid);
+                                            $rate_plane = getRatePlanByRoomDetailId($rdid);
+
+                                            $adultPrice = 0;
+                                            $childPrice = 0;
+                                            $adult = $bidrow['adult'];
+                                            $child = $bidrow['child'];
+                                            $night = 1;
+                                            $roomPrice = number_format(getRoomPriceById($rid,$rdid, $adult, $checkIn ,$checkOut), 2);
+                                            $noRoom = 0;
+                                            $couponCode = '';
+
+                                            $singleRoomPriceCalculator = SingleRoomPriceCalculator($rid, $rdid, $adult, $child , $noRoom, $night, $roomPrice, $childPrice , $adultPrice, $couponCode);
+                                            // $total_price += $night * (($roomPrice * $no_room) + $extraAdult + $extraChild);
+                                            
+                                            $gst_price += $singleRoomPriceCalculator[0]['gst'];
+                                            $total_price += $singleRoomPriceCalculator[0]['total'];
+                                            $couponValue = $singleRoomPriceCalculator[0]['couponPrice'];
+                                            if($singleRoomPriceCalculator[0]['couponPrice'] == ''){
+                                                $couponValue = 0;
+                                            }
+                                            $couponBalance += $couponValue;
+                                            $html .= '<tr>
+                                                        <td style="text-align:start;padding:10px 10px 20px 0px">
+                                                        
+                                                        <span style="color:gray;font-weight:lighter">
+                                                        '.$room_name.'
+                                                        </span>
+                                                        </td>
+                                                        <td style="text-align:center;padding:10px 10px 20px 0px">
+                                                        '.$singleRoomPriceCalculator[0]['room'].'
+                                                        </td>
+                                                        <td style="text-align:center;padding:10px 10px 20px 0px">
+                                                        '.$singleRoomPriceCalculator[0]['adultPrint'].'
+                                                        </td>
+                                                        <td style="text-align:center;padding:10px 10px 20px 0px">
+                                                        '.$singleRoomPriceCalculator[0]['childPrint'].'
+                                                        </td>
+                                                        <td style="text-align:center;padding:10px 10px 20px 0px">
+                                                        '.$singleRoomPriceCalculator[0]['gst'].'
+                                                        </td>
+                                                    </tr>';
+                                        }
+
+                                        if($pickUp > 0){
+                                            $pickupHtml = '
+
+                                                            <tr>
+                                                                <td style="width:50%;text-align:left;padding-left:8px;color:#7b8199">PickUp</td>
+                                                                <td style="width:50%;text-align:right;padding-left:8px;color:#7b8199">₹ '.$pickUp.'</td>
+                                                            </tr>
+                                                            
+                                                            ';
+                                            $total_price = $total_price + $pickUp;
+                                        }
+
+                                        
+                                        if($couponCode != ''){
+                                           
+                                            $couponCodeHtml = '
+                                                            <tr>
+                                                                <td style="width:50%;text-align:left;padding-left:8px;color:#7b8199">Coupon Code('.$couponCode.')</td>
+                                                                <td style="width:50%;text-align:right;padding-left:8px;color:#7b8199">₹ '.$couponBalance.'</td>
+                                                            </tr>
+                                                            ';
+                                        }
+
+                                    $html .=' </tbody>
+                                    </table>
+                                    <table style="width:100%;border-spacing: 20px">
+                                        '.$pickupHtml.'
+                                        <tr>
+                                            <td style="width:50%;text-align:left;padding-left:8px;color:#7b8199">GST</td>
+                                            <td style="width:50%;text-align:right;padding-left:8px;color:#7b8199">₹ '.$gst_price.'</td>
+                                        </tr>
+                                        '.$couponCodeHtml.'
+                                        <tr>
+                                            <td style="width:50%;text-align:left;padding-left:8px;color:#7b8199">Total Payout amount</td>
+                                            <td style="width:50%;text-align:right;padding-left:8px;color:#7b8199">₹ '.$total_price.'</td>
+                                        </tr>
+                                        '.$buttomBar.'
+                                    </table>
+                                    
+
+                                    </div>
+                                </div>
+                                ​
+
+                                <div style="max-width:588px;margin:auto">
+                                    <div style="text-align:center;margin-bottom:16px;margin-top:8px;max-width:588px;margin:auto">
+                                    <a href="'.$bookingSite.'" style="color:white;text-decoration:unset" target="_blank">
+                                        <div style="padding:15px 0px 15px 0px;background:#ec407a;border-radius:3px;margin:10px 0px;color:white">
+                                        View Rooms
+                                        </div>
+                                    </a>
+                                    </div>
+
+                                    <p style="font-size:14px;text-align:center;color:#7b8199">
+                                    If you have any issue with the service from '.$sitename.' Software Private Ltd, please raise
+                                    your request
+                                    <a href=" " target="_blank">here</a>
+                                    </p>
+                                </div>
+
+                                '.hotelPolicyEmail().'
+                            </div>
+                        </div>
+                    </blockquote>
+                </body>
+                </html>
+  
+    
+    ';
+    return $html;
 }
 
 

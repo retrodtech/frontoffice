@@ -108,7 +108,7 @@ if(isset($_GET['delete'])){
                             </div>
 
                             <div class="col-12 col-lg-12 m-auto">
-                                <?php echo SuccessMsg(); echo ErrorMsg() ?>
+                                <?php // echo SuccessMsg(); echo ErrorMsg() ?>
                                 <!-- <a href="<?php echo FRONT_BOOKING_SITE.'/admin/manage-room.php' ?>" class="btn dark mb15">Add Room</a> -->
 
                                 <div class="card" style="padding: 25px 10px;">

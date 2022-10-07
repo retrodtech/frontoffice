@@ -1,7 +1,7 @@
 
-// var webUrl = 'https://admin.retrod.in/';
 var webUrl = 'http://localhost/pms/';
-var loadingGif = 'http://localhost/pms/img/loading.gif';
+// var webUrl = 'https://admin.retrod.in/';
+var loadingGif = webUrl+'img/loading.gif';
 
 
 function error($msg){
@@ -195,18 +195,19 @@ function getTotalSingleRoomPrice($target,$rid,$rdid='',$checkIn='',$checkOut='',
     });
 }
 
-function showGuestDetailPopUp($roomNum = '', $bid='',$id = '',$btn = '',$rTab = ''){
+function showGuestDetailPopUp($roomNum = '', $bid='',$id = '',$btn = '',$rTab = '', $bdid = ''){
     var roomNum = $roomNum;
     var bId = $bid;
     var id = $id;
     var btn = $btn;
     var rTab = $rTab;
+    var bdid = $bdid;
 
     $('#bookindDetail .content').html('<div class="loadingIcon"><img src="'+loadingGif+'"></div>');
     $.ajax({
         url : webUrl+'include/ajax/roomView.php',
         type : 'post',
-        data : {'type': 'showPopUpGuestDetail', roomNum:roomNum,bId:bId,id:id,btn:btn,rTab:rTab},
+        data : {'type': 'showPopUpGuestDetail', roomNum:roomNum,bId:bId,id:id,btn:btn,rTab:rTab,bdid:bdid},
         success : function(data){
             $('#bookindDetail .content').html(data);
             
@@ -256,6 +257,18 @@ function closeContent($clickableId, $actionId){
         e.preventDefault;
         $(actionId).hide();
     });
+}
+
+
+function imageTagInsert($target, $path, $width = '80', $type= ''){
+    var path = $path;
+    var target = $target;
+    var width = $width;
+    var type = $type;
+    var imgPath = webUrl+'img/'+type+'/'+path;
+    var html = "<img width="+width+" data-img="+path+" src="+imgPath+" /> <input type='hidden' name="+target+" value="+path+">"
+
+    $('.'+target).html(html);
 }
 
 $(document).on('click','#configBtn',function(){
@@ -427,9 +440,10 @@ $(document).on('change','#searchForReservationValue', function(e){
 $(document).on('click','.reservationContent', function(){
     var bookingId = $(this).data('bookingid');
     var rTab = $(this).data('reservationtab');
+    var bdid = $(this).data('bdid');
     
     $('#bookindDetail').addClass('show');
-    showGuestDetailPopUp('',bookingId, '','',rTab);
+    showGuestDetailPopUp('',bookingId, '','',rTab, bdid);
 
 });
 
@@ -588,11 +602,12 @@ $(document).on('click','#checkInStatus', function(){
     var roomNumber = $(this).data('roomnum');
     var rTab = $(this).data('reservationtab');
     var rBID = $(this).data('bookingid');
+    var bdid = $(this).data('bdid');
     
     $.ajax({
         url : webUrl+'include/ajax/roomView.php',
         type: 'post',
-        data: { type: 'checkRoomCheckIn', roomNumber:roomNumber, rBID:rBID},
+        data: { type: 'checkRoomCheckIn', roomNumber:roomNumber, rBID:rBID,bdid:bdid},
         success: function (data) {
             var result = JSON.parse(data);
             console.log(result);
@@ -601,7 +616,7 @@ $(document).on('click','#checkInStatus', function(){
             if(status == 1){
                 swal("Good job!", "Successfull "+msg+" guest.", "success");
                 loadResorvation(rTab);
-                showGuestDetailPopUp(roomNumber);
+                showGuestDetailPopUp(roomNumber,'','','',rTab,bdid);
             }
         }
     });
@@ -626,10 +641,13 @@ $(document).on('click', '#paymentBtn', function(){
 
 $(document).on('click', '#printBtn', function(){
     var roomNumber = $(this).data('roomnum');
+    var rBID = $(this).data('bookingid');
+    var bdid = $(this).data('bdid');
+
     $.ajax({
         url : webUrl+'include/ajax/roomView.php',
         type: 'post',
-        data: { type: 'printBtnClick', roomNumber:roomNumber},
+        data: { type: 'printBtnClick', roomNumber:roomNumber,rBID:rBID,bdid:bdid},
         success: function (data) {
             $('#bookingOtherDetail').show();
             $('#bookingOtherDetail').html(data);
@@ -1020,10 +1038,9 @@ $(document).on('change', '.proof #guestIdProofImg', function(){
         success: function(data) {
 
         $result = JSON.parse(data);
-        var guestPImg = $result.name;
+        guestPImg = $result.name;
         $('#guestPopupFixContent').remove();
-        var guestImg = $('.guestImgSec img').data('img');
-        loadAddGuestReservationForm(bid,'#addGestOnReservation .content','',gid,serial,guestImg, guestPImg);
+        imageTagInsert('guestProofImgSec', guestPImg,'','guestP');
 
         }
     });
@@ -1204,11 +1221,20 @@ $(document).on('change', '.guestImg #guestIdProofImg', function(){
             $result = JSON.parse(data);
             var guestImg = $result.name;
             $('#guestPopupFixContent').remove();
-            var guestPImg = $('.guestProofImgSec img').data('img');
-            loadAddGuestReservationForm(bid,'#addGestOnReservation .content','',gid,serial,guestImg,guestPImg);
+            imageTagInsert('guestImgSec', guestImg,'','guest');
             
         }
     });
+    
+});
+
+$(document).on('submit', '#printGuestBooingVoucherForm', function(){
+    var select = $('#chooseVoucher').find(":selected").val();
+    var roomNum = $('#roomNum').val();
+    var rBID = $('#rBID').val();
+    var bdid = $('#bdid').val();
+
+    
     
 });
 

@@ -1648,7 +1648,7 @@ if(isset($_POST['type'])){
                 $imgCon = '<div class="imgGrid">';
                 foreach(getImageById($id) as $key=>$imgList){
                     if($key<3){
-                        $img = FRONT_SITE_ROOM_IMG.$imgList;
+                        $img = WS_FRONT_SITE_IMG.'room/'.$imgList;
                         $imgCon .= "<span><img style='width:50px' src='$img'></span>";
                     }
                 }
