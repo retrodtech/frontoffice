@@ -315,22 +315,7 @@ function getCouponList($status='',$hid = '', $cid =''){
     return $data;
 }
 
-function getGstPriceByBid($bid,$rNum,$bdid){
-    $bookingDetailArry = getBookingData($bid, $rNum, '', $bdid)[0];
-    $rid = $bookingDetailArry['roomId'];
-    $rdid = $bookingDetailArry['roomDId'];
-    $adult = $bookingDetailArry['adult'];
-    $child = $bookingDetailArry['child'];
-    $checkIn = $bookingDetailArry['checkIn'];
-    $checkOut = $bookingDetailArry['checkOut'];
-    $couponCode = $bookingDetailArry['couponCode'];
-    $nNight = getNightByTwoDates($checkIn, $checkOut);
-    $roomPice = getSingleRoomPrice($rid, $rdid, $adult, $child ,$checkIn, $nNight,$couponCode='');
-    // $gstPer = getGSTPercentage();
-    // $gstPer = 12;
-    // $GstPrice = getGSTPrice($roomPice);
-    return $roomPice;
-}
+
 
 // Booking Detail Start
 
@@ -2165,8 +2150,8 @@ function orderEmail($oid){
                                             $adult = $bidrow['adult'];
                                             $child = $bidrow['child'];
                                             $night = 1;
-                                            $roomPrice = number_format(getRoomPriceById($rid,$rdid, $adult, $checkIn ,$checkOut), 2);
-                                            $noRoom = 0;
+                                            $roomPrice = getRoomPriceById($rid,$rdid, $adult, $checkIn ,$checkOut);
+                                            $noRoom = 1;
                                             $couponCode = '';
 
                                             $singleRoomPriceCalculator = SingleRoomPriceCalculator($rid, $rdid, $adult, $child , $noRoom, $night, $roomPrice, $childPrice , $adultPrice, $couponCode);
@@ -2226,6 +2211,7 @@ function orderEmail($oid){
 
                                     $html .=' </tbody>
                                     </table>
+
                                     <table style="width:100%;border-spacing: 20px">
                                         '.$pickupHtml.'
                                         <tr>
@@ -2270,6 +2256,532 @@ function orderEmail($oid){
   
     
     ';
+    
+    return $html;
+}
+
+function getBookingDetailByBId($bid){
+    global $conDB;
+    $sql = mysqli_query($conDB, "select * from bookingdetail where bid = '$bid'");
+    $bookingsql = mysqli_fetch_assoc(mysqli_query($conDB, "select * from booking where id = '$bid'"));
+    $coupon = $bookingsql['couponCode'];
+    if($coupon == ''){
+        $coupon = '';
+    }
+    $data = array();
+    $sellPrice = 0;
+    $couponDis = 0;
+    $actualPrice = 0;
+    $GstPrice = 0;
+    if(mysqli_num_rows($sql) > 0){
+        while($row = mysqli_fetch_assoc($sql)){
+            
+            $detail = SingleRoomPriceCalculator($row['roomId'], $row['roomDId'], $row['adult'], $row['child'] , '', $row['night'], $row['roomPrice'], $row['childPrice'], $row['adultPrice'], $coupon);
+            $sellPrice += ($detail[0]['room'] + $detail[0]['adult'] + $detail[0]['child'] ) * $detail[0]['noNight'];
+            $couponValue = $detail[0]['couponPrice'];
+            if($detail[0]['couponPrice'] == ''){
+                $couponValue = 0;
+            }
+            $couponDis += $couponValue * $detail[0]['noNight']; 
+            $GstPrice += $detail[0]['gst'];
+            
+        }
+        $data[] = [
+            'sellPrice' => $sellPrice,
+            'couponDis' => $couponDis,
+            'actualPrice' => $sellPrice - $couponDis,
+            'GstPrice' => $GstPrice,
+        ];
+    }
+    return $data;
+}
+
+function getBookingDetailArrByBId($bid,$date,$night,$coupon){
+    global $conDB;
+    $sql = mysqli_query($conDB, "select * from bookingdetail where bid = '$bid'");
+    $bookingsql = mysqli_fetch_assoc(mysqli_query($conDB, "select * from booking where id = '$bid'"));
+    $data = array();
+    if(mysqli_num_rows($sql) > 0){
+        while($row = mysqli_fetch_assoc($sql)){
+            
+            $detail = getSingleRoomPrice($row['roomId'], $row['roomDId'], $row['adult'], $row['child'] ,$date,$night,$coupon );
+            $data[] = [
+                'id'=>$row['id'],
+                'room'=>getRoomHeaderById($row['roomId']),
+                'ratePlan'=>getRatePlanByRoomDetailId($row['roomDId']),
+                'noAdult'=>$row['adult'],
+                'noChild'=>$row['child'],
+                'adultPrice'=>'demo',
+                'childPrice'=>'demo',
+                'checkIn'=>'demo',
+                'checkout'=>'demo',
+                'gstPer'=>$detail['gstPer'],
+                'gst'=>$detail['gst'],
+                'roomPrice'=>'demo',
+                'totalPrice'=>$detail['total'],
+            ];
+        }
+    }
+    return $data;
+}
+
+function getBookingVoucher($oid){
+    
+    $invoiceNo = printBooingId($oid);
+    $name = getGuestDetail($oid)[0]['name'];
+    $email = getGuestDetail($oid)[0]['email'];
+    $phone = getGuestDetail($oid)[0]['phone'];
+    $company_name = getGuestDetail($oid)[0]['company_name'];
+    $gst = getGuestDetail($oid)[0]['comGst'];
+    $payment_status = getBookingDetailById($oid)['paymentStatus'];
+    $add_on = date('d-m-Y g:i A', strtotime(getBookingDetailById($oid)['addOn']));
+    $oderId = getOrderDetailByOrderId($oid)['bookinId'];
+    // $partial = getOrderDetailByOrderId($oid)['partial'];
+    $grossCharge = getBookingDetailById($oid)['totalPrice'];
+    $userPay = getBookingDetailById($oid)['userPay'];
+    
+    $checkInTime = hotelDetail()['checkIn'];
+    $checkOutTime = hotelDetail()['checkOut'];
+
+    $addOn = $add_on;
+    
+
+    $couponCode = getOrderDetailByOrderId($oid)['couponCode'];
+    $pickUp = getOrderDetailByOrderId($oid)['pickUp'];
+    $checkIn = getOrderDetailByOrderId($oid)['checkIn'];
+    $checkOut = getOrderDetailByOrderId($oid)['checkOut'];
+    $couponCode = getOrderDetailByOrderId($oid)['couponCode'];
+    $night = getNightByTwoDates($checkIn, $checkOut);
+    
+    $pickupHtml = '';
+    
+    $img = FRONT_SITE_IMG.hotelDetail()['logo'];
+    
+    
+    
+    $couponCodeHtml = '';
+    $couponPrice = 0 ;
+    
+    
+    
+    
+    if($pickUp > 0){
+        $pickupHtml = '
+            <tr>
+                <td style="padding: 5px 10px; border-bottom: 1px solid #00000033;">
+                    <h4>Pickup Charges</h4>
+                </td>
+                <td style="padding: 5px 10px; border-bottom: 1px solid #00000033; text-align: right;">₹ '.number_format($pickUp, 2).'</td>
+            </tr>
+        ';
+    }else{
+        $pickupHtml = '';
+    } 
+
+    $guestBook = '';
+    $roomBackupData = '';
+    $roomBackUpRoomName = '';
+    $totalRoomBrackupPrice = 0;
+    $totalAdultRoomBrackupPrice = 0;
+    $totslGstPrice = 0;
+    
+    foreach(getBookingDetailArrByBId($oid,$checkIn,$night,$couponCode) as $bookingList){
+        
+        $bookindDetailId = $bookingList['id'];
+        $checkInStatus = getBookingData($oid,'','',$bookindDetailId)[0]['checkInStatus'];
+        
+        $guestBook .= '
+                <tr>
+                    <td style="padding: 5px 10px;"> '.$bookingList['room'].' <br/>
+                        <strong>'.date('M-d, y', strtotime($bookingList['checkIn'])).'</strong> <br/>
+                        <small>Adult '.$bookingList['noAdult'].'</small> <br/>
+                        <strong>Night</strong>
+                    </td>
+                    <td style="padding: 5px 10px;">'.$bookingList['ratePlan'].'<br/>
+                            <strong>'.date('M-d, y', strtotime($bookingList['checkout'])).'</strong><br/>
+                            <small>Child '.$bookingList['noChild'].'</small> <br/>
+                            <strong> '.$night.'</strong> 
+                        </td>
+                </tr>
+        ';
+
+        $roomBackupData .= '<tr> <td colspan="4" style="padding:10px">'. $bookingList['room'] .'</td> </tr> ';
+     
+        for($i= 0; $i < getNightByTwoDates($bookingList['checkIn'],$bookingList['checkout']); $i++){
+            $chilAdult = $bookingList['adultPrice'] + $bookingList['childPrice'];
+            $totalRoomBrackupPrice += $bookingList['roomPrice'];
+            $totalAdultRoomBrackupPrice += $chilAdult;
+            $totslGstPrice += $bookingList['gst'];
+            $roomBackupData .= '<tr>
+                                    <td style="padding:10px">'.date('d-M-Y', strtotime(getDateByDay($bookingList['checkIn'], $i))).'</td>
+                                    <td style="padding:10px; text-align:center">₹ '.$bookingList['roomPrice'].'</td>
+                                    <td style="padding:10px;text-align:right">₹ '.$chilAdult.'</td>
+                                    <td style="padding:10px;text-align:right">₹ '.$bookingList['gst'].' @ '.$bookingList['gstPer'].' %</td>
+                                </tr>';
+        }
+    }
+
+    $calculateHotelVoucher = getBookingDetailByBId($oid);
+    
+
+    if($couponCode != ''){ 
+        $couponCodeHtml = '<tr>
+                                <td style="padding: 5px 10px; border-bottom: 1px solid #00000033;">
+                                    <h4>Coupon Discount</h4>
+                                    <p><small>( '.$couponCode.' )</small></p>
+                                </td>
+                                <td style="padding: 5px 10px;border-bottom: 1px solid #00000033;text-align: right;">₹ '.number_format($calculateHotelVoucher[0]['couponDis'], 2).'</td>
+                            </tr>
+                            
+                            <tr>
+                                <td style="padding: 5px 10px; border-bottom: 1px solid #00000033;">
+                                    <h4>Actual Sell Rates</h4>
+                                </td>
+                                <td style="padding: 5px 10px;border-bottom: 1px solid #00000033;text-align: right;">₹ '.number_format($calculateHotelVoucher[0]['actualPrice'], 2).'</td>
+                            </tr>
+                            
+                            ';
+    }
+    
+    
+    if($checkInStatus == 4){
+        
+        $actualPrice = $userPay * 100 / 112;
+        
+    }else{
+        
+        $actualPrice = $calculateHotelVoucher[0]['actualPrice'];
+        
+    }
+    
+    $gstActualPrice = $calculateHotelVoucher[0]['GstPrice'];
+    
+    $retroCommPrice = $actualPrice * COMM_PRICE / 100 ;
+    $commTax = $retroCommPrice * 18 / 100 ;
+    
+    $tcsPrice = $actualPrice * 1 / 100 ;
+    $tdsPrice = $actualPrice * 1 / 100 ;
+    
+    $totalCommission = $retroCommPrice + $commTax + $tcsPrice + $tdsPrice;
+    
+    
+    $bookingCancleHtml = '';
+    
+    if($checkInStatus == 4){
+        
+        $natAmount = $userPay - $totalCommission;
+        
+        $bookingCancleHtml = '
+            <tr>
+                <td style="padding: 5px 10px; border-bottom: 1px solid #00000033;">
+                    <h4>Booking Status</h4>
+                </td>
+                <td style="padding: 5px 10px; border-bottom: 1px solid #00000033; text-align: right;background: darkred;text-align: center;color: white;font-weight: 700;">No Show</td>
+            </tr>
+        ';
+        
+    }else{
+        
+        $natAmount = $grossCharge - $totalCommission;
+        
+    }
+    
+    
+    $hotelPayable = $userPay - $totalCommission;
+    $partialStatus = '';
+    
+    $paymentStatusPrint = '
+        <tr>
+            <td style="padding: 5px 10px; border-bottom: 1px solid #00000033; border-left: 1px solid #00000033;">
+                <h4>Hotel Net payment</h4>
+            </td>
+            <td style="padding: 5px 10px; border-bottom: 1px solid #00000033; text-align: right; background: darkseagreen;color: black;font-weight: 700;">₹ '.number_format($hotelPayable, 2).'</td>
+        </tr>
+    ';
+    
+    if($grossCharge > $userPay){
+        $userPayPercentage = round(($userPay/$grossCharge) * 100);
+        $userHotelPay = $grossCharge - $userPay;
+        $userPayAtHotelHtml = '<tr>
+                                    <td style="padding: 5px 10px;"><strong style="color:#3f51b5">Pay at hotel</strong></td>
+                                    <td style="padding: 5px 10px;"><strong style="color:black">₹ '.$userHotelPay.'</strong></td>
+                                </tr>';
+        if($userHotelPay == 0){
+            $userPayAtHotelHtml = '';
+        }
+        if($checkInStatus == 4){
+            $userPayAtHotelHtml = '
+                <tr>
+                    <td style="padding: 5px 10px;"><strong style="color:#3f51b5">Pay at hotel</strong></td>
+                    <td style="padding: 5px 10px;"><strong style="color:black">₹ 0</strong></td>
+                </tr>
+            ';
+        }
+        $partialStatus = '
+            <tr>
+                <td style="padding: 5px 10px;"><strong style="color:red">Advance Pay('.$userPayPercentage.'%)</strong></td>
+                <td style="padding: 5px 10px;"><strong style="color:green">₹ '.$userPay.'</strong></td>
+            </tr>
+
+            '.$userPayAtHotelHtml.'
+        ';
+        
+        $paymentStatusPrint = '
+            <tr>
+                <td style="padding: 5px 10px; border-bottom: 1px solid #00000033; border-left: 1px solid #00000033;">
+                    <h4>Hotel Online payment</h4>
+                </td>
+                <td style="padding: 5px 10px; border-bottom: 1px solid #00000033; text-align: right; background: darksalmon;color: black;font-weight: 700;">₹ '.number_format($hotelPayable, 2).'</td>
+            </tr>
+            <tr>
+                <td style="padding: 5px 10px; border-bottom: 1px solid #00000033; border-left: 1px solid #00000033;">
+                    <h4>Hotel Net payment</h4>
+                </td>
+                <td style="padding: 5px 10px; border-bottom: 1px solid #00000033; text-align: right; background: darkseagreen;color: black;font-weight: 700;">₹ '.number_format($natAmount, 2).'</td>
+            </tr>
+        ';
+    }
+    
+    
+    if($payment_status == 'pending'){
+        
+        $html = '
+            <table>
+                <tr>
+                    <th>Payment Failed!</th>
+                </tr>
+            </table>
+        ';
+        
+    }else{
+        
+    
+    
+    
+    $html = '
+    
+    
+        <!DOCTYPE html>
+            <html lang="en">
+                <head>
+                    <title>Web Booking Voucher</title>
+                </head>
+                <body>
+            
+                    <table width="100%" style="border-top: 1px solid #00000033;border-left: 1px solid #00000033;border-right: 1px solid #00000033;padding: 10px 20px;">
+                        <tr>
+                            <td>
+                                <h2>Web Booking Voucher</h2> <br/>
+                                <p><small>Booking ID</small> <strong> '.$oderId.'</strong></p>
+                                <p>Booking Date: '.$addOn.'</p>
+                            </td>
+                            <td style="text-align:right">
+                                <img src="https://retrox.in/logo.png" alt="Logo" style="width: 80px;">
+                                <table style="width: 100%;padding: 10px 15px;">
+                                    <tr>
+                                        <td>
+                                            <p><strong>GST No.-</strong> '.RETROD_GST.'</p>
+                                            <p><strong>PAN No.-</strong> '.RETROD_PAN.'</p>
+                                            <p><strong>TAN No. -</strong> '.RETROD_TAN.'</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <table style="border-left: 1px solid #00000033;border-right: 1px solid #00000033;padding: 10px 20px; width:100%">
+                        <tr>
+                            <td >
+                                <p><strong>Dear Valuable Partner,</strong></p> <br/>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <table style="border-left: 1px solid #00000033;border-right: 1px solid #00000033;padding: 10px 20px; width:100%">
+                        <tr>
+                            <td style="padding: 0 20px;">
+                                <p>Congratulations, You have got a booking from your Website Please find the details below . Guest Name <strong>'.$name.'</strong></p>
+                                <p>The amount payable to hotel for this booking is INR <strong style="color: green;font-size: 21px;"> '.number_format($natAmount,2).'</strong> as per the details below.</p>
+                            </td>
+                        </tr>
+                    </table>
+            
+                    <table width="100%" style="border-left: 1px solid #00000033;border-right: 1px solid #00000033;padding: 10px 20px;">
+                        
+                        
+            
+                        <tr>
+                            <td>
+                            
+                                <table style="padding: 10px 20px; width: 100%; border-collapse: collapse; ">
+                                    <tr>
+                                        <th style="padding: 10px;border-top: 2px solid #96D4D4; border-bottom: 2px solid #96D4D4; border-left: 2px solid #96D4D4;">BOOKING DETAILS</th>
+                                        <th style="padding: 10px;width: 80%; border-top: 2px solid #96D4D4; border-bottom: 2px solid #96D4D4; border-right: 2px solid #96D4D4;border-left: 2px solid #96D4D4;">PAYMENT BREAKUP</th>
+                                    </tr>
+                                    <tr>
+                                    
+                                        <td width="40%" style="padding: 20px 20px; vertical-align: top; width: 40%; border-left: 2px solid #96D4D4; border-right: 2px solid #96D4D4; border-bottom: 2px solid #96D4D4;">
+                                            
+            
+                                            <table border="1" style="border-collapse: collapse; text-align:center; border-color: #96D4D4; width: 100%">
+                                                <tr>
+                                                    <td style="padding: 5px 10px;"><strong>Guest Name</strong></td>
+                                                    <td style="padding: 5px 10px;">'.$name.'</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 5px 10px;"><strong>Number</strong></td>
+                                                    <td style="padding: 5px 10px;">'.$phone.'</td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2" style="padding: 5px 10px;"> Night</th>
+                                                </tr>
+                                                '.$guestBook.'
+                                                '.$partialStatus.'
+                                            </table>
+                                        </td>
+                                        
+                                        <td width="60%" style="padding: 10px; width: 60%; border-right: 2px solid #96D4D4; border-bottom: 2px solid #96D4D4;">
+                                            
+                                            <table style="width: 100%;">
+                                                <tr style="vertical-align: top;">
+                                                   
+                                                    <td >
+                                                        <table style="border-collapse: collapse;padding: 10px 20px;">
+                        
+                                                            <tr>
+                                                                <td style="padding: 5px 10px; border-bottom: 1px solid #00000033;">
+                                                                    <h4>Hotel Sell Price</h4>
+                                                                    <p><small>(  Room x  Nights )</small></p>
+                                                                </td>
+                                                                <td style="padding: 5px 10px; border-bottom: 1px solid #00000033;text-align: right;">₹ '.number_format($calculateHotelVoucher[0]['sellPrice'],2).'</td>
+                                                            </tr>
+                                                            
+                                                            '.$couponCodeHtml.'
+                                    
+                                                            '. $pickupHtml.'
+                                    
+                                    
+                                                            <tr>
+                                                                <td style="padding: 5px 10px; border-bottom: 1px solid #00000033;">
+                                                                    <h4>GST @ </h4>
+                                                                    <p><small>(Including IGST or (SGST & CGST))</small></p>
+                                                                </td>
+                                                                <td style="padding: 5px 10px; border-bottom: 1px solid #00000033; text-align: right;">₹ '.number_format($gstActualPrice, 2).'</td>
+                                                            </tr>
+                                    
+                                                            
+                                                            
+                                                            <tr>
+                                                                <td style="padding: 5px 10px; border-bottom: 1px solid #00000033;">
+                                                                    <h4>Gross Charges</h4>
+                                                                </td>
+                                                                <td style="padding: 5px 10px; border-bottom: 1px solid #00000033; text-align: right;">₹ '.number_format($grossCharge, 2).'</td>
+                                                            </tr>
+                                                            
+                                                            '.$bookingCancleHtml.'
+                                                            
+                                                            <tr>
+                                                                <td style="padding: 5px 10px; ">
+                                                                    <h4><strong>Retrod</strong> <small>- Comm ( '.COMM_PRICE.'% )</small></h4>
+                                                                    <p><small>(Including Tax (18%))</small></p>
+                                                                </td>
+                                                                <td style="padding: 5px 10px; text-align: right;">
+                                                                    ₹ '.number_format($retroCommPrice, 2).' + <br/> ₹ '.number_format($commTax, 2).'
+                                                                    
+                                                                </td>
+                                                            </tr>
+                                                            
+                                                            <tr>
+                                                                <td style="padding: 0 0 10px 0; border-bottom: 1px solid #00000033;" colspan="2">
+                                                                    
+                                                                    <table border="1" style="width:100%; border-collapse: collapse; border-color: gainsboro;">
+                                                                    
+                                                                        <tr>
+                                                                            <td style="padding:5px 10px">TAC including Tax</td>
+                                                                            <td style="padding: 5px 10px; text-align: right;">₹ '.number_format($retroCommPrice + $commTax, 2).'</td>
+                                                                        </tr>
+                                                                        
+                                                                        <tr>
+                                                                            <td style="padding:5px 10px">TCS (1% on Sell Rate)</td>
+                                                                            <td style="padding: 5px 10px; text-align: right;">₹ '.number_format($tcsPrice, 2).'</td>
+                                                                        </tr>
+                                                                        
+                                                                        <tr>
+                                                                            <td style="padding:5px 10px">TDS (1% on Sell Rate)</td>
+                                                                            <td style="padding: 5px 10px; border-bottom: 1px solid #00000033; text-align: right;">₹ '.number_format($tdsPrice, 2).'</td>
+                                                                        </tr>
+                                                                    
+                                                                    
+                                                                    </table>
+                                                                    
+                                                                </td>
+                                                                
+                                                            </tr>
+                                                            
+                                                            
+                                                            '.$paymentStatusPrint.'
+                                                            
+                                                            
+                                    
+                                                        </table>
+                                                        
+                                                    </td>
+                                                    
+                                                </tr>
+                                            </table>
+            
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <br/>
+                    
+                    <h4>Room wise Break up</h4>
+                    
+                    <table border="1" style="width:100%;border-collapse: collapse;">
+                        <tr>
+                            <th style="padding:10px;text-align:left">Payment Breakup</th>
+                            <th style="padding:10px;text-align:center">Room Charges</th>
+                            <th style="padding:10px;text-align:right">Extra Guest/Child</th>
+                            <th style="padding:10px;text-align:right">GST</th>
+                        </tr>
+                        '.$roomBackupData.'
+                        ';
+                        
+                        
+                        
+                 
+                        
+                $html .= '
+                        <tr>
+                            <td style="padding:10px">Total</td>
+                            <td style="padding:10px;text-align:center">₹ '.$totalRoomBrackupPrice.'</td>
+                            <td style="padding:10px;text-align:right">₹ '.$totalAdultRoomBrackupPrice.'</td>
+                            <td style="padding:10px;text-align:right">₹ '.$totslGstPrice.'</td>
+                        </tr>
+                        
+                    
+                    </table>
+            
+                    
+                    
+                </body>
+            </html>
+    
+    
+    ';
+    
+    
+    }
+    
+    
+    
+    
     return $html;
 }
 

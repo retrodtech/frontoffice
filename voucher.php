@@ -37,10 +37,10 @@ include(SERVER_INCLUDE_PATH.'mpdf/autoload.php');
  }
 
 
-// $mpdf=new \Mpdf\Mpdf();
-// $mpdf->WriteHTML($orderEmail);
-// $file=$fileName.'.pdf';
-// $mpdf->Output($file,'D');
+$mpdf=new \Mpdf\Mpdf();
+$mpdf->WriteHTML($orderEmail);
+$file=$fileName.'.pdf';
+$mpdf->Output($file,'D');
 
 
 ?>
