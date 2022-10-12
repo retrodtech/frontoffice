@@ -286,27 +286,37 @@ if($type == 'checkRoomNumber'){
 }
 
 if($type == 'showPopUpGuestDetail'){
-  
+    // pr($_POST);
     $rTab = $_POST['rTab'];
     $bdid = $_POST['bdid'];
 
-    if($_POST['roomNum'] != ''){
-        $roomNum = safeData($_POST['roomNum']);
-        $bookDetailArry = getBookingData('',$roomNum)[0];
-    }
+    // if($_POST['roomNum'] != ''){
+    //     $roomNum = safeData($_POST['roomNum']);
+    //     $bookDetailArry = getBookingData('',$roomNum)[0];
+    // }
 
     if($_POST['id'] != ''){
-        $id = safeData($_POST['id']);
-        $bookDetailArry = getBookingData('','','',$id)[0];
+        $bdid = $_POST['id'];
+        $bookDetailArry = getBookingData('','','',$bdid)[0];
         $roomNum = $bookDetailArry['room_number'];
+        
     }
 
-    if($_POST['bId'] != ''){
-        $bvId = safeData($_POST['bId']);
-        $bid = getBookingIdByBVID($bvId);
-        $bookDetailArry = getBookingData($bid)[0];
+    if($bdid != ''){
+        $bookDetailArry = getBookingData('','','',$bdid)[0];
         $roomNum = $bookDetailArry['room_number'];
+        
     }
+
+    if($bdid == ''){
+        if($_POST['bId'] != ''){
+            $bvId = safeData($_POST['bId']);
+            $bid = getBookingIdByBVID($bvId);
+            $bookDetailArry = getBookingData($bid)[0];
+            $roomNum = $bookDetailArry['room_number'];
+        }
+    }
+    
     //  pr($bookDetailArry);
    
     
@@ -352,7 +362,7 @@ if($type == 'showPopUpGuestDetail'){
     // Payment Btn end
 
     $maxAdult = getMaxAdultCountByRId($roomId);
-    $bookGuest = count(getBookingDetailById($bid,$roomNum)['guest']);
+    $bookGuest = count(getBookingDetailById($bid,'',$bdid)['guest']);
     $addGouestBtn = '';
     if($maxAdult > $bookGuest){
         $addGouestBtn = '<div class="s25"></div><button id="addGustBtn" data-reservationtab='.$rTab.' data-bookingId = "'.$bid.'" data-roomNum = "'.$room_number.'" data-bdid="'.$bdid.'" class="btn btn-outline-primary">Add Guest</button>';
@@ -361,7 +371,8 @@ if($type == 'showPopUpGuestDetail'){
     $guestList = '';
     $groupGuestName = '';
     $goupGuestImg = '';
-    foreach(getBookingDetailById($bid,$roomNum)['guest'] as $key=>$guest){
+
+    foreach(getBookingDetailById($bid,'',$bdid)['guest'] as $key=>$guest){
         $gusetArray = getGuestDetail('','',$guest)[0];
         $guestName = ucfirst($gusetArray['name']);
         $guestImg = checkImg($gusetArray['image'], 'guest');
@@ -376,7 +387,7 @@ if($type == 'showPopUpGuestDetail'){
                     <div class="caption">
                         <h5>'.$guestName.'</h5>
                         <p>'.$bookingVId.'/'.$kayNum.'|'.$roomNum.'-'.$kayNum.'</p>
-                        <div class="editGuest" data-roomNum="'.$roomNum.'" data-bid="'.$bid.'" data-id="'.$guestId.'"><i class="far fa-edit"></i></div>
+                        <div class="editGuest" data-bdid="'.$bdid.'" data-bid="'.$bid.'" data-id="'.$guestId.'"><i class="far fa-edit"></i></div>
                     </div>
                 </div>
                 
@@ -502,15 +513,14 @@ if($type == 'showPopUpGuestDetail'){
 }
 
 if($type == 'checkRoomCheckIn'){
-    $roomNum = safeData($_POST['roomNumber']);
-    $bookDetailArry = getBookingData('',$roomNum)[0];
-    $checkInStatus = $bookDetailArry['checkinstatus'];
     $rBID = safeData($_POST['rBID']);
     $bdid = safeData($_POST['bdid']);
-
+    $bookDetailArry = getBookingData('','','',$bdid)[0];
+    $checkInStatus = $bookDetailArry['checkinstatus'];
+    
     // pr($_POST);
     if($checkInStatus == 1){
-        $sql = "update bookingdetail set checkinstatus = '2' where room_number = '$roomNum' and bid = '$rBID' and id = '$bdid'";
+        $sql = "update bookingdetail set checkinstatus = '2' where bid = '$rBID' and id = '$bdid'";
         $data = [
             'msg'=> 'checkin',
             'status'=> '1'
@@ -518,12 +528,13 @@ if($type == 'checkRoomCheckIn'){
     }
     
     if($checkInStatus == 2){
-        $sql = "update bookingdetail set checkinstatus = '3' where room_number = '$roomNum' and bid = '$rBID' and id = '$bdid'";
+        $sql = "update bookingdetail set checkinstatus = '3' where bid = '$rBID' and id = '$bdid'";
         $data = [
             'msg'=> 'checkout',
             'status'=> '1'
         ];
     }
+
 
 
     if(mysqli_query($conDB,$sql)){

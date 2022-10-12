@@ -218,6 +218,24 @@ if($type == 'convertArryToJSON'){
 
 }
 
+if($type == 'singleGroupBtnValue'){
+    $btnType = $_POST['btnType'];
+    $tab = $_POST['tab'];
+
+    if($btnType == 1){
+        $_SESSION['singleGroupBtn'] = 1;
+    }else{
+        $_SESSION['singleGroupBtn'] = 0;
+    }
+}
+
+
+if($type == 'removerImgWithName'){
+    $target = $_POST['target'];
+    $filename = $_POST['filename'];
+    
+    unlink(SERVER_IMG.$target.'/'.$filename);
+}
 
 
 ?>

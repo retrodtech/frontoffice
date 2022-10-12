@@ -4,7 +4,7 @@ include ('include/constant.php');
 include (SERVER_INCLUDE_PATH.'db.php');
 include (SERVER_INCLUDE_PATH.'function.php');
 include(SERVER_INCLUDE_PATH.'mpdf/autoload.php'); 
-
+pr($_GET);
  if(!isset($_GET['oid']) && !isset($_GET['vid']) && !isset($_GET['qpid']) && !isset($_GET['qpvid']) ){
     // redirect('index.php');
     // die();

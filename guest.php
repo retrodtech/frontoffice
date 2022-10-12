@@ -9,56 +9,6 @@ checkLoginAuth();
 checkPageBySupperAdmin('pms','Guest Detail', 'Guest Record');
 
 
-if(isset($_POST['reservationSubmit'])){
-
-    $bookId = BOOK_GENERATE.unique_id(5);
-    
-    $checkIn = safeData($_POST['checkIn']);
-    $checkOut = safeData($_POST['checkOut']);
-    $roomQuntity = safeData($_POST['roomQuntity']);
-    $reservationType = safeData($_POST['reservationType']);
-    $bookinSource = safeData($_POST['bookinSource']);
-    $businessSource = safeData($_POST['businessSource']);
-    // $bookAvailable = safeData($_POST['bookAvailable']);
-
-    $selectRoom = $_POST['selectRoom'];
-    $selectRateType = $_POST['selectRateType'];
-    $selectAdult = $_POST['selectAdult'];
-    $selectChild = $_POST['selectChild'];
-
-    $guestName = safeData($_POST['guestName']);
-    $guestMobile = safeData($_POST['guestMobile']);
-    $guestEmail = safeData($_POST['guestEmail']);
-    $guestAddress = safeData($_POST['guestAddress']);
-    $guestCuntry = safeData($_POST['guestCuntry']);
-    $guestState = safeData($_POST['guestState']);
-    $guestCity = safeData($_POST['guestCity']);
-    $guestZip = safeData($_POST['guestZip']);
-
-    // $bookingVoucher = safeData($_POST['bookingVoucher']);
-
-
-    mysqli_query($conDB, "insert into booking(bookinId,checkIn,checkOut,nroom,payment_status,bookingSource,bussinessSource) values('$bookId','$checkIn','$checkOut','$roomQuntity','$reservationType','$bookinSource','$businessSource')");
-
-    echo $lastId = mysqli_insert_id($conDB);
-
-    mysqli_query($conDB, "insert into guest(bookId,name,email,phone,country) values('$lastId','$guestName','$guestEmail','$guestMobile','$guestCuntry')");
-
-    if(isset($selectRoom)){
-        foreach($selectRoom as $key=> $val){
-            $room = $val;
-            $rateType = $selectRateType[$key];
-            $adult = $selectAdult[$key];
-            $child = $selectChild[$key];
-
-            mysqli_query($conDB, "insert into bookingdetail(bid,roomId,roomDId,adult,child) values('$lastId','$room','$rateType','$adult','$child')");
-
-        }
-    }
-
-
-}
-
 ?>
 
 

@@ -92,6 +92,32 @@ checkPageBySupperAdmin('pms','Reservation', 'Reservation');
             </div>
 
             <div class="row mt-4">
+
+                <div class="col-md-12">
+                    <div class="resvationGroupBtn">
+
+                        <div class="toggle_btn singleGroupToggleBtn active">
+                            <label for="singleGroupBtn"></label>
+                            <input id="singleGroupBtn" type="checkbox" checked class="cb-value" />
+                            <span class="round-btn"></span>
+                        </div>
+
+                        <!-- <div class="paymentTypeBtn">
+                            <label for="paymentType">Payment Type</label>
+                            <select name="paymentType" id="paymentType">
+                                <option value="1">Booking Engine</option>
+                                <option value="2">Quick Pay</option>
+                            </select>
+                        </div> -->
+
+                        <div class="currentDate">
+                            <label for="">Date</label>
+                            <input type="date" id="start" name="currentDate" value="<?= date('Y-m-d') ?>" min="<?= date('Y-m-d') ?>" max="">
+                        </div>
+
+                    </div>
+                </div>
+
                 <div class="col-12">
 
                     <div class="card mb-4 reservationNav">
@@ -99,22 +125,34 @@ checkPageBySupperAdmin('pms','Reservation', 'Reservation');
                             <div class="dFlex jcsb">
                                 <div class="left">
                                     <ul id="loadReservationCountContent">
-                                        <li><a id="reservationBtn" class="reservationTab active" href="javascript:void(0)">Reservations <span><?= countBookingRow('reservation')?>
-                                        </span></a></li>
-                                        <li><a id="ariveBtn" class="reservationTab" href="javascript:void(0)">Arrivals <span><?= countBookingRow('arrives')?></span></a></li>
-                                        <li><a id="failedBtn" class="reservationTab" href="javascript:void(0)">Failed <span><?= countBookingRow('failed')?></span></a></li>
-                                        <li><a id="inHouseBtn" class="reservationTab" href="javascript:void(0)">In house <span><?= countBookingRow('inHouse')?></span></a></li>
+                                        <li><a id="reservationBtn" class="reservationTab active"
+                                                href="javascript:void(0)">Reservations
+                                                <span><?= countBookingRow('reservation')?>
+                                                </span></a></li>
+                                        <li><a id="ariveBtn" class="reservationTab" href="javascript:void(0)">Arrivals
+                                                <span><?= countBookingRow('arrives')?></span></a></li>
+                                        <li><a id="failedBtn" class="reservationTab" href="javascript:void(0)">Failed
+                                                <span><?= countBookingRow('failed')?></span></a></li>
+                                        <li><a id="inHouseBtn" class="reservationTab" href="javascript:void(0)">In house
+                                                <span><?= countBookingRow('inHouse')?></span></a></li>
+                                        <li><a id="inHouseBtn" class="reservationTab" href="javascript:void(0)">Check
+                                                Out <span><?= countBookingRow('checkOut')?></span></a></li>
                                     </ul>
                                 </div>
                                 <div class="right">
                                     <ul>
-                                        <li><a href="javascript:void(0)" id="addReservationBtn" data-page="reservation"> <i class="fas fa-users"></i> Add Reservations</a> </li>
-                                        <li><a id="excelImport" href="javascript:void(0)"> <i class="fas fa-file-import"></i> Import</a> </li>
-                                        <li><a id="excelExport" href="javascript:void(0)"> <i class="fas fa-file-export"></i> Export</a> </li>
-                                        <li><a id="searchBtnReservation" href="javascript:void(0)"> <i class="fas fa-search"></i> Search</a> </li>
+                                        <li><a href="javascript:void(0)" id="addReservationBtn" data-page="reservation">
+                                                <i class="fas fa-users"></i> Add Reservations</a> </li>
+                                        <li><a id="excelImport" href="javascript:void(0)"> <i
+                                                    class="fas fa-file-import"></i> Import</a> </li>
+                                        <li><a id="excelExport" href="javascript:void(0)"> <i
+                                                    class="fas fa-file-export"></i> Export</a> </li>
+                                        <li><a id="searchBtnReservation" href="javascript:void(0)"> <i
+                                                    class="fas fa-search"></i> Search</a> </li>
                                     </ul>
                                     <div id="searchForReservation">
-                                        <input id="searchForReservationValue" type="text" class="form-contol" placeholder="Search Text.">
+                                        <input id="searchForReservationValue" type="text" class="form-contol"
+                                            placeholder="Search Text.">
                                         <button id="searchForCloseBtn">X</button>
                                     </div>
                                 </div>
@@ -122,7 +160,7 @@ checkPageBySupperAdmin('pms','Reservation', 'Reservation');
 
                         </div>
                     </div>
-                    
+
                     <div id="errorBox"></div>
                     <div id="resorvationContent">
                         <div class="loadingIcon">
@@ -142,7 +180,7 @@ checkPageBySupperAdmin('pms','Reservation', 'Reservation');
     </main>
 
     <?php include(FO_SERVER_SCREEN_PATH.'booing_detail.php') ?>
-    
+
 
 
 
@@ -150,63 +188,50 @@ checkPageBySupperAdmin('pms','Reservation', 'Reservation');
     <?php include(FO_SERVER_SCREEN_PATH.'script.php') ?>
 
     <script>
+    $('#navTopBar').hide();
+    $('.nav-link').removeClass('active');
+    $('.frontOfficeLink').addClass('active');
+    $('.reservationsLink').addClass('active');
 
-        $('#navTopBar').hide();
-        $('.nav-link').removeClass('active');
-        $('.frontOfficeLink').addClass('active');
-        $('.reservationsLink').addClass('active');   
-        
-        closeContent('#reservationAddGuestForm .card-head a', '#addGestOnReservation');
-        closeContent('#reservationAddGuestForm .card-foot .btn-outline-secondary', '#addGestOnReservation');
+    closeContent('#reservationAddGuestForm .card-head a', '#addGestOnReservation');
+    closeContent('#reservationAddGuestForm .card-foot .btn-outline-secondary', '#addGestOnReservation');
 
-        function reservationCountNavBar($rTab = ''){
-            var rTab = $rTab;
-            $.ajax({
-                url: 'include/ajax/room.php',
-                type: 'post',
-                data: {type: 'loadReservationCountNavBar', rTab:rTab},
-                success: function (data) {
-                    $('#loadReservationCountContent').html(data);
-                }
-            });
-        }
-
-        $(document).ready(() => {
-
-            loadResorvation('reservation');
-            reservationCountNavBar();
-
-            $(document).on('click','#reservationBtn',function(){
-                $('.reservationTab').removeClass('active');
-                $(this).addClass('active');
-                loadResorvation('reservation');
-            });
-
-            $(document).on('click','#ariveBtn',function(){
-                $('.reservationTab').removeClass('active');
-                $(this).addClass('active');
-                loadResorvation('arrives');
-            });
-
-            $(document).on('click','#failedBtn',function(){
-                $('.reservationTab').removeClass('active');
-                $(this).addClass('active');
-                loadResorvation('failed');
-            });
-
-            $(document).on('click','#inHouseBtn',function(){
-                $('.reservationTab').removeClass('active');
-                $(this).addClass('active');
-                loadResorvation('inHouse');
-            });
-
-            $(document).on('click', '.reservationTab ', function(){
-                $('.reservationTab').removeClass('active');
-                $(this).addClass('active');
-            });
+    function reservationCountNavBar($rTab = '', $group = '') {
+        var rTab = $rTab;
+        var group = $group;
+        $.ajax({
+            url: 'include/ajax/room.php',
+            type: 'post',
+            data: {
+                type: 'loadReservationCountNavBar',
+                rTab: rTab,
+                group: group
+            },
+            success: function(data) {
+                $('#loadReservationCountContent').html(data);
+            }
         });
+    }
+
+    $(document).ready(() => {
+
+        loadResorvation('reservation');
+        reservationCountNavBar();
 
 
+        $(document).on('click', '.reservationTab', function() {
+            var tabName = $(this).attr('id');
+            var singleGroupBtn = $(".singleGroupToggleBtn").hasClass("active");
+            if (singleGroupBtn == true) {
+                loadResorvation(tabName);
+                reservationCountNavBar(tabName);
+            } else {
+                loadResorvation(tabName, '', 1);
+                reservationCountNavBar(tabName);
+            }
+
+        });
+    });
     </script>
 
 </body>

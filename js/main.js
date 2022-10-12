@@ -26,15 +26,18 @@ function success($msg){
     return $html;
 }
 
-function loadResorvation($rTab='',$search='') {
+function loadResorvation($rTab='',$search='',$reserveType='',$bookingType='', $currentDate='') {
 
     var rTab = $rTab;
     var search = $search;
+    var reserveType = $reserveType;
+    var bookingType = $bookingType;
+    var currentDate = $currentDate;
 
     $.ajax({
         url: webUrl+'include/ajax/resorvation.php' ,
         type: 'post',
-        data: { type: 'load_resorvation',rTab:rTab,search:search},
+        data: { type: 'load_resorvation',rTab:rTab,search:search,reserveType:reserveType,bookingType:bookingType,currentDate:currentDate},
         success: function (data) {
             
             $('#resorvationContent').html(data);
@@ -215,10 +218,10 @@ function showGuestDetailPopUp($roomNum = '', $bid='',$id = '',$btn = '',$rTab = 
     });
 }
 
-function loadAddGuestReservationForm($bId = '', $target, $rNum='',$gid = '',$serial='', $gustImg = '', $guestProofImg = ''){
+function loadAddGuestReservationForm($bId = '', $target, $bdid='',$gid = '',$serial='', $gustImg = '', $guestProofImg = ''){
     var bid = $bId;
     var target = $target;
-    var rNum = $rNum;
+    var bdid = $bdid;
     var gid = $gid;
     var serial = $serial;
     var gustImg = $gustImg;
@@ -226,7 +229,7 @@ function loadAddGuestReservationForm($bId = '', $target, $rNum='',$gid = '',$ser
     $.ajax({
         url : webUrl+'include/ajax/resorvation.php',
         type: 'post',
-        data: {'type':'loadAddGuestReservationForm', bid:bid, rNum:rNum,gid:gid,serial:serial,gustImg:gustImg,guestProofImg:guestProofImg},
+        data: {'type':'loadAddGuestReservationForm', bid:bid, bdid:bdid,gid:gid,serial:serial,gustImg:gustImg,guestProofImg:guestProofImg},
         success: function (data) {
             $(target).html(data);
         }
@@ -266,9 +269,24 @@ function imageTagInsert($target, $path, $width = '80', $type= ''){
     var width = $width;
     var type = $type;
     var imgPath = webUrl+'img/'+type+'/'+path;
-    var html = "<img width="+width+" data-img="+path+" src="+imgPath+" /> <input type='hidden' name="+target+" value="+path+">"
+    var html = "<img width="+width+" data-img="+path+" src="+imgPath+" /> <input type='hidden' name="+target+" id="+target+" value="+path+">"
 
     $('.'+target).html(html);
+}
+
+function removerImgWithName($target, $filename){
+    var target= $target;
+    var filename= $filename;
+    $.ajax({
+        url : webUrl+'include/ajax/otherDetail.php',
+        type : 'post',
+        data : {'type': 'removerImgWithName', target:target,filename:filename},
+        success : function(data){
+            
+            
+        }
+    });
+
 }
 
 $(document).on('click','#configBtn',function(){
@@ -450,9 +468,9 @@ $(document).on('click','.reservationContent', function(){
 $(document).on('submit','#reservationAddGuestForm',function(e){
     e.preventDefault();
     loadAddGuestReservationFormSubmit();
-    var bid = $(this).data('bid');
+    var bdid = $(this).data('bdid');
     
-    showGuestDetailPopUp('','',bid);
+    showGuestDetailPopUp('','',bdid);
     $('#addGestOnReservation').hide();
 });
 
@@ -610,13 +628,13 @@ $(document).on('click','#checkInStatus', function(){
         data: { type: 'checkRoomCheckIn', roomNumber:roomNumber, rBID:rBID,bdid:bdid},
         success: function (data) {
             var result = JSON.parse(data);
-            console.log(result);
             var status = result.status;
             var msg = result.msg;
             if(status == 1){
                 swal("Good job!", "Successfull "+msg+" guest.", "success");
                 loadResorvation(rTab);
-                showGuestDetailPopUp(roomNumber,'','','',rTab,bdid);
+                // showGuestDetailPopUp('roomNumber','','','',rTab,bdid);
+                showGuestDetailPopUp('','', '','',rTab, bdid);
             }
         }
     });
@@ -828,26 +846,47 @@ $(document).on('click', '.removeRoomView', function(){
 $(document).on('click','#addGustBtn', function(){
     $('#addGestOnReservation').show();
      var bid = $(this).data('bookingid');
-     var rNum = $(this).data('roomnum');
+     var bdid = $(this).data('bdid');
     
-    loadAddGuestReservationForm(bid,'#addGestOnReservation .content',rNum);
+    loadAddGuestReservationForm(bid,'#addGestOnReservation .content',bdid);
 
 });
 
 $(document).on('click','.editGuest',function(){
-    var roomNum = $(this).data('roomnum');
+    var bdid = $(this).data('bdid');
     var bid = $(this).data('bid');
     var gid = $(this).data('id');
     $('#addGestOnReservation').show();
-    loadAddGuestReservationForm(bid,'#addGestOnReservation .content',roomNum,gid);
+    loadAddGuestReservationForm(bid,'#addGestOnReservation .content',bdid,gid);
     
 });
 
 $(document).on('click','#addGestOnReservation .closeContent', function(){
+    if($('#guestImgSec').length){
+        $img = $('#guestImgSec').val();
+        removerImgWithName('guest', $img);
+    }
+
+    if($('#guestProofImgSec').length){
+        $img = $('#guestProofImgSec').val();
+        removerImgWithName('guestP', $img);
+    }
+
     $('#addGestOnReservation').hide();
 });
 
 $(document).on('click','#addGestOnReservation .closeGuestSec', function(){
+   
+    if($('#guestImgSec').length){
+        $img = $('#guestImgSec').val();
+        removerImgWithName('guest', $img);
+    }
+
+    if($('#guestProofImgSec').length){
+        $img = $('#guestProofImgSec').val();
+        removerImgWithName('guestP', $img);
+    }
+
     $('#addGestOnReservation').hide();
 });
 
@@ -1234,7 +1273,8 @@ $(document).on('submit', '#printGuestBooingVoucherForm', function(){
     var rBID = $('#rBID').val();
     var bdid = $('#bdid').val();
 
-    
+    var url = webUrl+'voucher.php?oid='+bdid;
+    window.location.href = url;
     
 });
 
@@ -1389,4 +1429,18 @@ $('#popUpBox .closeBox').on('click',function(){
 
 $('#popUpBox .closeBtn').on('click',function(){
     $('#popUpBox').removeClass('show');
+});
+
+$('.cb-value').click(function() {
+    var getRTab = $('.reservationTab.active').attr('id');
+ 
+    var mainParent = $(this).parent('.toggle_btn');
+    if ($(mainParent).find('input.cb-value').is(':checked')) {
+        $(mainParent).addClass('active');
+        loadResorvation(getRTab,'',0);
+    } else {
+        $(mainParent).removeClass('active');
+        loadResorvation(getRTab,'',1);
+    }
+
 });

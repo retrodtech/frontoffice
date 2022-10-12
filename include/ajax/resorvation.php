@@ -20,26 +20,74 @@ if($type == 'load_resorvation'){
 
     $rTabType = $_POST['rTab'];
 
+    $reserveType = $_POST['reserveType'];
 
-    if($rTabType == 'reservation'){        
-        $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where bookingdetail.checkinstatus = '1' and booking.payment_status = '1'";
+    $bookingType = $_POST['bookingType'];
+
+    $currentDate = $_POST['currentDate'];
+
+    if($bookingType == ''){
+        $bookingType = 1;
     }
 
-    if($rTabType == 'arrives'){        
-        $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where booking.checkIn = '$currentDate' and booking.payment_status = '1'";
+    if($bookingType == 1){
+
+        if($rTabType == 'reservation'){        
+            $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where bookingdetail.checkinstatus = '1' and booking.payment_status = '1'";
+        }
+    
+        if($rTabType == 'arrives'){        
+            $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where booking.checkIn = '$currentDate' and booking.payment_status = '1'";
+        }
+    
+        if($rTabType == 'failed'){        
+            $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where booking.payment_status = '2'";
+        }
+    
+        if($rTabType == 'inHouse'){        
+            $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where bookingdetail.checkinstatus = '2' and booking.payment_status = '1'";
+        }
+    
+        if($rTabType == 'checkOut'){        
+            $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where bookingdetail.checkinstatus = '3' and booking.payment_status = '1'";
+        }
+
+        if($search != ''){        
+            $sql = "select booking.*,bookingdetail.checkinstatus,guest.name,guest.email,guest.phone from booking,bookingdetail,guest where guest.bookId= booking.id and guest.name like '%$search%' or guest.email like '%$search%' or guest.phone like '%$search%' or booking.reciptNo like '%$search%' or booking.bookinId like '%$search%'";
+        }
+
     }
 
-    if($rTabType == 'failed'){        
-        $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where booking.payment_status = '2'";
-    }
+    if($bookingType == 2){
 
-    if($rTabType == 'inHouse'){        
-        $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where bookingdetail.checkinstatus = '2' and payment_status = '1'";
-    }
+        if($rTabType == 'reservation'){        
+            $sql = "select * from quickpay where checkinstatus = '1' and payment_status = '1'";
+        }
+    
+        if($rTabType == 'arrives'){        
+            $sql = "select * from quickpay where checkIn = '$currentDate' and payment_status = '1'";
+        }
+    
+        if($rTabType == 'failed'){        
+            $sql = "select * from quickpay where payment_status = '2'";
+        }
+    
+        if($rTabType == 'inHouse'){        
+            $sql = "select * from quickpay where checkinstatus = '2' and payment_status = '1'";
+        }
+    
+        if($rTabType == 'checkOut'){        
+            $sql = "select * from quickpay where checkinstatus = '3' and payment_status = '1'";
+        }
 
-    if($search != ''){        
-        $sql = "select booking.*,bookingdetail.checkinstatus,guest.name,guest.email,guest.phone from booking,bookingdetail,guest where guest.bookId= booking.id and guest.name like '%$search%' or guest.email like '%$search%' or guest.phone like '%$search%' or booking.reciptNo like '%$search%' or booking.bookinId like '%$search%'";
+        if($search != ''){        
+            $sql = "select quickpay.*,guest.name,guest.email,guest.phone from quickpay,guest where guest.bookId= booking.id and guest.name like '%$search%' or guest.email like '%$search%' or guest.phone like '%$search%' or booking.reciptNo like '%$search%' or booking.bookinId like '%$search%'";
+        }
+        
     }
+    
+
+    
     
     $si = 0;
     $pagination = '';
@@ -60,8 +108,13 @@ if($type == 'load_resorvation'){
     
     $offset = ($page -1) * $limit_per_page;
     
-    $sql .= " and booking.id=bookingdetail.bid and booking.hotelId = '$hotelId' group by booking.id ORDER BY booking.id DESC ";
-    // $sql .= " ORDER BY id DESC limit {$offset}, {$limit_per_page}";
+    $sql .= " and booking.id=bookingdetail.bid and booking.hotelId = '$hotelId' ";
+    
+    if($reserveType == 1){
+        $sql .= " group by booking.id";
+    }
+
+    $sql .= " ORDER BY booking.id DESC ";
 
     $html = '<div class="row">';
 
@@ -550,15 +603,15 @@ if($type == 'load_add_resorvation'){
                                             
 
                                         </div>
-                                        <br/>'.
+                                        <br/>
 
-                                        // <div class="row">
-                                        //     <div class="col-md-2">
-                                        //         <a href="" class="btn btn-outline-primary" id="roomDetailIncBtnId">Add Room</a>
-                                        //     </div>
-                                        // </div>
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <a href="" class="btn btn-outline-primary" id="roomDetailIncBtnId">Add Room</a>
+                                            </div>
+                                        </div>
                                         
-                                        '
+                                        
 
                                         <br/>
                                         <hr/>
@@ -905,15 +958,15 @@ if($type == 'generatrExcelSheet'){
 if($type == 'loadAddGuestReservationForm'){
     // pr($_POST);
     $bid = safeData($_POST['bid']);
-    $rNum = safeData($_POST['rNum']);
+    $bdid = safeData($_POST['bdid']);
     $gid = safeData($_POST['gid']);
     $serial = safeData($_POST['serial']);
     $gustImg = safeData($_POST['gustImg']);
     $guestProofImg = safeData($_POST['guestProofImg']);
-
+   
     if($serial == ''){
-        $lstKey = array_key_last(getGuestDetail($bid,'','',$rNum));
-        $serial = getGuestDetail($bid,'','',$rNum)[$lstKey]['serial'] + 1;
+        $lstKey = array_key_last(getGuestDetail($bid,'','',$bdid));
+        $serial = getGuestDetail($bid,'','',$bdid)[$lstKey]['serial'] + 1;
     }
 
     $title = 'Add Guest';
@@ -1005,7 +1058,7 @@ if($type == 'loadAddGuestReservationForm'){
     }
 
     $html = '
-            <form data-bid="'.$bid.'" id="'.$actionBtn.'" method="post" enctype="multipart/form-data">
+            <form data-bid="'.$bid.'" data-bdid="'.$bdid.'" id="'.$actionBtn.'" method="post" enctype="multipart/form-data">
                 <div class="card">
                     <div class="card-head">
                         <h4>'.$title.'</h4>
@@ -1013,7 +1066,7 @@ if($type == 'loadAddGuestReservationForm'){
                         <input type="hidden" name="type" value="loadAddGuestReservationFormSubmit"/>
                         <input type="hidden" name="guestId" value="'.$gid.'"/>
                         <input type="hidden" name="bookingId" value="'.$bid.'"/>
-                        <input type="hidden" name="roomNum" value="'.$rNum.'"/>
+                        <input type="hidden" name="bookingDId" value="'.$bdid.'"/>
                     </div>
                     <div class="card-body">
                         
@@ -1141,7 +1194,7 @@ if($type == 'loadAddGuestReservationForm'){
 
 if($type == 'loadAddGuestReservationFormSubmit'){
 
-   
+  
     $guestName = safeData($_POST['guestName']);
     $guestPhone = safeData($_POST['guestPhone']);
     $guestEmail = safeData($_POST['guestEmail']);
@@ -1153,9 +1206,10 @@ if($type == 'loadAddGuestReservationFormSubmit'){
     $guestIdState = safeData($_POST['guestState']);
     $guestIdcity = safeData($_POST['guestCity']);
 
-    $hotelId = $_SESSION['ADMIN_ID'];
+    $hotelId = $_SESSION['HOTEL_ID'];
     $bookId = safeData($_POST['bookingId']);
-    $roomnum = safeData($_POST['roomNum']);
+    // $roomnum = safeData($_POST['bookingDId']);
+    $bookingDId = safeData($_POST['bookingDId']);
 
     $guestImgSec ='';
     $guestProofImgSec = '';
@@ -1166,8 +1220,6 @@ if($type == 'loadAddGuestReservationFormSubmit'){
     if(isset($_POST['guestProofImgSec'])){
         $guestProofImgSec = safeData($_POST['guestProofImgSec']);
     }
-    
-    echo $guestImgSec;
 
     $addBy = 1;
 
@@ -1184,8 +1236,6 @@ if($type == 'loadAddGuestReservationFormSubmit'){
         $guestImage = $guestArray['image'];
         $guestKycFile = $guestArray['kyc_file'];
     }
-
-
 
     $guestImgStr = '';
     $guestProofStr = '';
@@ -1212,7 +1262,7 @@ if($type == 'loadAddGuestReservationFormSubmit'){
     }
 
 
-    $sql = "insert into guest(hotelId,bookId,roomnum,name,email,phone,country,state,city,zip,image,kyc_file,kyc_number,kyc_type,addBy,serial) values('$hotelId','$bookId','$roomnum','$guestName','$guestEmail','$guestPhone','$guestCountry','$guestIdState','$guestIdcity','$guestZip','$guestImgSec','$guestProofImgSec','$guestIdNumber','$guestIdType','$addBy','$serialNo')";
+    $sql = "insert into guest(hotelId,bookId,bookingdId,name,email,phone,country,state,city,zip,image,kyc_file,kyc_number,kyc_type,addBy,serial) values('$hotelId','$bookId','$bookingDId','$guestName','$guestEmail','$guestPhone','$guestCountry','$guestIdState','$guestIdcity','$guestZip','$guestImgSec','$guestProofImgSec','$guestIdNumber','$guestIdType','$addBy','$serialNo')";
 
     if($_POST['guestId'] != ''){
         
@@ -1398,8 +1448,9 @@ if($type == 'guestIdImgSubmit'){
 
     (file_exists(SERVER_IMG.'/guest/'.$oldImg) == 1) ? $guestImgStr = imgUploadWithData($file,'guest',$oldImg)['img'] : $guestImgStr = imgUploadWithData($file,'guest')['img'];
     
+   
     if($gid != ''){
-        $sql = "update guest set image = '$guestImgStr' where id = '$gid' ";
+        $sql = "update guest set image = '$guestImgStr' where id = '$gid'";
         mysqli_query($conDB, $sql);
     }
 

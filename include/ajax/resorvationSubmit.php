@@ -61,10 +61,12 @@ if(isset($selectRoom)){
         $childPrice = getChildPriceByNoChild($child,$lastId,$room,$checkIn);
 
             mysqli_query($conDB, "insert into bookingdetail(bid,roomId,roomDId,adult,child,room_number) values('$lastId','$room','$rateType','$adult','$child','$roomNum')");
+            $lastBookingDetailId = mysqli_insert_id($conDB);
+            mysqli_query($conDB, "insert into guest(hotelId,bookId,bookingdId,serial,name,email,phone,country) values('$hotrlId','$lastId','$lastBookingDetailId','1','$guestName','$guestEmail','$guestMobile','$guestCuntry')");
     }
 }
 
-mysqli_query($conDB, "insert into guest(hotelId,bookId,roomnum,serial,name,email,phone,country) values('$hotrlId','$lastId','$roomNum','1','$guestName','$guestEmail','$guestMobile','$guestCuntry')");
+
 $guestLastId = mysqli_insert_id($conDB);
 
 echo $page;
