@@ -196,7 +196,7 @@ function generateNumberById($oid){
     return $oid;
 }
 
-function getRoomNumber($rNo='', $status = '', $rid='', $checkIn ='', $checkOut = '',$ridRes = '', $rnid = ''){
+function getRoomNumber($rNo='', $status = '', $rid='', $checkIn ='', $checkOut = '',$ridRes = '', $rnid = '',$bdid=''){
     global $conDB;
     if($status != ''){
         $sql = "select * from roomnumber where status = '1' and deleteRec= '1'";
@@ -223,7 +223,12 @@ function getRoomNumber($rNo='', $status = '', $rid='', $checkIn ='', $checkOut =
         }else{
             $sql .= " and roomId = '$rid' ";
         }
-        
+    }
+
+    if($bdid != ''){
+        $grapRoomNum = mysqli_fetch_assoc(mysqli_query($conDB, "select * from bookingdetail where id = '$bdid'"));
+        $room_number = $grapRoomNum['room_number'];
+        $sql .= " and roomNo  != '$room_number' ";
     }
 
     $query = mysqli_query($conDB, $sql);
@@ -1256,7 +1261,7 @@ function getSlider($sid=''){
     return $data;
 }
 
-function getRatePlanArrById($rid){
+function getRatePlanArrById($rid,$bdid=''){
     global $conDB;
     
     $sql = mysqli_query($conDB, "select * from roomratetype where room_id = '$rid'");

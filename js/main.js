@@ -289,6 +289,22 @@ function removerImgWithName($target, $filename){
 
 }
 
+
+function getOptionByRoomId($target, $roomId, $type, $bdid = ''){
+    var target = $target;
+    var roomId = $roomId;
+    var type = $type;
+    var bdid = $bdid;
+    $.ajax({
+        url : webUrl+'include/ajax/roomView.php',
+        type: 'post',
+        data: { type: 'getOptionByRoomId', roomId:roomId, opType:type, bdid:bdid},
+        success: function (data) {
+            $(target).html(data);
+        }
+    });
+}
+
 $(document).on('click','#configBtn',function(){
     $(this).parent().find('.dropdown-menu').toggleClass('show');
 });
@@ -689,13 +705,13 @@ $(document).on('click', '#checkInOutBtn', function(){
 });
 
 $(document).on('click', '#roomMoveBtn', function(){
-    var roomNumber = $(this).data('roomnum');
+    var rDId = $(this).data('bdid');
     var rTab = $(this).data('reservationtab');
     var rBID = $(this).data('bookingid');
     $.ajax({
         url : webUrl+'include/ajax/roomView.php',
         type: 'post',
-        data: { type: 'roomMoveBtnClick', roomNumber:roomNumber,rTab:rTab,rBID:rBID},
+        data: { type: 'roomMoveBtnClick', rDId:rDId,rTab:rTab,rBID:rBID},
         success: function (data) {
             $('#bookingOtherDetail').show();
             $('#bookingOtherDetail').html(data);
@@ -742,24 +758,14 @@ $(document).on('click', '#cancleReservation', function(){
 
 $(document).on('change', '#chooseRoomForMove', function(){
     var roomId = $(this).val();
-    $.ajax({
-        url : webUrl+'include/ajax/roomView.php',
-        type: 'post',
-        data: { type: 'chooseRoomForMoveClick', roomId:roomId},
-        success: function (data) {
-            $('#chooseRoomTypeForMove').html(data);
-        }
-    });
+    var bdid = $(this).data('bdid');
 
-    $.ajax({
-        url : webUrl+'include/ajax/roomView.php',
-        type: 'post',
-        data: { type: 'chooseRAtePlaneForMoveClick', roomId:roomId},
-        success: function (data) {
-            $('#chooseRatePlaneForMove').html(data);
-        }
-    });
+    getOptionByRoomId('#chooseRatePlaneForMove', roomId, 'rate',bdid);
+
+    getOptionByRoomId('#chooseRoomTypeForMove', roomId, 'roomNum',bdid);
+
 });
+
 
 $(document).on('submit', '#paymentBtnClickForm', function(e){
     e.preventDefault();
@@ -1267,14 +1273,21 @@ $(document).on('change', '.guestImg #guestIdProofImg', function(){
     
 });
 
-$(document).on('submit', '#printGuestBooingVoucherForm', function(){
+$(document).on('change', '#chooseVoucher', function(){
     var select = $('#chooseVoucher').find(":selected").val();
     var roomNum = $('#roomNum').val();
     var rBID = $('#rBID').val();
     var bdid = $('#bdid').val();
+    
+    if(select == 'guest'){
+        var url = webUrl+'/voucher.php?oid='+rBID;
+    }
 
-    var url = webUrl+'voucher.php?oid='+bdid;
-    window.location.href = url;
+    if(select == 'hotel'){
+        var url = webUrl+'/voucher.php?vid='+rBID;
+    }
+
+    $('#printGuestBooingVoucherBtn').attr("href", url);
     
 });
 

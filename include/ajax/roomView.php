@@ -408,102 +408,104 @@ if($type == 'showPopUpGuestDetail'){
 
     $html = '
     
-                <div class="row">
-                    <div class="col-md-6">
+            <div class="row">
+            
+                <div class="col-md-6">
 
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="booking">
-                                    <i class="fab fa-goodreads"></i>
-                                
-                                    <div class="title">
-                                        <div class="name"><h4>'.$groupGuestName.'</h4> <i class="fas fa-users"></i> </div>
-                                        <div class="location">
-                                            <i class="fas fa-map-marker-alt"></i>
-                                            <span>india</span>
-                                        </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="booking">
+                                <i class="fab fa-goodreads"></i>
+                            
+                                <div class="title">
+                                    <div class="name"><h4>'.$groupGuestName.'</h4> <i class="fas fa-users"></i> </div>
+                                    <div class="location">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>india</span>
                                     </div>
                                 </div>
-                                <div class="btnGroup">
-                                    <button data-reservationtab='.$rTab.' data-bookingId='.$bid.' data-roomnum="'.$roomNum.'" data-bdid="'.$bdid.'" class="btn btn-primary" id="reservations"><i class="fas fa-print"></i> Edit Reservation</button>
-                                    '.$checkInStatusHtml.$paymentBtnHtml.'
-                                    <button data-reservationtab='.$rTab.' data-bookingId='.$bid.' data-roomnum="'.$roomNum.'" data-bdid="'.$bdid.'" id="printBtn" class="btn btn2 btn-outline-secondary" data-tooltip-top="Print"><span><svg viewBox="64 64 896 896" focusable="false" width="15px" height="15px" data-icon="printer" fill="currentColor" aria-hidden="true"><path d="M820 436h-40c-4.4 0-8 3.6-8 8v40c0 4.4 3.6 8 8 8h40c4.4 0 8-3.6 8-8v-40c0-4.4-3.6-8-8-8zm32-104H732V120c0-4.4-3.6-8-8-8H300c-4.4 0-8 3.6-8 8v212H172c-44.2 0-80 35.8-80 80v328c0 17.7 14.3 32 32 32h168v132c0 4.4 3.6 8 8 8h424c4.4 0 8-3.6 8-8V772h168c17.7 0 32-14.3 32-32V412c0-44.2-35.8-80-80-80zM360 180h304v152H360V180zm304 664H360V568h304v276zm200-140H732V500H292v204H160V412c0-6.6 5.4-12 12-12h680c6.6 0 12 5.4 12 12v292z"></path></svg></span></button>
-                                </div>
-                                
-                                <div class="btnGroup">
-                                    <button data-reservationtab='.$rTab.' data-bookingId='.$bid.' data-roomnum="'.$roomNum.'" data-bdid="'.$bdid.'" id="checkInOutBtn" class="btn btn2 btn-outline-secondary" data-tooltip-top="Amend Stay"><span><svg width="15px" height="15px" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M14.4643 2.67854H18.2143C18.6094 2.67854 18.9286 2.99774 18.9286 3.39282V11H17.3215V8.83925H2.67862V17.3214H12V18.9285H1.78576C1.39067 18.9285 1.07147 18.6093 1.07147 18.2143V3.39282C1.07147 2.99774 1.39067 2.67854 1.78576 2.67854H5.53576V1.24997C5.53576 1.15175 5.61612 1.0714 5.71433 1.0714H6.96433C7.06254 1.0714 7.1429 1.15175 7.1429 1.24997V2.67854H12.8572V1.24997C12.8572 1.15175 12.9375 1.0714 13.0358 1.0714H14.2858C14.384 1.0714 14.4643 1.15175 14.4643 1.24997V2.67854ZM2.67862 4.28568V7.3214H17.3215V4.28568H14.4643V5.35711C14.4643 5.45532 14.384 5.53568 14.2858 5.53568H13.0358C12.9375 5.53568 12.8572 5.45532 12.8572 5.35711V4.28568H7.1429V5.35711C7.1429 5.45532 7.06254 5.53568 6.96433 5.53568H5.71433C5.61612 5.53568 5.53576 5.45532 5.53576 5.35711V4.28568H2.67862Z" fill="currentColor"></path><path d="M19.3257 14.4617C19.3471 14.445 19.3643 14.4236 19.3762 14.3993C19.3881 14.3749 19.3943 14.3482 19.3943 14.3211C19.3943 14.294 19.3881 14.2672 19.3762 14.2429C19.3643 14.2185 19.3471 14.1971 19.3257 14.1804L16.1628 11.6804C16.0467 11.5889 15.8748 11.6715 15.8748 11.8211V13.4751H8.32127C8.22306 13.4751 8.1427 13.5554 8.1427 13.6537V14.9929C8.1427 15.0912 8.22306 15.1715 8.32127 15.1715L15.8726 15.1715V16.8211C15.8726 16.9706 16.0445 17.0532 16.1606 16.9617L19.3257 14.4617Z" fill="currentColor"></path></svg></span></button>
-                                    <button data-reservationtab='.$rTab.' data-bookingId='.$bid.' data-roomnum="'.$roomNum.'" data-bdid="'.$bdid.'" id="roomMoveBtn" class="btn btn2 btn-outline-secondary" data-tooltip-top="Room Move"><span><svg  width="15px" height="15px" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.7143 6.0625H16.4286C17.3754 6.06359 18.2832 6.42611 18.9527 7.07053C19.6222 7.71495 19.9989 8.58865 20 9.5V12H18.5714V9.5C18.5709 8.95316 18.3449 8.42887 17.9432 8.0422C17.5414 7.65552 16.9967 7.43805 16.4286 7.4375H10.7143V12H12V13.375H1.42857V16H0V4H1.42857V12H9.28571V7.4375C9.28609 7.07294 9.43672 6.72341 9.70455 6.46563C9.97238 6.20785 10.3355 6.06286 10.7143 6.0625Z" fill="currentColor"></path><path d="M5.25 7.28571C5.44072 7.28571 5.62715 7.34227 5.78573 7.44823C5.9443 7.55418 6.0679 7.70478 6.14088 7.88098C6.21387 8.05718 6.23296 8.25107 6.19576 8.43812C6.15855 8.62518 6.06671 8.79699 5.93185 8.93185C5.797 9.06671 5.62518 9.15855 5.43812 9.19576C5.25107 9.23296 5.05718 9.21387 4.88098 9.14088C4.70478 9.0679 4.55418 8.9443 4.44823 8.78573C4.34227 8.62715 4.28571 8.44072 4.28571 8.25C4.28606 7.99436 4.38776 7.74929 4.56852 7.56852C4.74929 7.38776 4.99436 7.28605 5.25 7.28571ZM5.25 6C4.80499 6 4.36998 6.13196 3.99997 6.37919C3.62996 6.62643 3.34157 6.97783 3.17127 7.38896C3.00097 7.8001 2.95642 8.2525 3.04323 8.68895C3.13005 9.12541 3.34434 9.52632 3.65901 9.84099C3.97368 10.1557 4.37459 10.3699 4.81105 10.4568C5.2475 10.5436 5.6999 10.499 6.11104 10.3287C6.52217 10.1584 6.87357 9.87004 7.12081 9.50003C7.36804 9.13002 7.5 8.69501 7.5 8.25C7.5 7.65326 7.26295 7.08097 6.84099 6.65901C6.41903 6.23705 5.84674 6 5.25 6V6Z" fill="currentColor"></path><path d="M19.3257 16.1407C19.3471 16.124 19.3643 16.1027 19.3762 16.0783C19.3881 16.0539 19.3943 16.0272 19.3943 16.0001C19.3943 15.973 19.3881 15.9462 19.3762 15.9219C19.3643 15.8975 19.3471 15.8762 19.3257 15.8595L16.1628 13.3595C16.0467 13.2679 15.8748 13.3505 15.8748 13.5001V15.1541H8.32127C8.22306 15.1541 8.1427 15.2345 8.1427 15.3327V16.672C8.1427 16.7702 8.22306 16.8505 8.32127 16.8505H15.8726V18.5001C15.8726 18.6496 16.0445 18.7322 16.1606 18.6407L19.3257 16.1407Z" fill="currentColor"></path></svg></span></button>
-                                    <button data-reservationtab='.$rTab.' data-bookingId='.$bid.' data-roomnum="'.$roomNum.'" data-bdid="'.$bdid.'" id="cancleReservation" class="btn btn2 btn-outline-secondary" data-tooltip-top="Reservation Cancel"><span><svg width="15px" height="15px" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M18.2143 2.6785h-3.75V1.25a.179.179 0 00-.1785-.1786h-1.25a.179.179 0 00-.1786.1786v1.4285H7.1429V1.25a.179.179 0 00-.1786-.1786h-1.25a.179.179 0 00-.1785.1786v1.4285h-3.75a.7135.7135 0 00-.7143.7143v14.8215c0 .395.3192.7142.7143.7142h16.4285a.7135.7135 0 00.7143-.7142V3.3928a.7135.7135 0 00-.7143-.7143zm-.8928 14.6429H2.6786V8.8392h14.6429v8.4822zm-14.6429-10V4.2857h2.8572V5.357a.179.179 0 00.1785.1786h1.25a.1791.1791 0 00.1786-.1786V4.2857h5.7143V5.357a.179.179 0 00.1786.1786h1.25a.179.179 0 00.1785-.1786V4.2857h2.8572v3.0357H2.6786z" fill="currentColor"></path><g clip-path="url(#clip0)"><circle cx="15" cy="15" r="3" fill="#fff"></circle><path d="M15 10c-2.7612 0-5 2.2388-5 5s2.2388 5 5 5 5-2.2388 5-5-2.2388-5-5-5zm1.846 6.8996l-.7366-.0034L15 15.5737l-1.1083 1.3214-.7377.0033a.0888.0888 0 01-.0893-.0892.0929.0929 0 01.0212-.0581l1.452-1.7299-1.452-1.7288a.0935.0935 0 01-.0212-.058.0896.0896 0 01.0893-.0893l.7377.0033L15 14.471l1.1083-1.3214.7366-.0034a.0889.0889 0 01.0893.0893.0927.0927 0 01-.0213.058l-1.4497 1.7288 1.4509 1.7299a.093.093 0 01.0212.0581.0896.0896 0 01-.0893.0893z" fill="#FF5353"></path></g><defs><clipPath id="clip0"><path fill="#fff" transform="translate(10 10)" d="M0 0h10v10H0z"></path></clipPath></defs></svg></span></button>
-                                </div>
                             </div>
-
-                            <div class="card-body">
-                                <table width="100%">
-
-                                    <tr>
-                                        <td><p><small>Reservation Number</small><br/><span>'.$reciptNo.'</span></p></td>                                    
-                                        <td align="right"><p><small>Voucher Number</small><br/><span>'.$bookingVId.'</span></p></td>                                    
-                                    </tr>
-
-                                    <tr>
-                                        <td colspan="2" class="confirme paymentStatus"><p><small>Status</small><br/> <span>Confirmed Booking</span></p></td>                                                         
-                                    </tr>
-
-                                    <tr>
-                                        <td><p><small>Arrival Date</small><br/><span>'.$checkIn.'</span></p></td>                                    
-                                        <td align="right"><p><small>Departure Date</small><br/><span>'.$checkOut.'</span></p></td>                                    
-                                    </tr>
-
-                                    <tr>
-                                        <td><p><small>Booking Date</small><br/><span>'.$add_on.'</span></p></td>                                    
-                                        <td align="right"><p><small>Room Type</small><br/><span>'.$roomName.'</span></p></td>                                    
-                                    </tr>
-
-                                    <tr>
-                                        <td><p><small>Room Number</small><br/><span>'.$roomNum.'</span></p></td>                                    
-                                        <td align="right"><p><small>Avg. Daily Rate</small><br/><span>Rs '.number_format($avgPrice,2).'</span></p></td>                                    
-                                    </tr>
-                                
-                                </table>
+                            <div class="btnGroup">
+                                <button data-reservationtab='.$rTab.' data-bookingId='.$bid.' data-roomnum="'.$roomNum.'" data-bdid="'.$bdid.'" class="btn btn-primary" id="reservations"><i class="fas fa-print"></i> Edit Reservation</button>
+                                '.$checkInStatusHtml.$paymentBtnHtml.'
+                                <button data-reservationtab='.$rTab.' data-bookingId='.$bid.' data-roomnum="'.$roomNum.'" data-bdid="'.$bdid.'" id="printBtn" class="btn btn2 btn-outline-secondary" data-tooltip-top="Print"><span><svg viewBox="64 64 896 896" focusable="false" width="15px" height="15px" data-icon="printer" fill="currentColor" aria-hidden="true"><path d="M820 436h-40c-4.4 0-8 3.6-8 8v40c0 4.4 3.6 8 8 8h40c4.4 0 8-3.6 8-8v-40c0-4.4-3.6-8-8-8zm32-104H732V120c0-4.4-3.6-8-8-8H300c-4.4 0-8 3.6-8 8v212H172c-44.2 0-80 35.8-80 80v328c0 17.7 14.3 32 32 32h168v132c0 4.4 3.6 8 8 8h424c4.4 0 8-3.6 8-8V772h168c17.7 0 32-14.3 32-32V412c0-44.2-35.8-80-80-80zM360 180h304v152H360V180zm304 664H360V568h304v276zm200-140H732V500H292v204H160V412c0-6.6 5.4-12 12-12h680c6.6 0 12 5.4 12 12v292z"></path></svg></span></button>
                             </div>
-                            <div class="card-footer">
-                                <table width="100%">
-                                    <tr>
-                                        <td><p>Total</p></td>                                    
-                                        <td align="right"><p>RS '.number_format($grossCharge,2).'</p></td>                                    
-                                    </tr> 
-                                    <tr>
-                                        <td><p>Paid</p></td>                                    
-                                        <td align="right"><p>RS '.number_format($userPay,2).'</p></td>                                    
-                                    </tr> 
-                                    <tr>
-                                        <td><p>amount</p></td>                                    
-                                        <td align="right"><p>RS '.number_format($guestPayable,2).'</p></td>                                    
-                                    </tr>                                
-                                </table>
-                            </div>
-                        </div>
-                        
-
-                    </div>
-                    <div class="col-md-6" style="position:relative">
-                        
                             
-                        <div class="bookingGuestList bookingRoomList">
-                            <h4>Guest List</h4>
-
-                            '.$guestList.'
-
+                            <div class="btnGroup">
+                                <button data-reservationtab='.$rTab.' data-bookingId='.$bid.' data-roomnum="'.$roomNum.'" data-bdid="'.$bdid.'" id="checkInOutBtn" class="btn btn2 btn-outline-secondary" data-tooltip-top="Amend Stay"><span><svg width="15px" height="15px" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M14.4643 2.67854H18.2143C18.6094 2.67854 18.9286 2.99774 18.9286 3.39282V11H17.3215V8.83925H2.67862V17.3214H12V18.9285H1.78576C1.39067 18.9285 1.07147 18.6093 1.07147 18.2143V3.39282C1.07147 2.99774 1.39067 2.67854 1.78576 2.67854H5.53576V1.24997C5.53576 1.15175 5.61612 1.0714 5.71433 1.0714H6.96433C7.06254 1.0714 7.1429 1.15175 7.1429 1.24997V2.67854H12.8572V1.24997C12.8572 1.15175 12.9375 1.0714 13.0358 1.0714H14.2858C14.384 1.0714 14.4643 1.15175 14.4643 1.24997V2.67854ZM2.67862 4.28568V7.3214H17.3215V4.28568H14.4643V5.35711C14.4643 5.45532 14.384 5.53568 14.2858 5.53568H13.0358C12.9375 5.53568 12.8572 5.45532 12.8572 5.35711V4.28568H7.1429V5.35711C7.1429 5.45532 7.06254 5.53568 6.96433 5.53568H5.71433C5.61612 5.53568 5.53576 5.45532 5.53576 5.35711V4.28568H2.67862Z" fill="currentColor"></path><path d="M19.3257 14.4617C19.3471 14.445 19.3643 14.4236 19.3762 14.3993C19.3881 14.3749 19.3943 14.3482 19.3943 14.3211C19.3943 14.294 19.3881 14.2672 19.3762 14.2429C19.3643 14.2185 19.3471 14.1971 19.3257 14.1804L16.1628 11.6804C16.0467 11.5889 15.8748 11.6715 15.8748 11.8211V13.4751H8.32127C8.22306 13.4751 8.1427 13.5554 8.1427 13.6537V14.9929C8.1427 15.0912 8.22306 15.1715 8.32127 15.1715L15.8726 15.1715V16.8211C15.8726 16.9706 16.0445 17.0532 16.1606 16.9617L19.3257 14.4617Z" fill="currentColor"></path></svg></span></button>
+                                <button data-reservationtab='.$rTab.' data-bookingId='.$bid.' data-roomnum="'.$roomNum.'" data-bdid="'.$bdid.'" id="roomMoveBtn" class="btn btn2 btn-outline-secondary" data-tooltip-top="Room Move"><span><svg  width="15px" height="15px" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.7143 6.0625H16.4286C17.3754 6.06359 18.2832 6.42611 18.9527 7.07053C19.6222 7.71495 19.9989 8.58865 20 9.5V12H18.5714V9.5C18.5709 8.95316 18.3449 8.42887 17.9432 8.0422C17.5414 7.65552 16.9967 7.43805 16.4286 7.4375H10.7143V12H12V13.375H1.42857V16H0V4H1.42857V12H9.28571V7.4375C9.28609 7.07294 9.43672 6.72341 9.70455 6.46563C9.97238 6.20785 10.3355 6.06286 10.7143 6.0625Z" fill="currentColor"></path><path d="M5.25 7.28571C5.44072 7.28571 5.62715 7.34227 5.78573 7.44823C5.9443 7.55418 6.0679 7.70478 6.14088 7.88098C6.21387 8.05718 6.23296 8.25107 6.19576 8.43812C6.15855 8.62518 6.06671 8.79699 5.93185 8.93185C5.797 9.06671 5.62518 9.15855 5.43812 9.19576C5.25107 9.23296 5.05718 9.21387 4.88098 9.14088C4.70478 9.0679 4.55418 8.9443 4.44823 8.78573C4.34227 8.62715 4.28571 8.44072 4.28571 8.25C4.28606 7.99436 4.38776 7.74929 4.56852 7.56852C4.74929 7.38776 4.99436 7.28605 5.25 7.28571ZM5.25 6C4.80499 6 4.36998 6.13196 3.99997 6.37919C3.62996 6.62643 3.34157 6.97783 3.17127 7.38896C3.00097 7.8001 2.95642 8.2525 3.04323 8.68895C3.13005 9.12541 3.34434 9.52632 3.65901 9.84099C3.97368 10.1557 4.37459 10.3699 4.81105 10.4568C5.2475 10.5436 5.6999 10.499 6.11104 10.3287C6.52217 10.1584 6.87357 9.87004 7.12081 9.50003C7.36804 9.13002 7.5 8.69501 7.5 8.25C7.5 7.65326 7.26295 7.08097 6.84099 6.65901C6.41903 6.23705 5.84674 6 5.25 6V6Z" fill="currentColor"></path><path d="M19.3257 16.1407C19.3471 16.124 19.3643 16.1027 19.3762 16.0783C19.3881 16.0539 19.3943 16.0272 19.3943 16.0001C19.3943 15.973 19.3881 15.9462 19.3762 15.9219C19.3643 15.8975 19.3471 15.8762 19.3257 15.8595L16.1628 13.3595C16.0467 13.2679 15.8748 13.3505 15.8748 13.5001V15.1541H8.32127C8.22306 15.1541 8.1427 15.2345 8.1427 15.3327V16.672C8.1427 16.7702 8.22306 16.8505 8.32127 16.8505H15.8726V18.5001C15.8726 18.6496 16.0445 18.7322 16.1606 18.6407L19.3257 16.1407Z" fill="currentColor"></path></svg></span></button>
+                                <button data-reservationtab='.$rTab.' data-bookingId='.$bid.' data-roomnum="'.$roomNum.'" data-bdid="'.$bdid.'" id="cancleReservation" class="btn btn2 btn-outline-secondary" data-tooltip-top="Reservation Cancel"><span><svg width="15px" height="15px" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M18.2143 2.6785h-3.75V1.25a.179.179 0 00-.1785-.1786h-1.25a.179.179 0 00-.1786.1786v1.4285H7.1429V1.25a.179.179 0 00-.1786-.1786h-1.25a.179.179 0 00-.1785.1786v1.4285h-3.75a.7135.7135 0 00-.7143.7143v14.8215c0 .395.3192.7142.7143.7142h16.4285a.7135.7135 0 00.7143-.7142V3.3928a.7135.7135 0 00-.7143-.7143zm-.8928 14.6429H2.6786V8.8392h14.6429v8.4822zm-14.6429-10V4.2857h2.8572V5.357a.179.179 0 00.1785.1786h1.25a.1791.1791 0 00.1786-.1786V4.2857h5.7143V5.357a.179.179 0 00.1786.1786h1.25a.179.179 0 00.1785-.1786V4.2857h2.8572v3.0357H2.6786z" fill="currentColor"></path><g clip-path="url(#clip0)"><circle cx="15" cy="15" r="3" fill="#fff"></circle><path d="M15 10c-2.7612 0-5 2.2388-5 5s2.2388 5 5 5 5-2.2388 5-5-2.2388-5-5-5zm1.846 6.8996l-.7366-.0034L15 15.5737l-1.1083 1.3214-.7377.0033a.0888.0888 0 01-.0893-.0892.0929.0929 0 01.0212-.0581l1.452-1.7299-1.452-1.7288a.0935.0935 0 01-.0212-.058.0896.0896 0 01.0893-.0893l.7377.0033L15 14.471l1.1083-1.3214.7366-.0034a.0889.0889 0 01.0893.0893.0927.0927 0 01-.0213.058l-1.4497 1.7288 1.4509 1.7299a.093.093 0 01.0212.0581.0896.0896 0 01-.0893.0893z" fill="#FF5353"></path></g><defs><clipPath id="clip0"><path fill="#fff" transform="translate(10 10)" d="M0 0h10v10H0z"></path></clipPath></defs></svg></span></button>
+                            </div>
                         </div>
 
-                        <div class="bookingOtherDetail" id="bookingOtherDetail">
+                        <div class="card-body">
+                            <table width="100%">
+
+                                <tr>
+                                    <td><p><small>Reservation Number</small><br/><span>'.$reciptNo.'</span></p></td>                                    
+                                    <td align="right"><p><small>Voucher Number</small><br/><span>'.$bookingVId.'</span></p></td>                                    
+                                </tr>
+
+                                <tr>
+                                    <td colspan="2" class="confirme paymentStatus"><p><small>Status</small><br/> <span>Confirmed Booking</span></p></td>                                                         
+                                </tr>
+
+                                <tr>
+                                    <td><p><small>Arrival Date</small><br/><span>'.$checkIn.'</span></p></td>                                    
+                                    <td align="right"><p><small>Departure Date</small><br/><span>'.$checkOut.'</span></p></td>                                    
+                                </tr>
+
+                                <tr>
+                                    <td><p><small>Booking Date</small><br/><span>'.$add_on.'</span></p></td>                                    
+                                    <td align="right"><p><small>Room Type</small><br/><span>'.$roomName.'</span></p></td>                                    
+                                </tr>
+
+                                <tr>
+                                    <td><p><small>Room Number</small><br/><span>'.$roomNum.'</span></p></td>                                    
+                                    <td align="right"><p><small>Avg. Daily Rate</small><br/><span>Rs '.number_format($avgPrice,2).'</span></p></td>                                    
+                                </tr>
                             
+                            </table>
                         </div>
-
-                       
+                        <div class="card-footer">
+                            <table width="100%">
+                                <tr>
+                                    <td><p>Total</p></td>                                    
+                                    <td align="right"><p>RS '.number_format($grossCharge,2).'</p></td>                                    
+                                </tr> 
+                                <tr>
+                                    <td><p>Paid</p></td>                                    
+                                    <td align="right"><p>RS '.number_format($userPay,2).'</p></td>                                    
+                                </tr> 
+                                <tr>
+                                    <td><p>amount</p></td>                                    
+                                    <td align="right"><p>RS '.number_format($guestPayable,2).'</p></td>                                    
+                                </tr>                                
+                            </table>
+                        </div>
                     </div>
+                    
 
                 </div>
+
+                <div class="col-md-6" style="position:relative">
+                    
+                        
+                    <div class="bookingGuestList bookingRoomList">
+                        <h4>Guest List</h4>
+
+                        '.$guestList.'
+
+                    </div>
+
+                    <div class="bookingOtherDetail" id="bookingOtherDetail">
+                        
+                    </div>
+
+                    
+                </div>
+
+            </div>
 
 
     ';
@@ -593,6 +595,7 @@ if($type == 'printBtnClick'){
     $rBID = safeData($_POST['rBID']);
     $bdid = safeData($_POST['bdid']);
     $paymentMwthod = '';
+    $url = FRONT_SITE.'/voucher.php?oid='.$rBID;
     foreach(getPaymentTypeMethod() as $paymentList){
         $data = $paymentList['name'];
         $dataId = $paymentList['id'];
@@ -602,7 +605,7 @@ if($type == 'printBtnClick'){
     $html = '
             <div class="paymentBlock">
                 <h4>Print Voucher </h4>
-                <form id="printGuestBooingVoucherForm">
+                <div id="printGuestBooingVoucherForm">
 
                     <div class="row mb-4">
                         <div class="col-12">
@@ -619,10 +622,10 @@ if($type == 'printBtnClick'){
 
                     <div class="row">
                     <div class="col-6"><button class="btn btn-outline-secondary removeRoomView">Cancel</button></div>
-                    <div class="col-6 flexEnd"><button type="submit" class="btn bg-gradient-primary">Download</button></div>
+                    <div class="col-6 flexEnd"><a id="printGuestBooingVoucherBtn" href="'.$url.'"><button class="btn bg-gradient-primary">Download</button></a></div>
                     </div>
 
-                </form>
+                </div>
             </div>
     ';
 
@@ -671,12 +674,15 @@ if($type == 'checkInOutBtnClick'){
 }
 
 if($type == 'roomMoveBtnClick'){
-    $roomNum = safeData($_POST['roomNumber']);
+    
+    $rDId = safeData($_POST['rDId']);
     $rTab = safeData($_POST['rTab']);
     $rBID = safeData($_POST['rBID']);
 
-    $bookingArray = getBookingData($rBID)[0];
-    
+    $bookingArray = getBookingData($rBID,'','',$rDId)[0];
+    // pr($bookingArray);
+    $roomNum =$bookingArray['room_number'];
+    $roomId=$bookingArray['roomId'];
     $roomDId = $bookingArray['roomDId'];
     $checkIn = $bookingArray['checkIn'];
     $checkOut = $bookingArray['checkOut'];
@@ -729,15 +735,16 @@ if($type == 'roomMoveBtnClick'){
                         </div>
                     </div>
 
-                    <input type="hidden" value="'.$roomNum.'" name="roomNum" id="moveRoomNum">
+                    <input type="hidden" value="'.$roomNum.'" name="oldRoomNum" id="moveRoomNum">
                     <input type="hidden" value="'.$rTab.'" name="reservationTab" id="reservationTab">
                     <input type="hidden" value="'.$rBID.'" name="roomBID" id="roomBID">
+                    <input type="hidden" value="'.$rDId.'" name="roomDID" id="roomDID">
                     <input type="hidden" value="roomMoveBtnClickFormSubmit" name="type">
 
                     <div class="row mb-4">
                         <div class="col-12">
                             <label for="chooseRoomForMove">Room </label>
-                            <select class="form-control" id="chooseRoomForMove" name="roomType">
+                            <select class="form-control" id="chooseRoomForMove" name="roomType" data-bdid="'.$rDId.'">
                                 '.$roomTypeHtml.'
                             </select>
                         </div>
@@ -809,15 +816,29 @@ if($type == 'cancleReservationClick'){
     echo $html;
 }
 
-if($type == 'chooseRoomForMoveClick'){
+if($type == 'getOptionByRoomId'){
     $roomId = safeData($_POST['roomId']);
+    $opType = safeData($_POST['opType']);
+    $bdid = safeData($_POST['bdid']);
     $data = '';
-    foreach(getRoomNumber('','',1,$roomId) as $roomTypeList){
-        $num = $roomTypeList['roomNo'];
-        $numId = $roomTypeList['id'];
-
-        $data .= "<option value='$num'>$num</option>";
+    if($opType == 'rate'){
+        foreach(getRatePlanArrById($roomId,$bdid) as $ratePlaneList){
+            $id = $ratePlaneList['id'];
+            $rplan = $ratePlaneList['rplan'];
+    
+            $data .= "<option value='$id'>$rplan</option>";
+        }
     }
+    if($opType == 'roomNum'){
+        foreach(getRoomNumber('','1',$roomId,'','','','',$bdid) as $roomTypeList){
+            $num = $roomTypeList['roomNo'];
+            $numId = $roomTypeList['id'];
+    
+            $data .= "<option value='$num'>$num</option>";
+        }
+    }
+    
+    
 
     echo $data;
 } 
@@ -880,23 +901,30 @@ if($type == 'checkInOutBtnClickFormSubmit'){
 }
 
 if($type == 'roomMoveBtnClickFormSubmit'){
-
-    $oldRoomNum = safeData($_POST['roomNum']);
+    
+    $oldRoomNum = safeData($_POST['oldRoomNum']);
     $roomType = safeData($_POST['roomType']);
     $roomNumber = safeData($_POST['roomNumber']);
+    $roomBID = safeData($_POST['roomBID']);
     $ratePlane = safeData($_POST['ratePlane']);
-    $ratePlane = safeData($_POST['ratePlane']);
-    $ratePlane = safeData($_POST['ratePlane']);
+    $roomDID = safeData($_POST['roomDID']);
 
-    $bookDetailArry = getBookingData('',$oldRoomNum)[0];
-    $bid = $bookDetailArry['bid'];
+    $bookDetailArry = getBookingData('','','',$roomDID)[0];
+    $roomId = $bookDetailArry['roomId'];
+    $adult = $bookDetailArry['adult'];
+    $child = $bookDetailArry['child'];
+    $checkinstatus = $bookDetailArry['checkinstatus'];
+    $addBy = $_SESSION['ADMIN_ID'];
     
 
-    $sql = "update bookingdetail set room_number = '$roomNumber', roomId ='$roomType', roomDId='$ratePlane' where bid = '$bid' and room_number = '$oldRoomNum'";
+    // $sql = "update bookingdetail set room_number = '$roomNumber', roomId ='$roomType', roomDId='$ratePlane' where id = '$bdid'";
+    $sql = "update bookingdetail set deleteRec = '0' where id = '$roomDID'";
+
+   
 
     if(mysqli_query($conDB,$sql)){
+        mysqli_query($conDB, "insert into bookingdetail(bid,roomId,roomDId,room_number,adult,child,checkinstatus,addBy) value('$roomBID','$roomId','$roomDID','$roomNumber','$adult','$child','$checkinstatus','$addBy')");
         echo 1;
-        mysqli_query($conDB, "update guest set roomnum = '$roomNumber' where bookId = '$bid' and roomnum = '$oldRoomNum'");
     }else{
         echo 0;
     }

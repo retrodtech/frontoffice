@@ -882,6 +882,7 @@ if($type == 'loadReservationPreview'){
     $total = '';
     $paid = '';
     $couponCode = '';
+    
     if(isset($_POST['selectRateType']) && !empty($_POST['selectRateType'])){
         foreach($_POST['selectRateType'] as $key=>$val){
             $rateType = $val;
