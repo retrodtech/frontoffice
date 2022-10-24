@@ -14,9 +14,15 @@ if($type == 'loadRoomView'){
   
     $si = 0;
     $pagination = '';
-    
+    $postSlug = $_POST['slug'];
+    $date = ($_POST['date'] == '') ? date('Y-m-d') : $_POST['date'];
+    $rid = getRoomType('','',$postSlug)[0]['id'];
     $sql = "select * from roomnumber where id != ''";
-        
+    
+    if($postSlug != ''){
+        $sql .= " and roomId = '$rid'";
+    }
+    
     
     $limit_per_page = 15;
     
@@ -26,15 +32,38 @@ if($type == 'loadRoomView'){
     }else{
         $page = 1;
     }
+    $roomVacant = countRoomViewByDate()['exist'];
+    $roomBook = countRoomViewByDate('',$date)['book'];
+    if($postSlug != ''){
+        $roomTypeHtml = "<li class='' data-rslug=''><h6>All</h6> <div class='roomViewAlert'><span>$roomBook</span><span>$roomVacant</span></div></li>";
+    }else{
+        $roomTypeHtml = "<li class='active' data-rslug=''><h6>All</h6> <div class='roomViewAlert'><span>$roomBook</span><span>$roomVacant</span></div></li>";
+    }
+    foreach(getRoomType('',1) as $roomTypeList){
+        $id = $roomTypeList['id'];
+        $header = $roomTypeList['header'];
+        $slug = $roomTypeList['slug'];
+        $roomVacant = countRoomViewByDate($slug)['exist'];
+        $roomBook = countRoomViewByDate($slug,$date)['book'];
+        if($postSlug == $slug){
+            $roomTypeHtml .= "<li class='active' data-rslug='$slug'><h6>$header</h6> <div class='roomViewAlert'><span>$roomBook</span><span>$roomVacant</span></div></li>";
+        }else{
+            $roomTypeHtml .= "<li data-rslug='$slug'><h6>$header</h6> <div class='roomViewAlert'><span>$roomBook</span><span>$roomVacant</span></div></li>";
+        }
+    }
     
     
     $offset = ($page -1) * $limit_per_page;
     
     $sql .= " ORDER BY roomNo ASC ";
-    // $sql .= " ORDER BY roomNo ASC limit {$offset}, {$limit_per_page}";
-    
+        
     $html = '<div class="card"><div class="card-body"><div class="row">';
-
+    $html .= '<div class="col-md-3">
+                <ul class="roomViewSideTab">
+                    '.$roomTypeHtml.'
+                </ul>
+            </div>';
+    $html .= '<div class="col-md-8"><div class="row">';
     $query = mysqli_query($conDB, $sql);
     $si = $si + ($limit_per_page *  $page) - $limit_per_page;
     if(mysqli_num_rows($query) > 0){
@@ -54,14 +83,14 @@ if($type == 'loadRoomView'){
             $bookPersion = '___';
             $persionCheckin = 'Vacant';
             
-            if(isset(getBookingData('',$rn,date('Y-m-d'))[0]['bid'])){    
+            if(isset(getBookingData('',$rn,$date)[0]['bid'])){    
 
                 $maxAdult = getRoomAdultCountById($roomId);
                 $countAdult = getBookingData('',$rn)[0]['adult'];                      
                 $bid = getBookingData('',$rn)[0]['bid'];
                 $positionPer = getPercentageByTwoValue($countAdult,$maxAdult);
                 $bookingImgUrl = FRONT_SITE_IMG.'icon/source/'.getBookingSource(getBookingData('',$rn)[0]['bookingSource'])[0]['img'];
-
+         
                 if(isset(getGuestDetail($bid,1)[0]['name'])){
                     $bookPersion = ucfirst(getGuestDetail($bid,1)[0]['name']);
                     $persionCheckin = 'Check In';
@@ -70,7 +99,7 @@ if($type == 'loadRoomView'){
             }
 
 
-            $html .= '<div class="col-md-3 col-sm-6 col-xs-12">
+            $html .= '<div class="col-md-4 col-sm-6 col-xs-12">
                             <div class="content roomContent" data-roomnumber="'.$rn.'">
                                 <div class="iconCon">
                                     <div>'.$rn.'</div>
@@ -111,7 +140,7 @@ if($type == 'loadRoomView'){
        
     }
 
-    $html .= '</div></div></div>';
+    $html .= '</div></div></div></div></div>';
 
     echo $html;
 }
@@ -264,19 +293,25 @@ if($type == 'load_add_guest'){
 if($type == 'checkRoomNumber'){
     $roomNum = safeData($_POST['roomNumber']);
 
-    $currentDate = date('Y-m-d');
+    $currentDate = safeData($_POST['date']);
 
     $roomNumArry = getBookingData('',$roomNum,$currentDate);
-
+    $bid = $roomNumArry[0]['bid'];
+    $bdid = $roomNumArry[0]['bookingdetailId'];
+    
     if(count($roomNumArry) > 0){
         $data = [
             'type'=>'popUp',
-            'roomNo'=>$roomNum
+            'roomNo'=>$roomNum,
+            'bid'=>$bid,
+            'bdid'=>$bdid
         ];
     }else{
         $data = [
             'type'=>'false',
-            'roomNo'=>''
+            'roomNo'=>'',
+            'bid'=>'',
+            'bdid'=>''
         ];
     }
 
@@ -680,16 +715,19 @@ if($type == 'roomMoveBtnClick'){
     $rBID = safeData($_POST['rBID']);
 
     $bookingArray = getBookingData($rBID,'','',$rDId)[0];
-    // pr($bookingArray);
+    // pr($_POST);
+    $bdid =$bookingArray['id'];
     $roomNum =$bookingArray['room_number'];
     $roomId=$bookingArray['roomId'];
     $roomDId = $bookingArray['roomDId'];
     $checkIn = $bookingArray['checkIn'];
     $checkOut = $bookingArray['checkOut'];
 
+    
     $roomTypeHtml = '';
-    $roomNumHtml = '';
-    $ratePlaneHtml = '';
+    $roomNumHtml = roomMoveOptionByRoomId($roomId, 'roomNum', $bdid);
+    $rateTypeHtml = roomMoveOptionByRoomId($roomId, 'rate', $bdid);
+  
 
     foreach(getRoomType() as $roomTypeList){
         $name = $roomTypeList['header'];
@@ -700,26 +738,7 @@ if($type == 'roomMoveBtnClick'){
             $roomTypeHtml .= "<option value='$roomTypeId'>$name</option>";
         }
     }
-
-    if(count(getRoomNumber('','',1,$rBID,$checkIn)) > 0){
-        foreach(getRoomNumber('','',1,$roomId,$checkIn) as $roomNumList){
-            $num = $roomNumList['roomNo'];
-            $numId = $roomNumList['id'];
-            if($roomTypeId == $roomId){
-                $roomNumHtml .= "<option selected value='$num'>$num</option>";
-            }else{
-                $roomNumHtml .= "<option value='$num'>$num</option>";
-            }
-        }
-    }else{
-        $roomNumHtml = "<option value='0'>No Room</option>";
-    }
-
-    foreach(getRateType($rBID,'','1') as $ratePlaneList){
-        $ratePlaneName = $ratePlaneList['title'];
-        $ratePlaneid = $ratePlaneList['id'];
-        $ratePlaneHtml .= "<option value='$ratePlaneid'>$ratePlaneName</option>";
-    }
+    
     
     $pageName = getPageName($_SERVER['PHP_SELF']);
     
@@ -738,7 +757,7 @@ if($type == 'roomMoveBtnClick'){
                     <input type="hidden" value="'.$roomNum.'" name="oldRoomNum" id="moveRoomNum">
                     <input type="hidden" value="'.$rTab.'" name="reservationTab" id="reservationTab">
                     <input type="hidden" value="'.$rBID.'" name="roomBID" id="roomBID">
-                    <input type="hidden" value="'.$rDId.'" name="roomDID" id="roomDID">
+                    <input type="hidden" value="'.$rDId.'" name="bookingDId" id="bookingDId">
                     <input type="hidden" value="roomMoveBtnClickFormSubmit" name="type">
 
                     <div class="row mb-4">
@@ -754,7 +773,7 @@ if($type == 'roomMoveBtnClick'){
                         <div class="col-12">
                             <label for="chooseRatePlaneForMove">Rate Plane</label>
                             <select class="form-control" id="chooseRatePlaneForMove" name="ratePlane">
-                                '.$ratePlaneHtml.'
+                                '.$rateTypeHtml.'
                             </select>
                         </div>
                     </div>
@@ -821,26 +840,8 @@ if($type == 'getOptionByRoomId'){
     $opType = safeData($_POST['opType']);
     $bdid = safeData($_POST['bdid']);
     $data = '';
-    if($opType == 'rate'){
-        foreach(getRatePlanArrById($roomId,$bdid) as $ratePlaneList){
-            $id = $ratePlaneList['id'];
-            $rplan = $ratePlaneList['rplan'];
-    
-            $data .= "<option value='$id'>$rplan</option>";
-        }
-    }
-    if($opType == 'roomNum'){
-        foreach(getRoomNumber('','1',$roomId,'','','','',$bdid) as $roomTypeList){
-            $num = $roomTypeList['roomNo'];
-            $numId = $roomTypeList['id'];
-    
-            $data .= "<option value='$num'>$num</option>";
-        }
-    }
-    
-    
 
-    echo $data;
+    echo roomMoveOptionByRoomId($roomId, $opType, $bdid);
 } 
 
 if($type == 'chooseRAtePlaneForMoveClick'){
@@ -907,23 +908,31 @@ if($type == 'roomMoveBtnClickFormSubmit'){
     $roomNumber = safeData($_POST['roomNumber']);
     $roomBID = safeData($_POST['roomBID']);
     $ratePlane = safeData($_POST['ratePlane']);
-    $roomDID = safeData($_POST['roomDID']);
+    $bookingDId = safeData($_POST['bookingDId']);
 
-    $bookDetailArry = getBookingData('','','',$roomDID)[0];
+    $bookDetailArry = getBookingData('','','',$bookingDId)[0];
     $roomId = $bookDetailArry['roomId'];
     $adult = $bookDetailArry['adult'];
     $child = $bookDetailArry['child'];
     $checkinstatus = $bookDetailArry['checkinstatus'];
+    $roomDId = $bookDetailArry['roomDId'];
+
+    $bid = $bookDetailArry['bid'];
     $addBy = $_SESSION['ADMIN_ID'];
     
-
-    // $sql = "update bookingdetail set room_number = '$roomNumber', roomId ='$roomType', roomDId='$ratePlane' where id = '$bdid'";
-    $sql = "update bookingdetail set deleteRec = '0' where id = '$roomDID'";
-
+    $sql = "update bookingdetail set deleteRec = '0' where id = '$bookingDId'";
+  
    
-
     if(mysqli_query($conDB,$sql)){
-        mysqli_query($conDB, "insert into bookingdetail(bid,roomId,roomDId,room_number,adult,child,checkinstatus,addBy) value('$roomBID','$roomId','$roomDID','$roomNumber','$adult','$child','$checkinstatus','$addBy')");
+        mysqli_query($conDB, "insert into bookingdetail(bid,roomId,roomDId,room_number,adult,child,checkinstatus,addBy) value('$roomBID','$roomId','$roomDId','$roomNumber','$adult','$child','$checkinstatus','$addBy')");
+        $lastInserId = mysqli_insert_id($conDB);
+        $guestQuery = mysqli_query($conDB, "select * from guest where bookId = '$bid' ");
+        
+        while ($row = mysqli_fetch_assoc($guestQuery)) {
+            $guestId = $row['id'];
+            mysqli_query($conDB, "update guest set bookingdId = '$lastInserId' where id='$guestId'");
+            
+        }
         echo 1;
     }else{
         echo 0;

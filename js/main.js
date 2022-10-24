@@ -34,6 +34,10 @@ function loadResorvation($rTab='',$search='',$reserveType='',$bookingType='', $c
     var bookingType = $bookingType;
     var currentDate = $currentDate;
 
+    if(rTab == ''){
+        rTab = 'reservation';
+    }
+
     $.ajax({
         url: webUrl+'include/ajax/resorvation.php' ,
         type: 'post',
@@ -71,11 +75,14 @@ function loadGuest() {
 
 }
 
-function loadRoomView() {
+function loadRoomView($slug = '', $currentDate='') {
+    var slug = $slug;
+    var date = $currentDate;
+    
     $.ajax({
         url: webUrl+'include/ajax/roomView.php' ,
         type: 'post',
-        data: { type: 'loadRoomView' },
+        data: { type: 'loadRoomView', slug:slug,date:date },
         success: function (data) {
             $('#roomViewContent').html(data);
         }
@@ -139,7 +146,7 @@ function loadReservationPreview(){
         type: 'post',
         data: $('#addReservationForm').serialize() + {type: 'loadReservationPreview'},
         success: function (data) {
-            // 
+           
             $('#loadAddResorvation .insertContrnt').html(data);
         }
     });
@@ -511,7 +518,8 @@ $('#addReservationBtn').click(function(){
 
 $(document).on('click','#addReservationSubmitBtn',function(e){
     e.preventDefault();
-    
+    var idName = $('.reservationTab.active').prop('id');
+
     $.ajax({
         url: webUrl+'include/ajax/resorvationSubmit.php' ,
         type: 'post',
@@ -520,9 +528,9 @@ $(document).on('click','#addReservationSubmitBtn',function(e){
             $('#loadAddResorvation').html('').hide();
             $('#addReservationForm').trigger('reset');
             swal("Good job!", "Successfull Add Reservation.", "success");
-
-            if(data == 'reservation'){
-                loadResorvation();
+           
+            if(idName == 'reservation' || idName == 'arrives' || idName == 'failed' || idName == 'inHouse' || idName == 'checkOut'){
+                loadResorvation('reservation');
             } 
 
             if(data == 'stayView'){
@@ -568,23 +576,50 @@ $(document).on('change','#csvFile', function(e){
     $('#excelImportForm .fileName').html(fileName);
 });
 
+$(document).on('change', '#currentDateStart', function(){
+    var currentDate = $(this).val();
+    var rTab = $('.reservationTab.active').attr('id');
+    loadResorvation(rTab,'','','', currentDate)
+});
+
+$(document).on('click','.roomViewSideTab li', function(){
+    $('.roomViewSideTab li').removeClass('active');
+    $(this).addClass('active');
+    var currentDate = $('#roomViewCurrentDate').val();
+    var roomSlug = $(this).data('rslug');
+    
+    loadRoomView(roomSlug,currentDate);
+});
+
+$(document).on('change', '#roomViewCurrentDate', function(){
+    var currentDate = $('#roomViewCurrentDate').val();
+    var roomSlug = $('.roomViewSideTab .active').data('rslug');
+    
+    loadRoomView(roomSlug,currentDate);
+});
+
 
 // Room View start 
 
 $(document).on('click','.roomContent', function(){
     var roomNumber = $(this).data('roomnumber');
+    var date = $('#roomViewCurrentDate').val();
+    var rTab =  $('.roomViewNav.active').attr('id');
+    
     $.ajax({
         url : webUrl+'include/ajax/roomView.php',
         type: 'post',
-        data: { type: 'checkRoomNumber',  roomNumber:roomNumber},
+        data: { type: 'checkRoomNumber', roomNumber:roomNumber,date:date},
         success: function (data) {
-           
+           console.log(data);
             var responce = JSON.parse(data);
+            
             if(responce.type == 'popUp'){
                 var roomNum = responce.roomNo;
-                
+                var bid = responce.bid;
+                var bdid = responce.bdid;
                 $('#bookindDetail').addClass('show');
-                showGuestDetailPopUp(roomNum);
+                showGuestDetailPopUp(roomNum,bid,bdid,'',rTab,bdid);
             }
 
             if(responce.type == 'false'){
@@ -593,6 +628,7 @@ $(document).on('click','.roomContent', function(){
             }
         }
     });
+
 });
 
 $(document).on('click', '#bookindDetail .closeContent', function(){
@@ -649,7 +685,6 @@ $(document).on('click','#checkInStatus', function(){
             if(status == 1){
                 swal("Good job!", "Successfull "+msg+" guest.", "success");
                 loadResorvation(rTab);
-                // showGuestDetailPopUp('roomNumber','','','',rTab,bdid);
                 showGuestDetailPopUp('','', '','',rTab, bdid);
             }
         }
@@ -822,7 +857,6 @@ $(document).on('submit', '#checkInOutBtnClickForm', function(e){
 
 $(document).on('submit', '#roomMoveBtnClickForm', function(e){
     e.preventDefault();
-    var roomNum = $('#moveRoomNum').val();
     var rTab = $(this).data('reservationtab');
     $.ajax({
         url : webUrl+'include/ajax/roomView.php',

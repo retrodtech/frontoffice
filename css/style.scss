@@ -858,7 +858,7 @@ table {
     background: white;
 }
 
-.reservationContent{
+.reservationContent,.reservationContentPreview{
     position: relative;
     background: $white;
     padding: 20px 20px 0 20px;
@@ -2138,6 +2138,7 @@ table {
 .button {
   cursor: pointer
 }
+
 .button-default {
     background-color: rgb(248, 248, 248);
     border: 1px solid rgba(204, 204, 204, 0.5);
@@ -2366,7 +2367,6 @@ table {
       opacity: 0;
       z-index: 9;
       cursor:pointer;
-      -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
     }
   }
 
@@ -2389,3 +2389,76 @@ table {
     }
 }
   
+.roomViewSideTab {
+    position: sticky;
+    top: 50px;
+    background: #00539b;
+    padding: 15px 0;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px #0089ff87;
+    li {
+        display: flex;
+        padding: 10px 25px;
+        margin: 10px 0;
+        position: relative;
+        z-index: 1;
+        color: white;
+        cursor: pointer;
+        justify-content: space-between;
+        align-items: center;
+        h6{
+            color: inherit;
+        }
+        .roomViewAlert{
+            span{
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                margin-right: 3px;
+                font-size: 10px;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+                font-weight: 700;
+                &:first-child{
+                    background: #acddac;
+                    color: $black;
+                }
+                &:last-child{
+                    background: #dddddd;
+                    color: $black;
+                }
+            }
+        }
+        &:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50px;
+            background: transparent;
+            z-index: -1;
+        }
+        &.active {
+            background: transparent;
+            color: black;
+            font-weight: 700;
+            &:before {
+                background: white;
+                box-shadow: 0 5px 10px #00000014;
+            }
+            .roomViewAlert{
+                span{
+                    &:first-child{
+                        color: $black;
+                    }
+                    &:last-child{
+                        color: $black;
+                    }
+                }
+            }
+        }
+    }
+}

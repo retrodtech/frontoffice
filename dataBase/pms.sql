@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 01, 2022 at 03:32 PM
+-- Generation Time: Oct 24, 2022 at 12:30 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -113,7 +113,7 @@ CREATE TABLE `booking` (
 --
 
 INSERT INTO `booking` (`id`, `hotelId`, `bookinId`, `reciptNo`, `userPay`, `checkIn`, `checkOut`, `nroom`, `couponCode`, `pickUp`, `payment_status`, `payment_id`, `bookingSource`, `bussinessSource`, `voucherNumber`, `comPlanId`, `comValue`, `coompanyId`, `paymethodId`, `paytypeId`, `addBy`, `add_on`, `status`, `deleteRec`) VALUES
-(1, '7ae36', 'jamindars_b8d39', '001', 2000, '2022-09-30', '2022-10-02', 0, '', NULL, '1', NULL, 1, 0, NULL, NULL, NULL, NULL, 6, NULL, '1', '2022-09-29 13:38:19', 1, 1);
+(1, '7ae36', 'jamindars_bd6efb', '001', 5000, '2022-10-25', '2022-10-27', 0, '0', NULL, '1', NULL, 1, 0, NULL, NULL, NULL, NULL, 6, NULL, '1', '2022-10-22 23:28:46', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -132,6 +132,8 @@ CREATE TABLE `bookingdetail` (
   `gstPer` int(11) DEFAULT NULL,
   `totalPrice` float DEFAULT NULL,
   `checkinstatus` int(11) DEFAULT 1,
+  `addBy` varchar(250) DEFAULT NULL,
+  `addOn` timestamp NOT NULL DEFAULT current_timestamp(),
   `deleteRec` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -139,8 +141,9 @@ CREATE TABLE `bookingdetail` (
 -- Dumping data for table `bookingdetail`
 --
 
-INSERT INTO `bookingdetail` (`id`, `bid`, `roomId`, `roomDId`, `room_number`, `adult`, `child`, `gstPer`, `totalPrice`, `checkinstatus`, `deleteRec`) VALUES
-(1, 1, 2, 2, 201, 2, 0, NULL, NULL, 1, 1);
+INSERT INTO `bookingdetail` (`id`, `bid`, `roomId`, `roomDId`, `room_number`, `adult`, `child`, `gstPer`, `totalPrice`, `checkinstatus`, `addBy`, `addOn`, `deleteRec`) VALUES
+(1, 1, 1, 1, 101, 2, 0, NULL, NULL, 1, NULL, '2022-10-22 17:58:46', 0),
+(2, 1, 1, 1, 104, 2, 0, NULL, NULL, 1, '1', '2022-10-22 18:23:11', 1);
 
 -- --------------------------------------------------------
 
@@ -309,9 +312,9 @@ INSERT INTO `gallery` (`id`, `hotelId`, `text`, `img`, `addBy`, `add_on`, `delet
 
 CREATE TABLE `guest` (
   `id` int(11) NOT NULL,
-  `hotelId` int(11) NOT NULL,
+  `hotelId` varchar(11) NOT NULL,
   `bookId` int(11) DEFAULT NULL,
-  `roomnum` int(11) NOT NULL,
+  `bookingdId` int(11) NOT NULL,
   `serial` varchar(11) NOT NULL DEFAULT '0',
   `name` varchar(250) NOT NULL,
   `email` varchar(250) NOT NULL,
@@ -335,10 +338,9 @@ CREATE TABLE `guest` (
 -- Dumping data for table `guest`
 --
 
-INSERT INTO `guest` (`id`, `hotelId`, `bookId`, `roomnum`, `serial`, `name`, `email`, `phone`, `gender`, `company_name`, `comGst`, `country`, `state`, `city`, `zip`, `image`, `kyc_file`, `kyc_number`, `kyc_type`, `addBy`, `addOn`) VALUES
-(1, 7, 1, 201, '1', 'Avinab', 'avinabgiri9439@gmail.com', '1234567890', NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, 'guest_137745.jpeg', NULL, NULL, NULL, '2022-09-29 13:38:19'),
-(4, 1, 1, 201, '2', 'Avinab2', 'avinabgiri9439@gmail.com', '123232', NULL, NULL, NULL, '', '', '', 0, '', 'guestP_225255.png', '121568', 1, '1', '2022-09-30 14:22:18'),
-(10, 1, 1, 201, '3', 'Avinab3', 'avinabgiri9439@gmail.com', '123232', NULL, NULL, NULL, '', '', '', 0, '', '', '121568', 2, '1', '2022-09-30 15:03:54');
+INSERT INTO `guest` (`id`, `hotelId`, `bookId`, `bookingdId`, `serial`, `name`, `email`, `phone`, `gender`, `company_name`, `comGst`, `country`, `state`, `city`, `zip`, `image`, `kyc_file`, `kyc_number`, `kyc_type`, `addBy`, `addOn`) VALUES
+(1, '7ae36', 1, 2, '1', 'Avinab', 'avinabgiri9439@gmail.com', '', NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-10-22 23:28:46'),
+(2, '7ae36', 1, 2, '2', 'Avinab2', 'avinabgiri9439@gmail.com', '123232', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-22 23:29:21');
 
 -- --------------------------------------------------------
 
@@ -444,7 +446,7 @@ CREATE TABLE `hotel` (
 --
 
 INSERT INTO `hotel` (`id`, `hCode`, `slug`, `name`, `email`, `phone`, `website`, `logo`, `commission`, `paymentGetway`, `userId`, `password`, `webBilder`, `bookingEngine`, `pms`, `beLink`, `status`, `addBy`, `addOn`) VALUES
-(1, '7ae36', 'jamindars-palace', 'Jamindars palace', 'reservation@jamindarspalace.com', '12345678902', 'jamindarspalace.com', 'Jamindars_palace_261.png', 12, 'hotel', 'hotel', '12345', 1, 1, 1, '', 1, '1_23-09-2022', '2022-09-23 07:55:08');
+(1, '7ae36', 'retrod', 'Retrod', 'admin@retrod.in', '12345678902', 'retrodtech.com', 'retrod_261.png', 12, 'hotel', 'retrod', '12345', 1, 1, 1, '', 1, '1_23-09-2022', '2022-09-23 07:55:08');
 
 -- --------------------------------------------------------
 
@@ -616,7 +618,7 @@ INSERT INTO `profile` (`id`, `hotelId`, `name`, `email`, `primaryphone`, `addres
 
 CREATE TABLE `quickpay` (
   `id` int(11) NOT NULL,
-  `hotelId` int(11) NOT NULL,
+  `hotelId` varchar(11) NOT NULL,
   `orderId` varchar(250) NOT NULL,
   `name` varchar(50) NOT NULL,
   `phone` varchar(15) NOT NULL,
@@ -635,6 +637,13 @@ CREATE TABLE `quickpay` (
   `addBy` text NOT NULL,
   `addOn` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `quickpay`
+--
+
+INSERT INTO `quickpay` (`id`, `hotelId`, `orderId`, `name`, `phone`, `email`, `room`, `room_id`, `nOfRoom`, `roomPrice`, `qickPayNote`, `totalAmount`, `amount`, `checkIn`, `checkOut`, `paymentId`, `paymentStatus`, `addBy`, `addOn`) VALUES
+(1, '7ae36', 'qpjamindars_19def', 'Avinab Giri', '9439706344', 'avinabgiri9439@gmail.com', 1, 1, 1, 1500, '', 1500, 1200, '2022-10-08', '2022-10-10', NULL, '1', '', '2022-10-08 15:44:35');
 
 -- --------------------------------------------------------
 
@@ -695,8 +704,9 @@ CREATE TABLE `room` (
 --
 
 INSERT INTO `room` (`id`, `hotelId`, `slug`, `header`, `sName`, `bedtype`, `totalroom`, `roomcapacity`, `description`, `noAdult`, `noChild`, `add_on`, `status`, `mrp`, `roomArea`, `noBed`, `noBathroom`, `faceId`, `view`, `booking`, `deleteRec`, `addBy`) VALUES
-(1, '7ae36', 'room-1', 'Room 10', '', 'king', 2, 3, '', 2, 0, '2022-09-23 07:07:31', 1, 3000, NULL, NULL, NULL, 0, 0, 0, 1, ''),
-(2, '7ae36', 'room-2', 'Room 2', '', 'king', 2, 3, '', 2, 0, '2022-09-23 07:10:03', 1, 3000, NULL, NULL, NULL, 0, 0, 0, 1, '');
+(1, '7ae36', 'standard-room', 'Standard Room', '', 'king', 3, 3, '', 2, 0, '2022-10-12 08:54:39', 1, 6000, NULL, NULL, NULL, 0, 0, 0, 1, ''),
+(2, '7ae36', 'deluxe-ground-floor', 'Deluxe Ground Floor', '', 'king', 3, 3, '', 2, 0, '2022-10-12 08:55:22', 1, 6500, NULL, NULL, NULL, 0, 0, 0, 1, ''),
+(3, '7ae36', 'super-deluxe room', 'Super Deluxe Room', '', 'king', 2, 3, '', 2, 0, '2022-10-12 08:56:21', 1, 7500, NULL, NULL, NULL, 0, 0, 0, 1, '');
 
 -- --------------------------------------------------------
 
@@ -720,9 +730,15 @@ CREATE TABLE `roomnumber` (
 --
 
 INSERT INTO `roomnumber` (`id`, `hotelId`, `roomNo`, `roomId`, `status`, `addBy`, `addOn`, `deleteRec`) VALUES
-(1, '7ae36', 101, 1, 1, '', '2022-09-23 10:05:49', 1),
-(2, '7ae36', 102, 1, 1, '', '2022-09-23 10:06:53', 1),
-(3, '7ae36', 201, 2, 1, '', '2022-09-23 10:07:11', 1);
+(1, '7ae36', 101, 1, 1, '', '2022-10-12 20:56:34', 1),
+(2, '7ae36', 102, 1, 1, '', '2022-10-12 20:56:40', 1),
+(3, '7ae36', 103, 1, 1, '', '2022-10-12 20:56:47', 1),
+(4, '7ae36', 104, 2, 1, '', '2022-10-12 20:57:11', 1),
+(5, '7ae36', 105, 2, 1, '', '2022-10-12 20:57:19', 1),
+(6, '7ae36', 106, 2, 1, '', '2022-10-12 20:57:27', 1),
+(7, '7ae36', 201, 3, 1, '', '2022-10-12 20:57:34', 1),
+(8, '7ae36', 202, 3, 1, '', '2022-10-12 20:57:43', 1),
+(9, '7ae36', 203, 3, 1, '', '2022-10-12 20:57:50', 1);
 
 -- --------------------------------------------------------
 
@@ -747,8 +763,9 @@ CREATE TABLE `roomratetype` (
 --
 
 INSERT INTO `roomratetype` (`id`, `room_id`, `title`, `singlePrice`, `doublePrice`, `price`, `extra_adult`, `extra_child`, `status`) VALUES
-(1, 1, 'Room only', 1000, 1200, 0, 100, 50, 1),
-(2, 2, 'Room only', 1000, 1200, 0, 100, 50, 1);
+(1, 1, 'Room Only', 5600, 5600, 0, 1120, 1120, 1),
+(2, 2, 'Room Only', 6100, 6100, 0, 1120, 1120, 1),
+(3, 3, 'Room Only', 7490, 7490, 0, 1120, 1120, 1);
 
 -- --------------------------------------------------------
 
@@ -767,7 +784,15 @@ CREATE TABLE `room_amenities` (
 --
 
 INSERT INTO `room_amenities` (`id`, `room_id`, `amenitie_id`) VALUES
-(1, 1, 15);
+(1, 1, 1),
+(2, 1, 2),
+(3, 1, 7),
+(4, 2, 1),
+(5, 2, 2),
+(6, 2, 7),
+(7, 3, 1),
+(8, 3, 2),
+(9, 3, 7);
 
 -- --------------------------------------------------------
 
@@ -786,10 +811,9 @@ CREATE TABLE `room_img` (
 --
 
 INSERT INTO `room_img` (`id`, `room_id`, `image`) VALUES
-(0, 1, '381671.png'),
-(0, 2, '857924.jpg'),
-(0, 1, '589168.jpeg'),
-(0, 2, '614423.jpg');
+(0, 1, '593896.jpg'),
+(0, 2, '550221.jpg'),
+(0, 3, '990018.jpg');
 
 -- --------------------------------------------------------
 
@@ -1164,7 +1188,7 @@ ALTER TABLE `booking`
 -- AUTO_INCREMENT for table `bookingdetail`
 --
 ALTER TABLE `bookingdetail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `bookingsource`
@@ -1212,7 +1236,7 @@ ALTER TABLE `gallery`
 -- AUTO_INCREMENT for table `guest`
 --
 ALTER TABLE `guest`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `guestidproof`
@@ -1284,7 +1308,7 @@ ALTER TABLE `profile`
 -- AUTO_INCREMENT for table `quickpay`
 --
 ALTER TABLE `quickpay`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `reservationtype`
@@ -1296,25 +1320,25 @@ ALTER TABLE `reservationtype`
 -- AUTO_INCREMENT for table `room`
 --
 ALTER TABLE `room`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `roomnumber`
 --
 ALTER TABLE `roomnumber`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `roomratetype`
 --
 ALTER TABLE `roomratetype`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `room_amenities`
 --
 ALTER TABLE `room_amenities`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `setting`

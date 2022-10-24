@@ -24,69 +24,17 @@ if($type == 'load_resorvation'){
 
     $bookingType = $_POST['bookingType'];
 
-    $currentDate = $_POST['currentDate'];
+    $currentDate = ($_POST['currentDate'] == '') ? date('Y-m-d') : $_POST['currentDate'];
 
     if($bookingType == ''){
         $bookingType = 1;
     }
 
-    if($bookingType == 1){
+    $sql = reservationReturnQuery($rTabType,$currentDate);
 
-        if($rTabType == 'reservation'){        
-            $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where bookingdetail.checkinstatus = '1' and booking.payment_status = '1'";
-        }
-    
-        if($rTabType == 'arrives'){        
-            $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where booking.checkIn = '$currentDate' and booking.payment_status = '1'";
-        }
-    
-        if($rTabType == 'failed'){        
-            $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where booking.payment_status = '2'";
-        }
-    
-        if($rTabType == 'inHouse'){        
-            $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where bookingdetail.checkinstatus = '2' and booking.payment_status = '1'";
-        }
-    
-        if($rTabType == 'checkOut'){        
-            $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where bookingdetail.checkinstatus = '3' and booking.payment_status = '1'";
-        }
-
-        if($search != ''){        
-            $sql = "select booking.*,bookingdetail.checkinstatus,guest.name,guest.email,guest.phone from booking,bookingdetail,guest where guest.bookId= booking.id and guest.name like '%$search%' or guest.email like '%$search%' or guest.phone like '%$search%' or booking.reciptNo like '%$search%' or booking.bookinId like '%$search%'";
-        }
-
+    if($search != ''){        
+        $sql = "select booking.*,bookingdetail.checkinstatus,guest.name,guest.email,guest.phone from booking,bookingdetail,guest where guest.bookId= booking.id and guest.name like '%$search%' or guest.email like '%$search%' or guest.phone like '%$search%' or booking.reciptNo like '%$search%' or booking.bookinId like '%$search%' and booking.checkIn >= '$currentDate'";
     }
-
-    if($bookingType == 2){
-
-        if($rTabType == 'reservation'){        
-            $sql = "select * from quickpay where checkinstatus = '1' and payment_status = '1'";
-        }
-    
-        if($rTabType == 'arrives'){        
-            $sql = "select * from quickpay where checkIn = '$currentDate' and payment_status = '1'";
-        }
-    
-        if($rTabType == 'failed'){        
-            $sql = "select * from quickpay where payment_status = '2'";
-        }
-    
-        if($rTabType == 'inHouse'){        
-            $sql = "select * from quickpay where checkinstatus = '2' and payment_status = '1'";
-        }
-    
-        if($rTabType == 'checkOut'){        
-            $sql = "select * from quickpay where checkinstatus = '3' and payment_status = '1'";
-        }
-
-        if($search != ''){        
-            $sql = "select quickpay.*,guest.name,guest.email,guest.phone from quickpay,guest where guest.bookId= booking.id and guest.name like '%$search%' or guest.email like '%$search%' or guest.phone like '%$search%' or booking.reciptNo like '%$search%' or booking.bookinId like '%$search%'";
-        }
-        
-    }
-    
-
     
     
     $si = 0;
@@ -108,7 +56,7 @@ if($type == 'load_resorvation'){
     
     $offset = ($page -1) * $limit_per_page;
     
-    $sql .= " and booking.id=bookingdetail.bid and booking.hotelId = '$hotelId' ";
+    $sql .= " and booking.id=bookingdetail.bid and booking.hotelId = '$hotelId' and bookingdetail.deleteRec = '1' ";
     
     if($reserveType == 1){
         $sql .= " group by booking.id";
@@ -118,12 +66,14 @@ if($type == 'load_resorvation'){
 
     $html = '<div class="row">';
 
-    
+
     
     $query = mysqli_query($conDB, $sql);
     $si = $si + ($limit_per_page *  $page) - $limit_per_page;
+   
     if(mysqli_num_rows($query) > 0){
         while($row = mysqli_fetch_assoc($query)){
+            
           $html .= '<div class="col-md-3 col-sm-6 col-xs-12">';
         
             $si ++;
@@ -154,9 +104,8 @@ if($type == 'load_resorvation'){
             $maxAddBy = count($addBy);
             $addByValue = $addBy[$maxAddBy -1];
             $addByValueArr = explode('_',$addByValue);
-            // $addByHtml = getSuperAdmin($addByValueArr['0'])['name'];
-
-            $gname = getGuestDetail('','',getBookingDetailById($bid)['name'])[0]['name'];
+            
+            $gname = getGuestDetail('','',getBookingDetailById($bid,'',$bookingDetailMainId)['name'])[0]['name'];
             $nAdult = getBookingDetailById($bid)['totalAdult'];
             $nChild = getBookingDetailById($bid)['totalChild'];
            
@@ -905,7 +854,7 @@ if($type == 'loadReservationPreview'){
 
 
 
-    $html = reservationContent($bid,$reciptNo,$gname,$checkIn,$checkOut,$bDate,$nAdult,$nChild,$totalPrice,$paid);
+    $html = reservationContent($bid,$reciptNo,$gname,$checkIn,$checkOut,$bDate,$nAdult,$nChild,$totalPrice,$paid,'','','','no');
 
     echo $html;
 }

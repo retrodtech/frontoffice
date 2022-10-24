@@ -6,7 +6,12 @@ include (SERVER_INCLUDE_PATH.'function.php');
 // pr($_POST);
 $page = $_POST['page'];
 
-$bookId = BOOK_GENERATE.unique_id(5);
+if(isset($_SESSION['reservatioId']) && $_SESSION['reservatioId'] !=''){
+    $bookId = $_SESSION['reservatioId'];
+}else{
+    $bookId = BOOK_GENERATE.unique_id(6);
+    $_SESSION['reservatioId'] = $bid;
+}
         
 $checkIn = safeData($_POST['checkIn']);
 $checkOut = safeData($_POST['checkOut']);
@@ -69,5 +74,7 @@ if(isset($selectRoom)){
 
 $guestLastId = mysqli_insert_id($conDB);
 
+unset($_SESSION['reservatioId']);
 echo $page;
+
 ?>

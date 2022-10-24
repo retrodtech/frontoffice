@@ -765,7 +765,7 @@ table .tableLine td, table .tableLine th {
   background: white;
 }
 
-.reservationContent {
+.reservationContent, .reservationContentPreview {
   position: relative;
   background: white;
   padding: 20px 20px 0 20px;
@@ -773,37 +773,37 @@ table .tableLine td, table .tableLine th {
   margin-bottom: 25px;
   box-shadow: 0 2px 4px rgba(12, 36, 76, 0.2);
 }
-.reservationContent ul {
+.reservationContent ul, .reservationContentPreview ul {
   margin-bottom: 0;
   padding-left: 0;
 }
-.reservationContent .head {
+.reservationContent .head, .reservationContentPreview .head {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.reservationContent .head .leftSide {
+.reservationContent .head .leftSide, .reservationContentPreview .head .leftSide {
   display: flex;
   align-items: center;
 }
-.reservationContent .head .icon {
+.reservationContent .head .icon, .reservationContentPreview .head .icon {
   margin-right: 20px;
 }
-.reservationContent .head .userName h4 {
+.reservationContent .head .userName h4, .reservationContentPreview .head .userName h4 {
   margin-bottom: 0px;
 }
-.reservationContent .head .rightSide {
+.reservationContent .head .rightSide, .reservationContentPreview .head .rightSide {
   width: 50px;
   height: 100%;
   display: flex;
   justify-content: end;
 }
-.reservationContent .head .rightSide .toggleCon {
+.reservationContent .head .rightSide .toggleCon, .reservationContentPreview .head .rightSide .toggleCon {
   position: relative;
   cursor: pointer;
 }
-.reservationContent .head .rightSide .toggleCon span {
+.reservationContent .head .rightSide .toggleCon span, .reservationContentPreview .head .rightSide .toggleCon span {
   width: 5px;
   height: 5px;
   background: rgba(0, 0, 0, 0.5);
@@ -812,13 +812,13 @@ table .tableLine td, table .tableLine th {
   margin-bottom: 3px;
   transition: 0.2s ease-in-out;
 }
-.reservationContent .head .rightSide .toggleCon span:last-child {
+.reservationContent .head .rightSide .toggleCon span:last-child, .reservationContentPreview .head .rightSide .toggleCon span:last-child {
   margin-bottom: 0;
 }
-.reservationContent .head .rightSide .toggleCon:hover span {
+.reservationContent .head .rightSide .toggleCon:hover span, .reservationContentPreview .head .rightSide .toggleCon:hover span {
   background: black;
 }
-.reservationContent .head .rightSide .actionContent {
+.reservationContent .head .rightSide .actionContent, .reservationContentPreview .head .rightSide .actionContent {
   position: absolute;
   top: 100%;
   background: white;
@@ -827,66 +827,66 @@ table .tableLine td, table .tableLine th {
   transform: translate(50%, -25%);
   display: none;
 }
-.reservationContent .head .rightSide .actionContent.show {
+.reservationContent .head .rightSide .actionContent.show, .reservationContentPreview .head .rightSide .actionContent.show {
   display: block;
 }
-.reservationContent .head .rightSide .actionContent li {
+.reservationContent .head .rightSide .actionContent li, .reservationContentPreview .head .rightSide .actionContent li {
   display: block;
 }
-.reservationContent .head .rightSide .actionContent li a {
+.reservationContent .head .rightSide .actionContent li a, .reservationContentPreview .head .rightSide .actionContent li a {
   display: block;
   padding: 3px 10px;
   margin-bottom: 1px;
   background: white;
   cursor: pointer;
 }
-.reservationContent .head .rightSide .actionContent li a:hover {
+.reservationContent .head .rightSide .actionContent li a:hover, .reservationContentPreview .head .rightSide .actionContent li a:hover {
   background: #f2f2f2;
 }
-.reservationContent .body {
+.reservationContent .body, .reservationContentPreview .body {
   position: relative;
 }
-.reservationContent .body .checkInDetail {
+.reservationContent .body .checkInDetail, .reservationContentPreview .body .checkInDetail {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 15px 0;
 }
-.reservationContent .body .bookingDate {
+.reservationContent .body .bookingDate, .reservationContentPreview .body .bookingDate {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.reservationContent .body .bookingDate .left {
+.reservationContent .body .bookingDate .left, .reservationContentPreview .body .bookingDate .left {
   font-size: 14px;
 }
-.reservationContent .body .bookingDate .right li {
+.reservationContent .body .bookingDate .right li, .reservationContentPreview .body .bookingDate .right li {
   display: inline-block;
   margin-right: 10px;
 }
-.reservationContent .body .bookingDate .right li:last-child {
+.reservationContent .body .bookingDate .right li:last-child, .reservationContentPreview .body .bookingDate .right li:last-child {
   margin-right: 0;
 }
-.reservationContent .body .bookingDetail {
+.reservationContent .body .bookingDetail, .reservationContentPreview .body .bookingDetail {
   position: relative;
   padding: 15px 0;
 }
-.reservationContent .body .bookingDetail li {
+.reservationContent .body .bookingDetail li, .reservationContentPreview .body .bookingDetail li {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.reservationContent .body .bookingDetail li:last-child strong {
+.reservationContent .body .bookingDetail li:last-child strong, .reservationContentPreview .body .bookingDetail li:last-child strong {
   color: red;
 }
-.reservationContent .foot {
+.reservationContent .foot, .reservationContentPreview .foot {
   padding: 10px 0;
 }
-.reservationContent .foot li {
+.reservationContent .foot li, .reservationContentPreview .foot li {
   display: inline-block;
   margin-right: 15px;
 }
-.reservationContent .foot li:last-child {
+.reservationContent .foot li:last-child, .reservationContentPreview .foot li:last-child {
   margin-right: 0;
 }
 
@@ -2211,7 +2211,6 @@ table .tableLine td, table .tableLine th {
   opacity: 0;
   z-index: 9;
   cursor: pointer;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
 }
 
 .resvationGroupBtn {
@@ -2233,4 +2232,73 @@ table .tableLine td, table .tableLine th {
   width: -moz-max-content;
   width: max-content;
   transform: translateX(-50%);
+}
+
+.roomViewSideTab {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 50px;
+  background: #00539b;
+  padding: 15px 0;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 137, 255, 0.5294117647);
+}
+.roomViewSideTab li {
+  display: flex;
+  padding: 10px 25px;
+  margin: 10px 0;
+  position: relative;
+  z-index: 1;
+  color: white;
+  cursor: pointer;
+  justify-content: space-between;
+  align-items: center;
+}
+.roomViewSideTab li h6 {
+  color: inherit;
+}
+.roomViewSideTab li .roomViewAlert span {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 3px;
+  font-size: 10px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+}
+.roomViewSideTab li .roomViewAlert span:first-child {
+  background: #acddac;
+  color: black;
+}
+.roomViewSideTab li .roomViewAlert span:last-child {
+  background: #dddddd;
+  color: black;
+}
+.roomViewSideTab li:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50px;
+  background: transparent;
+  z-index: -1;
+}
+.roomViewSideTab li.active {
+  background: transparent;
+  color: black;
+  font-weight: 700;
+}
+.roomViewSideTab li.active:before {
+  background: white;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.0784313725);
+}
+.roomViewSideTab li.active .roomViewAlert span:first-child {
+  color: black;
+}
+.roomViewSideTab li.active .roomViewAlert span:last-child {
+  color: black;
 }/*# sourceMappingURL=style.css.map */

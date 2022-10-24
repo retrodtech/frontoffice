@@ -143,16 +143,22 @@ if(isset($_POST['reservationSubmit'])){
 
             <div class="row mt-4">
                 <div class="col-12">
-
+                    <div class="col-md-2">
+                        <div class="currentDate mb-2">
+                            <label for="roomViewCurrentDate">Date</label>
+                            <input class="form-control" type="date" id="roomViewCurrentDate" name="currentDate" value="<?= date('Y-m-d') ?>" min="<?= date('Y-m-d') ?>" max="">
+                        </div>
+                    </div>
                     <div class="card mb-4 reservationNav">
                         <div class="card-body">
+                            
                             <div class="dFlex jcsb">
                                 <div class="left">
                                     <ul>
-                                        <li><a href="javascript:void(0)">All <span>55</span></a></li>
-                                        <li><a href="javascript:void(0)">Vacat <span>55</span></a></li>
-                                        <li><a href="javascript:void(0)">Reserved <span>55</span></a></li>
-                                        <li><a href="javascript:void(0)">Blocked <span>55</span></a></li>
+                                        <li><a id="allRoomView" class="roomViewNav active" href="javascript:void(0)">All <span>55</span></a></li>
+                                        <li><a id="vacatRoomView" class="roomViewNav" href="javascript:void(0)">Vacat <span>55</span></a></li>
+                                        <li><a id="reseredRoomView" class="roomViewNav" href="javascript:void(0)">Reserved <span>55</span></a></li>
+                                        <li><a id="blockRoomView" class="roomViewNav" href="javascript:void(0)">Blocked <span>55</span></a></li>
                                     </ul>
                                 </div>
                                 <div class="right">

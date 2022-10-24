@@ -3,7 +3,7 @@ include ('include/constant.php');
 include (SERVER_INCLUDE_PATH.'db.php');
 include (SERVER_INCLUDE_PATH.'function.php');
 
-pr($_SESSION);
+pr( countRoomViewByDate('standard-room','2022-10-08'));
 
 // pr(getBookingDetailArrByBId(1,'2022-10-08',3))
 

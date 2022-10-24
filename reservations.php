@@ -110,9 +110,9 @@ checkPageBySupperAdmin('pms','Reservation', 'Reservation');
                             </select>
                         </div> -->
 
-                        <div class="currentDate">
-                            <label for="">Date</label>
-                            <input type="date" id="start" name="currentDate" value="<?= date('Y-m-d') ?>" min="<?= date('Y-m-d') ?>" max="">
+                        <div class="currentDate mb-2">
+                            <label for="currentDateStart">Date</label>
+                            <input class="form-control" type="date" id="currentDateStart" name="currentDate" value="<?= date('Y-m-d') ?>" min="<?= date('Y-m-d') ?>" max="">
                         </div>
 
                     </div>
@@ -196,16 +196,21 @@ checkPageBySupperAdmin('pms','Reservation', 'Reservation');
     closeContent('#reservationAddGuestForm .card-head a', '#addGestOnReservation');
     closeContent('#reservationAddGuestForm .card-foot .btn-outline-secondary', '#addGestOnReservation');
 
-    function reservationCountNavBar($rTab = '', $group = '') {
+    function reservationCountNavBar($rTab = '', $group = '', $currentDate='') {
         var rTab = $rTab;
         var group = $group;
+        var currentDate = $currentDate;
+        if(rTab == ''){
+            rTab = 'reservation';
+        }
         $.ajax({
             url: 'include/ajax/room.php',
             type: 'post',
             data: {
                 type: 'loadReservationCountNavBar',
                 rTab: rTab,
-                group: group
+                group: group,
+                currentDate: currentDate
             },
             success: function(data) {
                 $('#loadReservationCountContent').html(data);
@@ -222,12 +227,13 @@ checkPageBySupperAdmin('pms','Reservation', 'Reservation');
         $(document).on('click', '.reservationTab', function() {
             var tabName = $(this).attr('id');
             var singleGroupBtn = $(".singleGroupToggleBtn").hasClass("active");
+            var currentDate = $('#currentDateStart').val();
             if (singleGroupBtn == true) {
-                loadResorvation(tabName);
-                reservationCountNavBar(tabName);
+                loadResorvation(tabName,'','','',currentDate);
+                reservationCountNavBar(tabName,currentDate);
             } else {
-                loadResorvation(tabName, '', 1);
-                reservationCountNavBar(tabName);
+                loadResorvation(tabName, '', 1,'',currentDate);
+                reservationCountNavBar(tabName,currentDate);
             }
 
         });

@@ -72,6 +72,31 @@ function convertArryToJSON($arry){
     return $arry;
 }
 
+function reservationReturnQuery($tab, $currentDate = ''){
+    if($tab == 'reservation'){        
+        $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where bookingdetail.checkinstatus = '1' and booking.payment_status = '1' and booking.checkIn >= '$currentDate'";
+    }
+
+    if($tab == 'arrives'){        
+        $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where booking.checkIn <= '$currentDate' and booking.checkOut >= '$currentDate' and booking.payment_status = '1'";
+    }
+
+    if($tab == 'failed'){        
+        $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where booking.payment_status = '2' and booking.add_on like '%$currentDate%'";
+    }
+
+    if($tab == 'inHouse'){        
+        $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where bookingdetail.checkinstatus = '2' and booking.payment_status = '1' and booking.checkIn >= '$currentDate'";
+    }
+
+    if($tab == 'checkOut'){        
+        $sql = "select booking.*,bookingdetail.checkinstatus,bookingdetail.id as bookingDetailMainId from booking,bookingdetail where bookingdetail.checkinstatus = '3' and booking.payment_status = '1' and booking.checkIn >= '$currentDate'";
+    }
+
+    return $sql;
+
+}
+
 function checkPageBySupperAdmin($pg='',$title='',$ttext=''){
     global $conDB;
     $hotelId = $_SESSION['HOTEL_ID'];
@@ -402,7 +427,6 @@ function getGuestDetail($bId='',$group='',$gid='', $bdid = ''){
 function getBookingDetailById($bid,$roomNo='', $bdid = ''){
     global $conDB;
     
-
     $checkIn = getBookingData($bid)[0]['checkIn'];
     $checkOut = getBookingData($bid)[0]['checkOut'];
     $userPay = getBookingData($bid)[0]['userPay'];
@@ -433,8 +457,9 @@ function getBookingDetailById($bid,$roomNo='', $bdid = ''){
     $totalChild = 0;
     $bookingQuery = "select * from bookingdetail where bid = '$bid'";
     if($roomNo != ''){
-        $bookingQuery .= " and room_number = '$roomNo'";
+        $bookingQuery .= " and room_number = '$roomNo' ";
     }
+    $bookingQuery .= " and deleteRec = '1'";
     $bookingSql = mysqli_query($conDB, $bookingQuery);
     $subTotalPrice = 0;
 
@@ -638,14 +663,20 @@ function getCashiering($tpe = '',$bs = '',$cid = '',$status=''){
     return $data;
 }
 
-function getRoomType($rid = '', $status = ''){
+function getRoomType($rid = '', $status = '', $slug = ''){
     global $conDB;
-    $sql = "select * from room";
-    if($rid != '' || $status != ''){
-        $sql .= " where status = '1'";
+    
+    if($status != ''){
+        $sql = "select * from room where status = '1'";
+    }else{
+        $sql = "select * from room where id != ''";
     }
     if($rid != ''){
         $sql .= " and id = '$rid'";
+    }
+
+    if($slug != ''){
+        $sql .= " and slug = '$slug'";
     }
 
     $data = array();
@@ -1051,35 +1082,14 @@ function checkRoomNumberExiist($rId, $checkIn='',$checkOut='',$rnum = ''){
     return $data;
 }
 
-function countBookingRow($rTab=''){
+function countBookingRow($rTab='',$currentDate = ''){
 
     global $conDB;
-    $currentDate = date('y-m-d'); 
     $hotelId = $_SESSION['HOTEL_ID'];
-    $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.hotelId = '$hotelId'";
+
+    $sql = reservationReturnQuery($rTab, $currentDate);
     
-
-    if($rTab == 'reservation'){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.hotelId = '$hotelId' and bookingdetail.checkinstatus = '1' and booking.payment_status = '1'";
-    }
-
-    if($rTab == 'arrives'){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.hotelId = '$hotelId' and booking.checkIn = '$currentDate' and booking.payment_status = '1'";
-    }
-
-    if($rTab == 'failed'){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.hotelId = '$hotelId' and booking.payment_status = '2'";
-    }
-
-    if($rTab == 'inHouse'){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.hotelId = '$hotelId' and bookingdetail.checkinstatus = '2' and booking.payment_status = '1'";
-    }
-
-    if($rTab == 'checkOut'){        
-        $sql = "select booking.*,bookingdetail.checkinstatus from booking,bookingdetail where booking.hotelId = '$hotelId' and bookingdetail.checkinstatus = '3' and booking.payment_status = '1'";
-    }
-    
-    $sql .= " and booking.id=bookingdetail.bid ";
+    $sql .= " and booking.id=bookingdetail.bid and bookingdetail.deleteRec = '1'";
 
     $query = mysqli_query($conDB, $sql);
 
@@ -1095,10 +1105,35 @@ function getPageName($page){
 }
 
 
+function roomMoveOptionByRoomId($roomId, $opType, $bdid){ 
+    $data='';
+    if($opType == 'rate'){
+        foreach(getRatePlanArrById($roomId) as $ratePlaneList){
+            $id = $ratePlaneList['id'];
+            $rplan = $ratePlaneList['rplan'];
+    
+            $data .= "<option value='$id'>$rplan</option>";
+        }
+    }
+    if($opType == 'roomNum'){
+        foreach(getRoomNumber('','1',$roomId,'','','','',$bdid) as $roomTypeList){
+            $num = $roomTypeList['roomNo'];
+            $numId = $roomTypeList['id'];
+    
+            $data .= "<option value='$num'>$num</option>";
+        }
+    }
+    
+    
+
+    return $data;
+}
+
+
 
 // Reservation
 
-function reservationContent($bid,$reciptNo,$gname,$checkIn,$checkOut,$bDate,$nAdult,$nChild,$total,$paid,$preview='',$rTab = '',$BDId){
+function reservationContent($bid,$reciptNo,$gname,$checkIn,$checkOut,$bDate,$nAdult,$nChild,$total,$paid,$preview='',$rTab = '',$BDId='',$clickBtn = ''){
     if($checkIn == ''){
         $checkIn = date('Y-m-d');
     }
@@ -1151,10 +1186,13 @@ function reservationContent($bid,$reciptNo,$gname,$checkIn,$checkOut,$bDate,$nAd
         ";
     }
 
-
+    $reservationBtn = 'reservationContent';
+    if($clickBtn != ''){
+        $reservationBtn = 'reservationContentPreview';
+    }
 
     $html = "
-            <div class='reservationContent' data-bookingId='$bid' data-reservationTab='$rTab' data-bdid='$BDId'>
+            <div class='$reservationBtn' data-bookingId='$bid' data-reservationTab='$rTab' data-bdid='$BDId'>
                             
                 <div class='head'>
                     <div class='leftSide'>
@@ -1221,8 +1259,9 @@ function reservationContent($bid,$reciptNo,$gname,$checkIn,$checkOut,$bDate,$nAd
                 $previewContent
 
             </div>
-        ";
+    ";
 
+    
         return $html;
 }
 
@@ -1263,8 +1302,14 @@ function getSlider($sid=''){
 
 function getRatePlanArrById($rid,$bdid=''){
     global $conDB;
+
+    $query = "select * from roomratetype where room_id = '$rid'";
+
+    if($bdid != ''){
+        $query .= " and bid = '$bdid'";
+    }
     
-    $sql = mysqli_query($conDB, "select * from roomratetype where room_id = '$rid'");
+    $sql = mysqli_query($conDB, $query);
     $data = array();
     while($row = mysqli_fetch_assoc($sql)){
         $data[] = [
@@ -1597,6 +1642,31 @@ function getAmenitieById($aid){
     return $sql['title'];
 }
 
+
+function countRoomViewByDate($slug='',$date='',$tab=''){
+    global $conDB;
+    $sql = "select * from roomnumber where id != ''";
+    $bookSql = "select * from booking where id != ''";
+    if($slug != ''){
+        $rid = getRoomType('','',$slug)[0]['id'];
+        $sql .= " and roomId = '$rid'";
+        $bookSql .= " and id = '$rid'";
+    }
+    if($date != ''){
+        $bookSql .= " and checkIn <= '$date' and checkOut >= '$date'";
+    }
+    $roomExist = mysqli_num_rows(mysqli_query($conDB, $sql));
+    $roomBook = mysqli_num_rows(mysqli_query($conDB, $bookSql));
+
+
+    $data = [
+        'exist'=>$roomExist,
+        'book'=> $roomBook
+    ];
+
+    return $data;
+}
+
 function loopRoomExist($rid,$date='',$date2='',$rdid=''){
     
     if(roomExist($rid,$date,$date2,$rdid) > 0){
@@ -1897,6 +1967,7 @@ function getRoomNameById($rid){
     $sql = mysqli_fetch_assoc(mysqli_query($conDB, "select header from room where id = '$rid'"));
     return $sql['header'];
 }
+
 function getRatePlanByRoomDetailId($rdid){
     global $conDB;
     $sql = mysqli_query($conDB, "select * from roomratetype where id  = '$rdid'");
@@ -3441,6 +3512,9 @@ function getQPVoucher($qpid){
     
     return $html;
 }
+
+
+
 
 
 
