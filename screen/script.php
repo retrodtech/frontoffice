@@ -13,7 +13,7 @@
 <script src="<?php echo FRONT_SITE ?>/js/jkanban-jkanban.js"></script>
 <script src="<?php echo FRONT_SITE ?>/js/script.js"></script>
 <script src="<?php echo FRONT_SITE ?>/js/table2excel.js"></script>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.8/sweetalert2.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
 

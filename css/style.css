@@ -1226,6 +1226,15 @@ table .tableLine td, table .tableLine th {
   border: 1px solid #d2d6da;
 }
 
+#guestContent .guestCheckRow img {
+  width: 50px;
+  height: 50px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border: 1px dashed #bbbbbb;
+  border-radius: 5px;
+  margin-right: 5px;
+}
 #guestContent .guestCheckRow.active {
   background: #e0e0f7;
 }
@@ -1572,13 +1581,20 @@ table .tableLine td, table .tableLine th {
 #bookindDetail .booking .location i {
   font-size: 12px;
 }
-#bookindDetail button {
+#bookindDetail .btnGroup button {
   margin: 0 0 5px;
   position: relative;
-  padding: 0.5rem 1rem;
+  width: 35px;
+  height: 30px;
   opacity: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
-#bookindDetail button.btn2 {
+#bookindDetail .btnGroup button.btn2 {
+  width: auto;
+  height: auto;
   padding: 0.5rem 0.5rem;
 }
 #bookindDetail .bookingRoomList {
@@ -2301,4 +2317,75 @@ table .tableLine td, table .tableLine th {
 }
 .roomViewSideTab li.active .roomViewAlert span:last-child {
   color: black;
+}
+
+#guestReviewFormContent {
+  position: relative;
+  padding: 10px 25px;
+}
+#guestReviewFormContent .btn {
+  position: relative;
+  transition: 0.2s ease-in-out;
+}
+#guestReviewFormContent .btn:hover {
+  background-image: linear-gradient(310deg, #17ad37, #98ec2d);
+  color: white;
+}
+
+.spinner {
+  margin: 20px auto;
+  width: 35px;
+  height: 35px;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.spinner .circle {
+  -webkit-animation: spinners linear infinite;
+          animation: spinners linear infinite;
+  position: absolute;
+  border: 1px solid transparent;
+  border-top-color: #F00;
+  border-radius: 50%;
+}
+.spinner .one {
+  width: 5px;
+  height: 5px;
+  border-top-color: #8f3b76;
+  -webkit-animation-duration: 0.85s;
+          animation-duration: 0.85s;
+}
+.spinner .two {
+  width: 15px;
+  height: 15px;
+  border-top-color: #c7417b;
+  -webkit-animation-duration: 0.95s;
+          animation-duration: 0.95s;
+}
+.spinner .three {
+  width: 25px;
+  height: 25px;
+  border-top-color: #f5487f;
+  -webkit-animation-duration: 1.05s;
+          animation-duration: 1.05s;
+}
+
+@-webkit-keyframes spinners {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinners {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }/*# sourceMappingURL=style.css.map */

@@ -1763,7 +1763,7 @@ if(isset($_POST['type'])){
             $rTab  = $_POST['rTab'];
         }
 
-        $rTab  = $_POST['rTab'];
+        $currentDate  = $_POST['currentDate'];
 
         $reservationBtn = ['reservation', 'arrives', 'failed', 'inHouse', 'checkOut'];
 
@@ -1774,7 +1774,7 @@ if(isset($_POST['type'])){
             if($rTabList == $rTab){
                 $active = 'active';
             }
-            $count = countBookingRow($rTabList);
+            $count = countBookingRow($rTabList,$currentDate);
             $name = ucfirst($rTabList);
             $data .= '<li><a id="'.$rTabList.'" class="reservationTab '.$active.'" href="javascript:void(0)">'.$name.' <span>'.$count.'
             </span></a></li>';

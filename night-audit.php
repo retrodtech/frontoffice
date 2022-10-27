@@ -55,7 +55,7 @@ if(isset($_GET['delete'])){
     <meta name="keywords" content="">
     <meta name="description" content="">
 
-    <title>Room List </title>
+    <title>Night Audit</title>
 
     <?php include(FO_SERVER_SCREEN_PATH.'link.php') ?>
 
@@ -71,7 +71,7 @@ if(isset($_GET['delete'])){
 
         <?php include(FO_SERVER_SCREEN_PATH.'navbar.php') ?>
 
-        <div class="container-fluid py-4" id="manage_room">
+        <div class="container-fluid py-4" id="nightAuditSection">
 
             <div class="row">
                 <div class="col-12">
@@ -80,6 +80,33 @@ if(isset($_GET['delete'])){
 
                         <div class="row">
 
+                            <div class="col-12">
+                                <div class="card mb-4 reservationNav">
+                                    <div class="card-body">
+                                        <div class="dFlex jcsb">
+                                            <div class="left">
+                                                <ul id="loadReservationCountContent">
+                                                    <li><a href="javascript:void(0)"><i class="fas fa-sync-alt"></i> Reload</a></li>
+                                                </ul>
+                                            </div>
+                                            <div class="right">
+                                                <ul>
+                                                    <li><a id="nightAuditExcelExport" href="javascript:void(0)"> <i
+                                                                class="fas fa-file-export"></i> Export</a> </li>
+                                                    <li><a id="searchBtnReservation" href="javascript:void(0)"> <i
+                                                                class="fas fa-search"></i> Search</a> </li>
+                                                </ul>
+                                                <div id="searchForReservation">
+                                                    <input id="searchForReservationValue" type="text" class="form-contol"
+                                                        placeholder="Search Text.">
+                                                    <button id="searchForCloseBtn">X</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="col-12 col-lg-12 m-auto">
 

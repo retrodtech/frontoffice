@@ -182,9 +182,6 @@ checkPageBySupperAdmin('pms','Reservation', 'Reservation');
     <?php include(FO_SERVER_SCREEN_PATH.'booing_detail.php') ?>
 
 
-
-
-
     <?php include(FO_SERVER_SCREEN_PATH.'script.php') ?>
 
     <script>

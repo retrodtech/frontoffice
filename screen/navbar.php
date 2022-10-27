@@ -15,7 +15,7 @@
                         <li><a href="<?php echo FO_FRONT_SITE ?>/room-view.php">Room View</a></li>
                         <li><a href="">Insert Transaction</a></li>
                         <li><a href="<?php echo FO_FRONT_SITE ?>/guest.php">Guest Database</a></li>
-                        <li><a href="">Night Audit</a></li>
+                        <li><a href="<?php echo FO_FRONT_SITE ?>/night-audit.php">Night Audit</a></li>
                         <li><a href="<?php echo FO_FRONT_SITE ?>/review.php">Guest Reviews</a></li>
                         <li><a href="">Lost and Found</a></li>
                         <li><a href="">Unsettled Folios</a></li>
@@ -61,7 +61,7 @@
                     <a href="">Reports</a>
                     <ul class="dropNav" style="max-width:175px">
                         <li style="width:100%"><a href="">Reports</a></li>
-                        <li style="width:100%"><a href="">Night Audit Log</a></li>
+                        <li style="width:100%"><a href="<?php echo FO_FRONT_SITE ?>/night-audit.php">Night Audit Log</a></li>
                     </ul>
                 </li>
             </ul>

@@ -37,9 +37,7 @@ if($type == 'loadReview'){
                 <thead>
                     <tr>
                         <th>Guest name</th>
-                        <th>Email Id</th>
                         <th>Comment</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>';
@@ -65,19 +63,8 @@ if($type == 'loadReview'){
             $html .= '<tr id="guestNameCheckRow'.$si.'" class="guestCheckRow">
 
                             <td>  <button class="showReplayOnReview" data-rid="'.$rid.'">'.$name.'</button> </td>
-                            <td>'.$email.'</td>
+                    
                             <td>'.$msg.'</td>
-                            <td class="iconCon ">
-                                <div class="tooltipCon"> 
-                                    <i class="fas fa-ellipsis-v"></i>
-                                    
-                                    <ul class="tooltipBody">
-                                        <li><a href="javascript:void(0)" data-tooltip-top="Edit"><i class="far fa-edit"></i></a></li>
-                                        <li><a href="javascript:void(0)" data-tooltip-top="Delete"><i class="far fa-trash-alt"></i></a></li>
-                                        <li><a href="javascript:void(0)" data-tooltip-top="Detail Log"><i class="fas fa-info"></i></a></li>
-                                    </ul>
-                                </div>
-                            </td>
                             
                         </tr>';
             
@@ -263,8 +250,37 @@ if($type == 'showReplay'){
 
     }
 
+    $html .= '<div id="guestReviewFormContent">
+                <form id="guestReviewForm">
+                    <input type="hidden" id="guestReviewId" name="grid" value="'.$rid.'">
+                    <div class="form-group">
+                        <textarea name="guestReviewReplay" class="form-control" cols="10" ></textarea>
+                    </div>
+                    <input id="guestReviewSubmitBtn" type="submit" class="form-control btn btn-outline-success" value="Submit">
+                </form>
+            </div>';
    
     echo $html;
+}
+
+
+if($type == 'addGuestReviewReplay'){
+    
+    $guestReviewReplay = $_POST['guestReviewReplay'];
+    $grid = $_POST['grid'];
+    $hotelId = $_SESSION['HOTEL_ID'];
+    $adminId = $_SESSION['ADMIN_ID'];
+    $sql = "insert into guest_review(hotelId,pid,adminId,msg) values('$hotelId', '$grid', '$adminId', '$guestReviewReplay')";
+
+
+    $guestEmailId = getGuestEmailId('', $grid);
+
+    if(mysqli_query($conDB, $sql)){
+        echo 1;
+        send_email($guestEmailId, '','','',$guestReviewReplay,'Feedback Replay.');
+    }else{
+        echo 0;
+    }
 }
 
 

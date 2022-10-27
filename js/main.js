@@ -42,10 +42,9 @@ function loadResorvation($rTab='',$search='',$reserveType='',$bookingType='', $c
         url: webUrl+'include/ajax/resorvation.php' ,
         type: 'post',
         data: { type: 'load_resorvation',rTab:rTab,search:search,reserveType:reserveType,bookingType:bookingType,currentDate:currentDate},
-        success: function (data) {
-            
+        success: function (data) {            
             $('#resorvationContent').html(data);
-            reservationCountNavBar(rTab);
+            reservationCountNavBar(rTab,'',currentDate);
         }
     });
 
@@ -225,7 +224,7 @@ function showGuestDetailPopUp($roomNum = '', $bid='',$id = '',$btn = '',$rTab = 
     });
 }
 
-function loadAddGuestReservationForm($bId = '', $target, $bdid='',$gid = '',$serial='', $gustImg = '', $guestProofImg = ''){
+function loadAddGuestReservationForm($bId = '', $target, $bdid='',$gid = '',$serial='', $gustImg = '', $guestProofImg = '', $rTab = '',$page=''){
     var bid = $bId;
     var target = $target;
     var bdid = $bdid;
@@ -233,10 +232,12 @@ function loadAddGuestReservationForm($bId = '', $target, $bdid='',$gid = '',$ser
     var serial = $serial;
     var gustImg = $gustImg;
     var guestProofImg = $guestProofImg;
+    var rTab = $rTab;
+    var page = $page;
     $.ajax({
-        url : webUrl+'include/ajax/resorvation.php',
+        url : webUrl+'include/ajax/guest.php',
         type: 'post',
-        data: {'type':'loadAddGuestReservationForm', bid:bid, bdid:bdid,gid:gid,serial:serial,gustImg:gustImg,guestProofImg:guestProofImg},
+        data: {'type':'loadAddGuestReservationForm', bid:bid, bdid:bdid,gid:gid,serial:serial,gustImg:gustImg,guestProofImg:guestProofImg,rTab:rTab,page:page},
         success: function (data) {
             $(target).html(data);
         }
@@ -246,7 +247,7 @@ function loadAddGuestReservationForm($bId = '', $target, $bdid='',$gid = '',$ser
 function loadAddGuestReservationFormSubmit(){
     var formData = new FormData($('#reservationAddGuestForm')[0]);
     $.ajax({
-        url : webUrl+'include/ajax/resorvation.php',
+        url : webUrl+'include/ajax/guest.php',
         type: 'POST',
           data: formData,
           async: false,
@@ -492,8 +493,9 @@ $(document).on('submit','#reservationAddGuestForm',function(e){
     e.preventDefault();
     loadAddGuestReservationFormSubmit();
     var bdid = $(this).data('bdid');
-    
-    showGuestDetailPopUp('','',bdid);
+    var bid = $(this).data('bid');
+    var rTab = 'reservation';
+    showGuestDetailPopUp('',bid,bdid,'',rTab,bdid);
     $('#addGestOnReservation').hide();
 });
 
@@ -579,7 +581,7 @@ $(document).on('change','#csvFile', function(e){
 $(document).on('change', '#currentDateStart', function(){
     var currentDate = $(this).val();
     var rTab = $('.reservationTab.active').attr('id');
-    loadResorvation(rTab,'','','', currentDate)
+    loadResorvation(rTab,'','','', currentDate);
 });
 
 $(document).on('click','.roomViewSideTab li', function(){
@@ -673,7 +675,8 @@ $(document).on('click','#checkInStatus', function(){
     var rTab = $(this).data('reservationtab');
     var rBID = $(this).data('bookingid');
     var bdid = $(this).data('bdid');
-    
+    var spiner = '<div class="spinner"><div class="circle one"></div><div class="circle two"></div><div class="circle three"></div></div>';
+    $(this).html(spiner);
     $.ajax({
         url : webUrl+'include/ajax/roomView.php',
         type: 'post',
@@ -887,8 +890,9 @@ $(document).on('click','#addGustBtn', function(){
     $('#addGestOnReservation').show();
      var bid = $(this).data('bookingid');
      var bdid = $(this).data('bdid');
+     var rTab = $(this).data('rTab');
     
-    loadAddGuestReservationForm(bid,'#addGestOnReservation .content',bdid);
+    loadAddGuestReservationForm(bid,'#addGestOnReservation .content',bdid,'','','','',rTab);
 
 });
 
@@ -1074,7 +1078,7 @@ $(document).on('click', '#guestPhotoWithWebsite', function(){
     var serial = $(this).data('serial');
 
     $.ajax({
-        url : webUrl+'include/ajax/resorvation.php',
+        url : webUrl+'include/ajax/guest.php',
         type: 'post',
         data: { type: 'guestPhotoProofeWithWebsite', bid:bid, serial:serial},
         success: function (data) {
@@ -1089,7 +1093,7 @@ $(document).on('change', '.proof #guestIdProofImg', function(){
     var property = document.getElementById('guestIdProofImg').files[0];
     var image_name = property.name;
     var image_extension = image_name.split('.').pop().toLowerCase();
-    var url = 'include/ajax/resorvation.php';
+    var url = 'include/ajax/guest.php';
     if (jQuery.inArray(image_extension, ['jpg', 'jpeg', 'png']) == -1) {
         $('#msg').html('Invalid image file');
         return false;
@@ -1252,7 +1256,7 @@ $(document).on('click', '.guestImg #guestPhotoWithWebsite', function(){
     var serial = $(this).data('serial');
 
     $.ajax({
-        url : webUrl+'include/ajax/resorvation.php',
+        url : webUrl+'include/ajax/guest.php',
         type: 'post',
         data: { type: 'guestPhotoWithWebsite', bid:bid, serial:serial},
         success: function (data) {
@@ -1271,7 +1275,7 @@ $(document).on('change', '.guestImg #guestIdProofImg', function(){
     var property = document.getElementById('guestIdProofImg').files[0];
     var image_name = property.name;
     var image_extension = image_name.split('.').pop().toLowerCase();
-    var url = 'include/ajax/resorvation.php';
+    var url = 'include/ajax/guest.php';
     if (jQuery.inArray(image_extension, ['jpg', 'jpeg', 'png']) == -1) {
         $('#msg').html('Invalid image file');
         return false;
@@ -1362,8 +1366,35 @@ $(document).on('click', '.guestOnStayView', function(){
 // Stay View End
 
 
+
+
+// Guest Page start
+
+$(document).on('click','.editGuestOnGuestPage',function(){
+    var gid = $(this).data('gid');
+    $('#addGestOnReservation').show();
+    loadAddGuestReservationForm('','#addGestOnReservation .content','',gid,'','','','','guest');
+    
+});
+
+// Guest page end
+
+
 // Review section start
 
+
+function showReplay($rid){
+    var rid = $rid;
+    $.ajax({
+        url: webUrl+'include/ajax/review.php' ,
+        type: 'post',
+        data: { type: 'showReplay', rid:rid },
+        success: function (data) {
+            $('#sideBox .content').html(data);
+            $('#sideBox').show();
+        }
+    });
+}
 
 function loadReview() {
     $.ajax({
@@ -1379,20 +1410,31 @@ function loadReview() {
 
 $(document).on('click', '.showReplayOnReview', function(){
     var rid = $(this).data('rid');
-    $.ajax({
-        url: webUrl+'include/ajax/review.php' ,
-        type: 'post',
-        data: { type: 'showReplay', rid:rid },
-        success: function (data) {
-            $('#sideBox .content').html(data);
-            $('#sideBox').show();
-        }
-    });
+    showReplay(rid);
     
 });
 
 $(document).on('click','#sideBox .closeContent', function(){
     $('#sideBox').hide();
+});
+
+$(document).on('submit','#guestReviewForm', function(e){
+    e.preventDefault();
+    var rid = $('#guestReviewId').val();
+    var data = $('#guestReviewForm').serialize()+'&type=addGuestReviewReplay';
+
+    $('#guestReviewSubmitBtn').val('Loading...');
+    $("#guestReviewSubmitBtn").prop('disabled', true);
+    $.ajax({
+        url: webUrl+'include/ajax/review.php' ,
+        type: 'post',
+        data: data,
+        success: function (data) {
+            showReplay(rid);
+            $('#guestReviewSubmitBtn').val('Submit');
+            $("#guestReviewSubmitBtn").prop('disabled', false);
+        }
+    });
 });
 
 
@@ -1490,4 +1532,12 @@ $('.cb-value').click(function() {
         loadResorvation(getRTab,'',1);
     }
 
+});
+
+
+$('#nightAuditExcelExport').click(function(){
+    var currentDate = (new Date()).toISOString().split('T')[0];
+    $("#nightAuditSection table").table2excel({
+          filename: "night-audit-"+ currentDate +".xls"
+    });
 });

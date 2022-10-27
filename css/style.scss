@@ -1325,6 +1325,14 @@ table {
 
 #guestContent{
     .guestCheckRow{
+        img{
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border: 1px dashed #bbbbbb;
+            border-radius: 5px;
+            margin-right: 5px;
+        }
         &.active{
             background: $rowActive;
             &:hover{
@@ -1709,12 +1717,19 @@ table {
         }
     }
 
-    button{
+    .btnGroup button{
         margin: 0 0 5px;
         position: relative;
-        padding: .5rem 1rem;
+        width: 35px;
+        height: 30px;
         opacity: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
         &.btn2{
+            width: auto;
+            height: auto;
             padding: .5rem .5rem;
         }
     }
@@ -2462,3 +2477,71 @@ table {
         }
     }
 }
+
+#guestReviewFormContent {
+    position: relative;
+    padding: 10px 25px;
+    .btn {
+        position: relative;
+        transition: .2s ease-in-out;
+        &:hover{
+            background-image: linear-gradient(310deg,#17ad37,#98ec2d);
+            color: $white;
+        }
+    }
+}
+
+
+.spinner {
+    margin: 20px auto;
+    width: 35px;
+    height: 35px;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    .circle {
+        animation: spinners linear infinite;
+        position: absolute;
+        border: 1px solid transparent;
+        border-top-color: #F00;
+        border-radius: 50%;
+    }
+    .one {
+        width: 5px;
+        height: 5px;
+        border-top-color: #8f3b76;
+        animation-duration: .85s;
+    }
+    .two {
+        width: 15px;
+        height: 15px;
+        border-top-color: #c7417b;
+        animation-duration: .95s
+    }
+    .three {
+        width: 25px;
+        height: 25px;
+        border-top-color: #f5487f;
+        animation-duration: 1.05s
+    }
+}
+
+@keyframes spinners {
+    0% {
+        transform: rotate(0deg)
+    }
+    
+    100% {
+        transform: rotate(360deg)
+    }
+}
+
+
+
+
+
+
+
+

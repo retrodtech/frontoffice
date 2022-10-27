@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 24, 2022 at 12:30 PM
+-- Generation Time: Oct 28, 2022 at 12:48 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -113,7 +113,13 @@ CREATE TABLE `booking` (
 --
 
 INSERT INTO `booking` (`id`, `hotelId`, `bookinId`, `reciptNo`, `userPay`, `checkIn`, `checkOut`, `nroom`, `couponCode`, `pickUp`, `payment_status`, `payment_id`, `bookingSource`, `bussinessSource`, `voucherNumber`, `comPlanId`, `comValue`, `coompanyId`, `paymethodId`, `paytypeId`, `addBy`, `add_on`, `status`, `deleteRec`) VALUES
-(1, '7ae36', 'jamindars_bd6efb', '001', 5000, '2022-10-25', '2022-10-27', 0, '0', NULL, '1', NULL, 1, 0, NULL, NULL, NULL, NULL, 6, NULL, '1', '2022-10-22 23:28:46', 1, 1);
+(1, '7ae36', 'jamindars_90de9c', '001', 10000, '2022-10-30', '2022-11-01', 0, '0', NULL, '1', NULL, 1, 0, NULL, NULL, NULL, NULL, 6, NULL, '1', '2022-10-27 10:43:13', 1, 1),
+(2, '7ae36', 'jamindars_61460e', '002', 5000, '2022-11-01', '2022-11-02', 0, '0', NULL, '1', NULL, 1, 0, NULL, NULL, NULL, NULL, 6, NULL, '1', '2022-10-27 10:44:18', 1, 1),
+(3, '7ae36', 'jamindars_e566b3', '003', 10000, '2022-11-03', '2022-11-05', 0, '0', NULL, '1', NULL, 1, 0, NULL, NULL, NULL, NULL, 6, NULL, '1', '2022-10-27 10:45:25', 1, 1),
+(4, '7ae36', 'jamindars_f9446a', '004', 10000, '2022-11-03', '2022-11-05', 0, '0', NULL, '1', NULL, 1, 0, NULL, NULL, NULL, NULL, 6, NULL, '1', '2022-10-27 10:46:25', 1, 1),
+(5, '7ae36', 'jamindars_86f010', '005', 10000, '2022-10-25', '2022-11-05', 0, '0', NULL, '1', NULL, 1, 0, NULL, NULL, NULL, NULL, 6, NULL, '1', '2022-10-27 10:47:59', 1, 1),
+(6, '7ae36', 'jamindars_4d063d', '006', 10000, '2022-11-03', '2022-11-05', 0, '0', NULL, '1', NULL, 1, 0, NULL, NULL, NULL, NULL, 6, NULL, '1', '2022-10-27 10:52:23', 1, 1),
+(7, '7ae36', 'jamindars_a71221', '007', 10000, '2022-11-03', '2022-11-05', 0, '0', NULL, '1', NULL, 1, 0, NULL, NULL, NULL, NULL, 6, NULL, '1', '2022-10-27 10:53:58', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -142,8 +148,13 @@ CREATE TABLE `bookingdetail` (
 --
 
 INSERT INTO `bookingdetail` (`id`, `bid`, `roomId`, `roomDId`, `room_number`, `adult`, `child`, `gstPer`, `totalPrice`, `checkinstatus`, `addBy`, `addOn`, `deleteRec`) VALUES
-(1, 1, 1, 1, 101, 2, 0, NULL, NULL, 1, NULL, '2022-10-22 17:58:46', 0),
-(2, 1, 1, 1, 104, 2, 0, NULL, NULL, 1, '1', '2022-10-22 18:23:11', 1);
+(1, 1, 1, 1, 101, 2, 0, NULL, NULL, 1, NULL, '2022-10-27 05:13:13', 1),
+(2, 2, 2, 2, 104, 2, 0, NULL, NULL, 1, NULL, '2022-10-27 05:14:18', 1),
+(3, 3, 1, 1, 102, 2, 0, NULL, NULL, 1, NULL, '2022-10-27 05:15:25', 1),
+(4, 4, 1, 1, 103, 2, 0, NULL, NULL, 1, NULL, '2022-10-27 05:16:25', 1),
+(5, 5, 2, 2, 105, 2, 0, NULL, NULL, 1, NULL, '2022-10-27 05:17:59', 1),
+(6, 6, 2, 2, 106, 2, 0, NULL, NULL, 1, NULL, '2022-10-27 05:22:23', 1),
+(7, 7, 3, 3, 201, 2, 0, NULL, NULL, 1, NULL, '2022-10-27 05:23:58', 1);
 
 -- --------------------------------------------------------
 
@@ -331,16 +342,30 @@ CREATE TABLE `guest` (
   `kyc_number` varchar(250) DEFAULT NULL,
   `kyc_type` int(11) DEFAULT NULL,
   `addBy` text DEFAULT NULL,
-  `addOn` datetime NOT NULL DEFAULT current_timestamp()
+  `addOn` datetime NOT NULL DEFAULT current_timestamp(),
+  `deleteRec` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `guest`
 --
 
-INSERT INTO `guest` (`id`, `hotelId`, `bookId`, `bookingdId`, `serial`, `name`, `email`, `phone`, `gender`, `company_name`, `comGst`, `country`, `state`, `city`, `zip`, `image`, `kyc_file`, `kyc_number`, `kyc_type`, `addBy`, `addOn`) VALUES
-(1, '7ae36', 1, 2, '1', 'Avinab', 'avinabgiri9439@gmail.com', '', NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-10-22 23:28:46'),
-(2, '7ae36', 1, 2, '2', 'Avinab2', 'avinabgiri9439@gmail.com', '123232', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-22 23:29:21');
+INSERT INTO `guest` (`id`, `hotelId`, `bookId`, `bookingdId`, `serial`, `name`, `email`, `phone`, `gender`, `company_name`, `comGst`, `country`, `state`, `city`, `zip`, `image`, `kyc_file`, `kyc_number`, `kyc_type`, `addBy`, `addOn`, `deleteRec`) VALUES
+(1, '7ae36', 1, 1, '1', 'Avinab', '', '', NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-10-27 10:43:13', 1),
+(2, '7ae36', 1, 1, '2', 'Avinab3', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-27 10:43:20', 1),
+(3, '7ae36', 1, 1, '3', 'Avinab3', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-27 10:43:27', 1),
+(4, '7ae36', 2, 2, '1', 'rajendra', 'avinabgiri9439@gmail.com', '', NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-10-27 10:44:18', 1),
+(5, '7ae36', 2, 2, '2', 'rajendra2', 'avinabgiri9439@gmail.com', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-27 10:44:30', 1),
+(6, '7ae36', 2, 2, '3', 'rajendra3', 'avinabgiri9439@gmail.com', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-27 10:44:47', 1),
+(7, '7ae36', 3, 3, '1', 'Arun', '', '', NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-10-27 10:45:25', 1),
+(8, '7ae36', 3, 3, '2', 'Arun2', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-27 10:45:36', 1),
+(9, '7ae36', 3, 3, '3', 'Arun3', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-27 10:45:56', 1),
+(10, '7ae36', 4, 4, '1', 'Vivek', '', '', NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-10-27 10:46:25', 1),
+(11, '7ae36', 4, 4, '2', 'vivek2', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-27 10:46:37', 1),
+(12, '7ae36', 4, 4, '3', 'vivek3', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-27 10:46:45', 1),
+(13, '7ae36', 5, 5, '1', 'Jagan', '', '', NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-10-27 10:47:59', 1),
+(14, '7ae36', 6, 6, '1', 'Omm', '', '', NULL, NULL, NULL, '', '', '', 0, 'guest_277239.jpg', 'guestP_172731.jpg', '', 0, '1', '2022-10-27 10:52:23', 1),
+(15, '7ae36', 7, 7, '1', 'Pritam', '', '', NULL, NULL, NULL, '', '', '', 0, 'guest_368148.jpg', 'guestP_290011.jpg', '', 0, '1', '2022-10-27 10:53:58', 1);
 
 -- --------------------------------------------------------
 
@@ -373,18 +398,36 @@ INSERT INTO `guestidproof` (`id`, `name`, `status`, `addOn`) VALUES
 
 CREATE TABLE `guest_review` (
   `id` int(11) NOT NULL,
-  `hotelId` int(11) NOT NULL,
+  `hotelId` varchar(11) NOT NULL,
   `pid` int(11) NOT NULL DEFAULT 0,
-  `admin` int(11) NOT NULL DEFAULT 0,
+  `adminId` int(11) DEFAULT NULL,
   `guestId` int(11) DEFAULT NULL,
-  `name` varchar(250) DEFAULT NULL,
-  `email` varchar(250) DEFAULT NULL,
   `msg` text NOT NULL,
   `status` int(11) NOT NULL DEFAULT 1,
   `deleteRec` int(11) NOT NULL DEFAULT 1,
-  `addBy` text NOT NULL,
+  `addBy` text DEFAULT NULL,
   `addOn` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `guest_review`
+--
+
+INSERT INTO `guest_review` (`id`, `hotelId`, `pid`, `adminId`, `guestId`, `msg`, `status`, `deleteRec`, `addBy`, `addOn`) VALUES
+(1, '7ae36', 0, NULL, 4, 'for test', 1, 1, '', '2022-10-27 17:47:33'),
+(2, '7ae36', 1, 1, NULL, 'test for replay', 1, 1, NULL, '2022-10-27 18:11:59'),
+(3, '7ae36', 0, NULL, 1, 'Test msg 2', 1, 1, NULL, '2022-10-27 18:40:10'),
+(4, '7ae36', 1, 1, NULL, 'hgh', 1, 1, NULL, '0000-00-00 00:00:00'),
+(5, '7ae36', 1, 1, NULL, 'ffdf', 1, 1, NULL, '0000-00-00 00:00:00'),
+(6, '7ae36', 1, 1, NULL, 'test\r\n', 1, 1, NULL, '0000-00-00 00:00:00'),
+(7, '7ae36', 3, 1, NULL, 'test', 1, 1, NULL, '0000-00-00 00:00:00'),
+(8, '7ae36', 3, 1, NULL, 'test Avi', 1, 1, NULL, '0000-00-00 00:00:00'),
+(9, '7ae36', 3, 1, NULL, 'fsdfkjlf', 1, 1, NULL, '0000-00-00 00:00:00'),
+(10, '7ae36', 1, 1, NULL, 'Test', 1, 1, NULL, '0000-00-00 00:00:00'),
+(11, '7ae36', 1, 1, NULL, 'test email', 1, 1, NULL, '0000-00-00 00:00:00'),
+(12, '7ae36', 1, 1, NULL, 'email test', 1, 1, NULL, '0000-00-00 00:00:00'),
+(13, '7ae36', 1, 1, NULL, 'email test2', 1, 1, NULL, '0000-00-00 00:00:00'),
+(14, '7ae36', 1, 1, NULL, 'email test 3', 1, 1, NULL, '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -447,6 +490,31 @@ CREATE TABLE `hotel` (
 
 INSERT INTO `hotel` (`id`, `hCode`, `slug`, `name`, `email`, `phone`, `website`, `logo`, `commission`, `paymentGetway`, `userId`, `password`, `webBilder`, `bookingEngine`, `pms`, `beLink`, `status`, `addBy`, `addOn`) VALUES
 (1, '7ae36', 'retrod', 'Retrod', 'admin@retrod.in', '12345678902', 'retrodtech.com', 'retrod_261.png', 12, 'hotel', 'retrod', '12345', 1, 1, 1, '', 1, '1_23-09-2022', '2022-09-23 07:55:08');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hoteladmin`
+--
+
+CREATE TABLE `hoteladmin` (
+  `id` int(11) NOT NULL,
+  `hotelId` varchar(11) NOT NULL,
+  `userId` varchar(50) NOT NULL,
+  `pass` varchar(11) NOT NULL,
+  `name` varchar(25) DEFAULT NULL,
+  `email` varchar(50) DEFAULT NULL,
+  `phone` varchar(15) DEFAULT NULL,
+  `deleteRec` int(11) NOT NULL DEFAULT 1,
+  `status` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `hoteladmin`
+--
+
+INSERT INTO `hoteladmin` (`id`, `hotelId`, `userId`, `pass`, `name`, `email`, `phone`, `deleteRec`, `status`) VALUES
+(1, '7ae36', 'retrod', '12345', '', '', '', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -587,7 +655,7 @@ INSERT INTO `payment_status` (`id`, `name`, `addOn`) VALUES
 
 CREATE TABLE `profile` (
   `id` int(11) NOT NULL,
-  `hotelId` int(11) NOT NULL,
+  `hotelId` varchar(11) NOT NULL,
   `name` varchar(250) NOT NULL,
   `email` varchar(250) NOT NULL,
   `primaryphone` varchar(150) NOT NULL,
@@ -608,7 +676,7 @@ CREATE TABLE `profile` (
 --
 
 INSERT INTO `profile` (`id`, `hotelId`, `name`, `email`, `primaryphone`, `address`, `district`, `pincode`, `gst`, `description`, `logo`, `url`, `checkIn`, `checkOut`, `addBy`) VALUES
-(1, 0, 'Jamindars Palace', 'reservation@jamindarspalace.com', '7682830917', 'BLUE FLAG BEACH, CHAKRATIRTHA ROAD, PURI', 'PURI', '752002', '21AABCH4042H1Z6', 'Jamindar Palace is one among the best luxury sea-view hotel in Puri and has stunning views of the ocean from various parts of the property. Being absolutely one in all the pleasant luxury sea-view hotel in Puri', 'logo.png', 'https://jamindarspalace.com', '10.00 AM', '08.00 AM', '');
+(1, '7ae36', 'Retrod', 'reservation@jamindarspalace.com', '7682830917', 'BLUE FLAG BEACH, CHAKRATIRTHA ROAD, PURI', 'PURI', '752002', '21AABCH4042H1Z6', 'Jamindar Palace is one among the best luxury sea-view hotel in Puri and has stunning views of the ocean from various parts of the property. Being absolutely one in all the pleasant luxury sea-view hotel in Puri', 'logo.png', 'https://jamindarspalace.com', '10.00 AM', '08.00 AM', '');
 
 -- --------------------------------------------------------
 
@@ -1048,6 +1116,12 @@ ALTER TABLE `hotel`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `hoteladmin`
+--
+ALTER TABLE `hoteladmin`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `inventory`
 --
 ALTER TABLE `inventory`
@@ -1182,13 +1256,13 @@ ALTER TABLE `banktypemethod`
 -- AUTO_INCREMENT for table `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `bookingdetail`
 --
 ALTER TABLE `bookingdetail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `bookingsource`
@@ -1236,7 +1310,7 @@ ALTER TABLE `gallery`
 -- AUTO_INCREMENT for table `guest`
 --
 ALTER TABLE `guest`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `guestidproof`
@@ -1248,7 +1322,7 @@ ALTER TABLE `guestidproof`
 -- AUTO_INCREMENT for table `guest_review`
 --
 ALTER TABLE `guest_review`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `herosection`
@@ -1260,6 +1334,12 @@ ALTER TABLE `herosection`
 -- AUTO_INCREMENT for table `hotel`
 --
 ALTER TABLE `hotel`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `hoteladmin`
+--
+ALTER TABLE `hoteladmin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --

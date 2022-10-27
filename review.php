@@ -9,56 +9,6 @@ checkLoginAuth();
 checkPageBySupperAdmin('pms','Review', 'Review');
 
 
-if(isset($_POST['reservationSubmit'])){
-
-    $bookId = BOOK_GENERATE.unique_id(5);
-    
-    $checkIn = safeData($_POST['checkIn']);
-    $checkOut = safeData($_POST['checkOut']);
-    $roomQuntity = safeData($_POST['roomQuntity']);
-    $reservationType = safeData($_POST['reservationType']);
-    $bookinSource = safeData($_POST['bookinSource']);
-    $businessSource = safeData($_POST['businessSource']);
-    // $bookAvailable = safeData($_POST['bookAvailable']);
-
-    $selectRoom = $_POST['selectRoom'];
-    $selectRateType = $_POST['selectRateType'];
-    $selectAdult = $_POST['selectAdult'];
-    $selectChild = $_POST['selectChild'];
-
-    $guestName = safeData($_POST['guestName']);
-    $guestMobile = safeData($_POST['guestMobile']);
-    $guestEmail = safeData($_POST['guestEmail']);
-    $guestAddress = safeData($_POST['guestAddress']);
-    $guestCuntry = safeData($_POST['guestCuntry']);
-    $guestState = safeData($_POST['guestState']);
-    $guestCity = safeData($_POST['guestCity']);
-    $guestZip = safeData($_POST['guestZip']);
-
-    // $bookingVoucher = safeData($_POST['bookingVoucher']);
-
-
-    mysqli_query($conDB, "insert into booking(bookinId,checkIn,checkOut,nroom,payment_status,bookingSource,bussinessSource) values('$bookId','$checkIn','$checkOut','$roomQuntity','$reservationType','$bookinSource','$businessSource')");
-
-    echo $lastId = mysqli_insert_id($conDB);
-
-    mysqli_query($conDB, "insert into guest(bookId,name,email,phone,country) values('$lastId','$guestName','$guestEmail','$guestMobile','$guestCuntry')");
-
-    if(isset($selectRoom)){
-        foreach($selectRoom as $key=> $val){
-            $room = $val;
-            $rateType = $selectRateType[$key];
-            $adult = $selectAdult[$key];
-            $child = $selectChild[$key];
-
-            mysqli_query($conDB, "insert into bookingdetail(bid,roomId,roomDId,adult,child) values('$lastId','$room','$rateType','$adult','$child')");
-
-        }
-    }
-
-
-}
-
 ?>
 
 
@@ -73,7 +23,7 @@ if(isset($_POST['reservationSubmit'])){
     <meta name="keywords" content="">
     <meta name="description" content="">
 
-    <title>Reservations </title>
+    <title>Guest Review</title>
 
     <?php include(FO_SERVER_SCREEN_PATH.'link.php') ?>
 
@@ -160,14 +110,7 @@ if(isset($_POST['reservationSubmit'])){
                                         <button><i class="fas fa-search"></i></button>
                                     </form>
                                 </div>
-                                <div class="right">
-                                    <ul>
-                                        <li><button id="addGuestDataBtn" class="btn btn-outline-primary" >Add Guest</button></li>
-                                        <li><button class="btn btn-outline-secondary">Export</button></li>
-                                        <li><button class="btn btn-outline-secondary">Audit Trail</button></li>
-                                        <li><button class="btn btn-outline-secondary">Search</button></li>
-                                    </ul>
-                                </div>
+                                
                             </div>
                         </div>
                         <div class="card-body">
@@ -350,6 +293,8 @@ if(isset($_POST['reservationSubmit'])){
         </div>
     </section>
 
+    
+
 
     <?php include(FO_SERVER_SCREEN_PATH.'script.php') ?>
 
@@ -374,12 +319,7 @@ if(isset($_POST['reservationSubmit'])){
         $(document).ready(() => {
 
             loadReview();
-
-
-            $('#addGuestDataBtn').click(function () {
-                $('#loadAddGuest').show();
-                loadAddGuestData();
-            });
+            
 
         });
 

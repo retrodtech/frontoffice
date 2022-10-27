@@ -358,7 +358,7 @@ function getBookingIdByBVID($bvid){
 function getBookingData($bid = '', $rNum = '', $checkIn='',$id='',$onlyCheckIn=''){
     global $conDB;
     $hotelId = $_SESSION['HOTEL_ID'];
-    $query = "select booking.*,bookingdetail.*, bookingdetail.id as bookingdetailId from booking,bookingdetail where booking.id=bookingdetail.bid and booking.hotelId='$hotelId'";
+    $query = "select booking.*,bookingdetail.*, bookingdetail.id as bookingdetailId , guest.id as guestId from booking,bookingdetail,guest where booking.id=bookingdetail.bid and booking.id=guest.bookId and bookingdetail.id = guest.bookingdId and booking.hotelId='$hotelId'";
     if($bid != ''){
         $query .= " and bookingdetail.bid = '$bid'";
     }
@@ -376,6 +376,8 @@ function getBookingData($bid = '', $rNum = '', $checkIn='',$id='',$onlyCheckIn='
         }
         
     }
+
+
     $sql = mysqli_query($conDB, $query);
     $data = array();
     if(mysqli_num_rows($sql) > 0){
@@ -1642,15 +1644,14 @@ function getAmenitieById($aid){
     return $sql['title'];
 }
 
-
 function countRoomViewByDate($slug='',$date='',$tab=''){
     global $conDB;
     $sql = "select * from roomnumber where id != ''";
-    $bookSql = "select * from booking where id != ''";
+    $bookSql = "select booking.*,bookingdetail.roomId from booking,bookingdetail where booking.id = bookingdetail.bid";
     if($slug != ''){
         $rid = getRoomType('','',$slug)[0]['id'];
         $sql .= " and roomId = '$rid'";
-        $bookSql .= " and id = '$rid'";
+        $bookSql .= " and bookingdetail.roomId = '$rid'";
     }
     if($date != ''){
         $bookSql .= " and checkIn <= '$date' and checkOut >= '$date'";
@@ -1660,7 +1661,7 @@ function countRoomViewByDate($slug='',$date='',$tab=''){
 
 
     $data = [
-        'exist'=>$roomExist,
+        'exist'=>$roomExist - $roomBook,
         'book'=> $roomBook
     ];
 
@@ -1885,7 +1886,6 @@ function buildSGLView($rid,$rdid){
 
     return $data;
 }
-
 
 
 function getDateByDay($date,$nday){
@@ -3511,6 +3511,58 @@ function getQPVoucher($qpid){
     
     
     return $html;
+}
+
+
+function getGuestEmailId($gid='', $grid = ''){
+    global $conDB;
+    if($gid == ''){
+        $sql = "select * from guest_review where id = $grid";
+        $row = mysqli_fetch_assoc(mysqli_query($conDB, $sql));
+        $gid = $row['guestId'];
+    }
+
+    $getGuestDetailArry = getGuestDetail('','',$gid)[0];
+
+
+    return $getGuestDetailArry['email'];
+}
+
+
+
+function send_email($email,$gname='',$cc='',$bcc='',$html,$subject){
+    include(SERVER_INCLUDE_PATH.'smtp/PHPMailerAutoload.php');
+    $hotel_name = hotelDetail()['name'];
+
+    $mail = new PHPMailer;
+
+    $mail->SMTPDebug = 0;                               
+
+    $mail->isSMTP();              
+    $mail->Host = 'smtppro.zoho.in';  
+    $mail->SMTPAuth = true;                               
+    $mail->Username = 'noreply@retrod.in';                 
+    $mail->Password = 'Retrod@121';  
+    $mail->SMTPSecure = 'tls';                            
+    $mail->Port = 587;    
+       
+
+    $mail->setFrom('noreply@retrod.in',$hotel_name);
+    $mail->addAddress("$email", "$gname");
+    $mail->addCC("$cc");
+    $mail->addBCC("$bcc");
+
+    $mail->isHTML(true);
+    $mail->Subject = "$subject";
+    $mail->Body    = $html;
+
+   
+    
+    if($mail->send()) {
+        // echo 1;
+    } else {
+        // echo $mail->ErrorInfo;
+    }
 }
 
 
