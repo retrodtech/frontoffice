@@ -28,7 +28,7 @@
     if($type == 'guestPhoto'){
         $path = $_SERVER['DOCUMENT_ROOT'].'/pms/img/guest/';
         $oldImg = $row['image'];
-        $fileFirstName = 'guestp';
+        $fileFirstName = 'guest';
         $clmName = 'image';
     }
 
