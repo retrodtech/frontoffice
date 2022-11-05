@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 31, 2022 at 02:27 PM
--- Server version: 10.4.24-MariaDB
--- PHP Version: 8.1.6
+-- Generation Time: Nov 05, 2022 at 12:14 PM
+-- Server version: 10.4.25-MariaDB
+-- PHP Version: 7.4.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -341,6 +341,7 @@ CREATE TABLE `guest` (
   `kyc_file` varchar(250) DEFAULT NULL,
   `kyc_number` varchar(250) DEFAULT NULL,
   `kyc_type` int(11) DEFAULT NULL,
+  `file_upload_type` varchar(10) DEFAULT NULL,
   `addBy` text DEFAULT NULL,
   `addOn` datetime NOT NULL DEFAULT current_timestamp(),
   `deleteRec` int(11) NOT NULL DEFAULT 1
@@ -350,22 +351,22 @@ CREATE TABLE `guest` (
 -- Dumping data for table `guest`
 --
 
-INSERT INTO `guest` (`id`, `hotelId`, `bookId`, `bookingdId`, `serial`, `name`, `email`, `phone`, `gender`, `company_name`, `comGst`, `country`, `state`, `city`, `zip`, `image`, `kyc_file`, `kyc_number`, `kyc_type`, `addBy`, `addOn`, `deleteRec`) VALUES
-(1, '7ae36', 1, 1, '1', 'Avinab', '', '', NULL, NULL, NULL, '', NULL, NULL, NULL, 'guest-1-1.jpg', NULL, NULL, NULL, NULL, '2022-10-27 10:43:13', 1),
-(2, '7ae36', 1, 1, '2', 'Avinab3', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-27 10:43:20', 1),
-(3, '7ae36', 1, 1, '3', 'Avinab3', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-27 10:43:27', 1),
-(4, '7ae36', 2, 2, '1', 'rajendra', 'avinabgiri9439@gmail.com', '', NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-10-27 10:44:18', 1),
-(5, '7ae36', 2, 2, '2', 'rajendra2', 'avinabgiri9439@gmail.com', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-27 10:44:30', 1),
-(6, '7ae36', 2, 2, '3', 'rajendra3', 'avinabgiri9439@gmail.com', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-27 10:44:47', 1),
-(7, '7ae36', 3, 3, '1', 'Arun', '', '', NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-10-27 10:45:25', 1),
-(8, '7ae36', 3, 3, '2', 'Arun2', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-27 10:45:36', 1),
-(9, '7ae36', 3, 3, '3', 'Arun3', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-27 10:45:56', 1),
-(10, '7ae36', 4, 4, '1', 'Vivek', '', '', NULL, NULL, NULL, '', '', '', 0, 'guest-949852.jpg', 'guest-119273.jpg', '', 0, '1', '2022-10-27 10:46:25', 1),
-(11, '7ae36', 4, 4, '2', 'vivek2', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-27 10:46:37', 1),
-(12, '7ae36', 4, 4, '3', 'vivek3', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, '1', '2022-10-27 10:46:45', 1),
-(13, '7ae36', 5, 5, '1', 'Jagan', '', '', NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-10-27 10:47:59', 1),
-(14, '7ae36', 6, 6, '1', 'Omm', '', '', NULL, NULL, NULL, '', '', '', 0, 'guest-722128.jpg', 'guest-134598.jpg', '', 0, '1', '2022-10-27 10:52:23', 1),
-(15, '7ae36', 7, 7, '1', 'Pritam', '', '', NULL, NULL, NULL, '', '', '', 0, 'guest_368148.jpg', 'guestP_290011.jpg', '', 0, '1', '2022-10-27 10:53:58', 1);
+INSERT INTO `guest` (`id`, `hotelId`, `bookId`, `bookingdId`, `serial`, `name`, `email`, `phone`, `gender`, `company_name`, `comGst`, `country`, `state`, `city`, `zip`, `image`, `kyc_file`, `kyc_number`, `kyc_type`, `file_upload_type`, `addBy`, `addOn`, `deleteRec`) VALUES
+(1, '7ae36', 1, 1, '1', 'Avinab', '', '', NULL, NULL, NULL, '', NULL, NULL, NULL, 'guest-1-1.jpg', NULL, NULL, NULL, NULL, NULL, '2022-10-27 10:43:13', 1),
+(2, '7ae36', 1, 1, '2', 'Avinab3', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, NULL, '1', '2022-10-27 10:43:20', 1),
+(3, '7ae36', 1, 1, '3', 'Avinab3', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, NULL, '1', '2022-10-27 10:43:27', 1),
+(4, '7ae36', 2, 2, '1', 'rajendra', 'avinabgiri9439@gmail.com', '', NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-10-27 10:44:18', 1),
+(5, '7ae36', 2, 2, '2', 'rajendra2', 'avinabgiri9439@gmail.com', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, NULL, '1', '2022-10-27 10:44:30', 1),
+(6, '7ae36', 2, 2, '3', 'rajendra3', 'avinabgiri9439@gmail.com', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, NULL, '1', '2022-10-27 10:44:47', 1),
+(7, '7ae36', 3, 3, '1', 'Arun', '', '', NULL, NULL, NULL, '', NULL, NULL, NULL, 'guestp_994412.jpeg', '', NULL, NULL, 'qr', NULL, '2022-10-27 10:45:25', 1),
+(8, '7ae36', 3, 3, '2', 'Arun2', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, NULL, '1', '2022-10-27 10:45:36', 1),
+(9, '7ae36', 3, 3, '3', 'Arun3', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, NULL, '1', '2022-10-27 10:45:56', 1),
+(10, '7ae36', 4, 4, '1', 'Vivek', '', '', NULL, NULL, NULL, '', '', '', 0, 'guest-949852.jpg', 'guest-119273.jpg', '', 0, NULL, '1', '2022-10-27 10:46:25', 1),
+(11, '7ae36', 4, 4, '2', 'vivek2', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, NULL, '1', '2022-10-27 10:46:37', 1),
+(12, '7ae36', 4, 4, '3', 'vivek3', '', '', NULL, NULL, NULL, '', '', '', 0, '', '', '', 0, NULL, '1', '2022-10-27 10:46:45', 1),
+(13, '7ae36', 5, 5, '1', 'Jagan', '', '', NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-10-27 10:47:59', 1),
+(14, '7ae36', 6, 6, '1', 'Omm', '', '', NULL, NULL, NULL, '', '', '', 0, 'guest-722128.jpg', 'guest-134598.jpg', '', 0, NULL, '1', '2022-10-27 10:52:23', 1),
+(15, '7ae36', 7, 7, '1', 'Pritam', '', '', NULL, NULL, NULL, '', '', '', 0, 'guest_368148.jpg', 'guestP_290011.jpg', '', 0, NULL, '1', '2022-10-27 10:53:58', 1);
 
 -- --------------------------------------------------------
 
